@@ -14,10 +14,10 @@
   
 ### La Team
 
-| First Name | Last Name | Status     | Nickname         |
-| -----------|-----------|------------|------------------|
-| Benjamin   | CASTELLAN | The Fool   | Le Clown         |
-| Samuel     | PIERRE    | The Brain  | Finder of errors |
-| Louis      | ROMAN     | The Brawn  | Le Connard       |
-| Camille    | MORIN     | The Leader | Super Bitchhhh   |
-| Robbie     | LEROBOT   | The Robot  | Le Projet        |
+| First Name | Last Name | Status       | Nickname         |
+| -----------|-----------|--------------|------------------|
+| Benjamin   | CASTELLAN | The Fool     | Le Clown         |
+| Samuel     | PIERRE    | The Brain    | Finder of errors |
+| Louis      | ROMAN     | The Brawn    | Le Connard       |
+| Camille    | MORIN     | The ex-Leader| Super Bitchhhh   |
+| Robbie     | LEROBOT   | The Robot    | Le Projet        |
