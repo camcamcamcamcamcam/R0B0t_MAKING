@@ -30,3 +30,18 @@
 * Brainstormer des idées pour la forme de notre robooooot ♥ ♥ ♥
 * Quels capteurs utiliser ?
 * Déterminer par quoi commencer _(haha)_
+
+## Compte-rendu de la séance du 06/11/2017
+1. Prise en main de la brique
+2. Connection bluetooth
+3. Test des capteurs (sonar : ok, boussole : ok, tactile : un seul ?, couleur : bofibof)
+4. Répartition des tâches
+
+### Pour la séance du 13/11/2017
+- [ ] Regarder les formes de robot possibles (qui tient les capteurs) _(Benji)_
+- [ ] Faire les courbes de performance des capteurs _(Samuel & Louis)_
+- [ ] Commencer le site (avec GitHub) _(Leader)_
+- [ ] Étudier le code de base : https://github.com/in4lio/ev3dev-c/tree/master/source/ev3 (ev3.h, ev3_port.h, ev3_tacho.h, ev3_sensor.h) _(Leader & Benji)_
+- [ ] Comprendre le client-serveur : https://gitlab.eurecom.fr/ludovic.apvrille/OS_Robot_Project_Fall2017/tree/master _(Leader)_
+- [ ] Réfléchir au fonctionnement du robot _(ttlemonde ttlemonde)_
+- [ ] Accepter ♥ Robbie ♥ _(les sous-fifres)_
