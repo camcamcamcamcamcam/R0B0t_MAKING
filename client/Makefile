@@ -5,6 +5,8 @@ all:
 	gcc robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o robotclient
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c i2c.c -o i2c.o
 	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c testSonar.c -o testSonar.o
+	gcc testSonar.o -Wall -lm -lev3dev-c -o testSonar
 
 i2c:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c i2c.c -o i2c.o
