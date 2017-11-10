@@ -58,7 +58,7 @@ int main( void )
 	printf("Valeur mesurée (en cm) ?");
 	scanf("%d",&expectedValue);
 	printf("\n");
-	while (value!=0){
+	while (expectedValue!=0){
 		
 		if (ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0)){
 			printf("SONAR found, reading sonar...\n");
