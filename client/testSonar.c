@@ -53,7 +53,7 @@ int main( void )
 	int expectedValue;
 	FILE * fichier = NULL;
 	fichier = fopen("testSonar.txt","a");
-	fprintf("# The file contains some kind of table expectedValue (in cm) : value from the sensor \n");
+	fprintf(fichier,"# The file contains some kind of table expectedValue (in cm) : value from the sensor \n");
 	
 	printf("Valeur mesurée (en cm) ?")
 	scanf("%d",&expectedValue);
@@ -70,7 +70,7 @@ int main( void )
 			fflush( stdout );
 	    	}
 		
-		printf("Valeur mesurée (en cm) ? (0 to exit)")
+		printf("Valeur mesurée (en cm) ? (0 to exit)");
 		scanf("%d",&value);
 		printf("\n");
 	}
