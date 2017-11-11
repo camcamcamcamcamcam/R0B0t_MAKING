@@ -66,12 +66,12 @@ int main( void )
 				value = 0;
 			}
 			printf( "\r(%f) \n", value);
-			fprintf(fichier, '%d : %d \n', expectedValue, value);
+			fprintf(fichier, '%d : %f \n', expectedValue, value);
 			fflush( stdout );
 	    	}
 		
 		printf("Valeur mesurée (en cm) ? (0 to exit)");
-		scanf("%d",&value);
+		scanf("%d",&expectedValue);
 		printf("\n");
 	}
 	
