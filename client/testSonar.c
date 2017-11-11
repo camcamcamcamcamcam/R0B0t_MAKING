@@ -53,9 +53,9 @@ int main( void )
 	int expectedValue;
 	FILE * fichier = NULL;
 	fichier = fopen("testSonar.txt","a");
-	fprintf(fichier,"# The file contains some kind of table expectedValue (in cm) : value from the sensor \n");
+	fprintf(fichier,"# The file contains a kind of table expectedValue (in cm) : value from the sensor \n");
 	
-	printf("Valeur mesurée (en cm) ?");
+	printf("Value measured (in cm) ?");
 	scanf("%d",&expectedValue);
 	printf("\n");
 	while (expectedValue!=0){
@@ -66,7 +66,9 @@ int main( void )
 				value = 0;
 			}
 			printf( "\r(%f) \n", value);
-			fprintf(fichier, '%d : %f \n', expectedValue, value);
+			printf("Value expected : %d \n", expectedValue);
+			printf("Value measured : %f \n", value);
+			fprintf(fichier, "%d : %f \n", expectedValue, value);
 			fflush( stdout );
 	    	}
 		
