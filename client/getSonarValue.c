@@ -60,15 +60,13 @@ int main( void )
 //Run all sensors
 	ev3_sensor_init();
 
-	while (True){
+	while (1){
 		
 		value = getSonarDistance();
-		printf("Valeur détectée : %f cm",value)
+		printf("Valeur détectée : %f cm",value);
 		sleep(2);
 		
 	}
-	
-	fclose(fichier);
 
 	ev3_uninit();
 	printf( "*** ( EV3 ) Bye! ***\n" );
