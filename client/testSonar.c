@@ -21,28 +21,12 @@
 
 int main( void )
 {
-	int i;
-	uint8_t sn;
-	FLAGS_T state;
 	uint8_t sn_sonar;
 	char s[ 256 ];
-	int val;
 	float value;
-	uint32_t n, ii;
-#ifndef __ARM_ARCH_4T__
-	/* Disable auto-detection of the brick (you have to set the correct address below) */
-	ev3_brick_addr = "192.168.0.204";
-
-#endif
+	
 	if ( ev3_init() == -1 ) return ( 1 );
 
-#ifndef __ARM_ARCH_4T__
-	printf( "The EV3 brick auto-detection is DISABLED,\nwaiting %s online with plugged tacho...\n", ev3_brick_addr );
-
-#else
-	printf( "Waiting tacho is plugged...\n" );
-
-#endif
 	while ( ev3_tacho_init() < 1 ) Sleep( 1000 );
 
 	printf( "*** ( EV3 ) Hello! ***\n" );

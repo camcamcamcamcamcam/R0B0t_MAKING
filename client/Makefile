@@ -12,6 +12,11 @@ i2c:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c i2c.c -o i2c.o
 	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
 	./i2c
+	
+getSonarValue:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c getSonarValue.c -o getSonarValue.o
+	gcc getSonarValue.o -Wall -lm -lev3dev-c -o getSonarValue
+	./getSonarValue
 
 client:
 	gcc -std=gnu99 -W -Wall -c robotclient.c -o robotclient.o
