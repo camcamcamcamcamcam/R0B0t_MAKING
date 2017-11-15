@@ -20,7 +20,7 @@
 
 float valueToDistance(float sensorValue){
 	if(sensorValue>=744){
-		return 95;
+		return 75;
 	}
 	else{
 		return 0.1*sensorValue;
