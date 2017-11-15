@@ -18,6 +18,11 @@ getSonarValue:
 	gcc getSonarValue.o -Wall -lm -lev3dev-c -o getSonarValue
 	./getSonarValue
 
+setMotorsValue:	
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c setMotorsValue.c -o setMotorsValue.o
+	gcc setMotorsValue.o -Wall -lm -lev3dev-c -o setMotorsValue
+	./setMotorsValue
+
 client:
 	gcc -std=gnu99 -W -Wall -c robotclient.c -o robotclient.o
 	gcc robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o robotclient
