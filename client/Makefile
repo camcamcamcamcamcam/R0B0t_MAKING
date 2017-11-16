@@ -28,5 +28,10 @@ client:
 	gcc robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o robotclient
 	./robotclient
 
+motorsWheels:
+        gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_wheels.c -o motors_wheels.o
+        gcc motors_wheels.o -Wall -lm -lev3dev-c -o motors_wheels
+        ./motors_wheels
+
 run:
 	./tester
