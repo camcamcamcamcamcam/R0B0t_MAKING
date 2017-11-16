@@ -18,22 +18,56 @@
 //////////////////////////////////////////////////
 #endif
 
+void go_straight(int speed, int duration){
+	run_motor(66, speed, duration);
+	run_motor(68, speed, duration);
+}
+
+int get_motor_position(int port){
+	uint8_t sn;
+	int position;
+	if( ev3_search_tacho_plugged_in(port,0,&sn,0) ){
+		get_tacho_position(sn,&position);
+	}
+	printf("position : %d \n",position);
+	return position;
+}
+
+void run_motor_pos(int port, int position){
+	uint8_t sn;
+	if ( ev3_search_tacho_plugged_in(port,0,&sn,0) ){
+		position = get_tacho_position(sn, &position);
+	}
+	set_tacho_position(sn,position+10000);
+	set_tacho_command_inx(sn, TACHO_RUN_TIMED);
+}
+
 void run_motor(int port, int speed, int duration){
 	// Port detected : 66 left and 68 right
-	
 	uint8_t sn;
 	int eff_speed;
+	int polarity;
 	if ( ev3_search_tacho_plugged_in(port,0, &sn, 0 )) {
 		int max_speed;
 		get_tacho_max_speed( sn, &max_speed );
+		if(speed<0){
+			polarity = set_tacho_polarity_inx(sn,TACHO_INVERSED);
+			speed = -speed;
+		}
+		else{
+			polarity = set_tacho_polarity_inx(sn,TACHO_NORMAL);
+		}
 		if(speed > max_speed){
 			eff_speed = max_speed;
 		}
 		else{
 			eff_speed = speed;
 		}
+		
 		printf("Effective speed : %d \n",eff_speed);
-		set_tacho_time_sp( sn, time );
+		set_tacho_speed_sp( sn, eff_speed);
+		set_tacho_time_sp( sn, duration );
+		set_tacho_command_inx(sn, TACHO_RUN_TIMED);
 	}
 }
 
@@ -79,12 +113,23 @@ int main( void )
 	}
 	// Run motors in order from port A to D
 	// Port detected : 66 left and 68 right
-	int port=66;
 	int duration=4000;
 	int speed=1000;
-	run_motor(port, speed, duration);
-	
+	/*
+	go_straight(speed, duration);
+	int position = 1;
+	while(position>0){
+		position = get_motor_position(66);
+	}
+	*/
+	int position;
+	position = get_motor_position(66);
+	run_motor_pos(66,1000);
+	while(position>0){
+		position = get_motor_position(66);
+		sleep(1);
+	}
 	printf( "*** ( EV3 ) Bye! ***\n" );
-
+	
 	return ( 0 );
 }
