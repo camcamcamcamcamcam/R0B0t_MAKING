@@ -18,12 +18,12 @@
 //////////////////////////////////////////////////
 #endif
 
-void initMotorWheels();
+void initMotorWheels(uint8_t *sn);
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
-void goStraightForAngleBoth(int speed, int angle);
-/*make both wheels turn with the specified speed and angle*/
-void goStraightForAngle(int port, int speed, int angle);
+void goStraight(uint8_t *sn, int speed, int distance);
+/*make both wheels turn with the specified speed and distance*/
+void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port*/
 int get_motor_position(int port);
 
