@@ -27,19 +27,21 @@ uint8_t sn_color;
 uint8_t sn_compass;
 uint8_t sn_sonar;
 uint8_t sn_mag;
+uint32_t n, ii;
+
 
 void initMotorWheels(){
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
-    int i;
-    char s[ 256 ];
-    int val;
-    float value;
-    uint32_t n, ii;
+
+    //char s[ 256 ];
+    //int val;
+    //float value;
 
     if ( ev3_init() == -1 ) return ( 1 );
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
 }
+
 
 void goStraightForAngleBoth(int speed, int angle){  //todo Make then run at the same time
 /*make both wheels turn with the specified speed and angle*/
