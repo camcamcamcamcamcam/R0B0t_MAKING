@@ -19,6 +19,8 @@
 #endif
 
 #include "motors_wheels.h"
+#define PI 3.14159265
+#define DIAMETRE 56  // diameter of the wheel : 56mm
 
 uint8_t sn;
 FLAGS_T state;
@@ -34,10 +36,6 @@ void initMotorWheels(){
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
 
-    //char s[ 256 ];
-    //int val;
-    //float value;
-
     if ( ev3_init() == -1 ) return ( 1 );
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
 }
@@ -49,6 +47,7 @@ void goStraightForAngleBoth(int speed, int angle){  //todo Make then run at the 
         goStraightForAngle(66, speed, angle);
         goStraightForAngle(68, speed, angle);
     }
+
 
 void goStraightForAngle(int port, int speed, int angle) {
 /*only make one wheel turn with the motor on the specified port*/
@@ -69,13 +68,50 @@ void goStraightForAngle(int port, int speed, int angle) {
 }
 
 
+int get_motor_position(int port){
+    //1 increment is equal to 1 degree
+    uint8_t sn;
+    int position;
+    if( ev3_search_tacho_plugged_in(port,0,&sn,0) ){
+        get_tacho_position(sn,&position);
+    }
+    printf("position : %d \n",position);
+    return position;
+}
+
+
+int angle_to_distance(int angle){
+/* take in parameter the difference in angle for the wheels and returns the distance in mm*/
+    return ((angle/360)*PI*DIAMETRE);
+}
+
+
+int distance_to_angle(int distance){
+/* take in parameter the distance in mm and returns the difference in angle for the wheels */
+    return ((distance*360)/(PI*DIAMETRE));
+}
+
 int main( void ){
 //to test each function, we need the main
 
     initMotorWheels();
     int max_speed;
+    ev3_search_tacho_plugged_in(66, 0, &sn, 0);
     get_tacho_max_speed( sn, &max_speed );
+    //test
 
-    goStraightForAngleBoth(max_speed / 12, 90);
+    int tacho_rot;
+    get_tacho_count_per_rot(sn, &tacho_rot);
+
+    int tacho_m;
+    get_tacho_count_per_m(sn, &tacho_m);
+    printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
+
+    get_motor_position(68);
+    goStraightForAngleBoth(max_speed / 12, distance_to_angle(200));
+    while(1){
+        Sleep(50);
+        get_motor_position(68);
+    }
 
 }
