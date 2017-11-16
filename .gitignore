@@ -1,1 +1,9 @@
 _site
+
+# make and build files
+*.lst
+*.o
+*.eep
+*.lss
+*.map
+*.sym
