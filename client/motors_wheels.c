@@ -20,17 +20,18 @@
 
 #include "motors_wheels.h"
 
+uint8_t sn;
+FLAGS_T state;
+uint8_t sn_touch;
+uint8_t sn_color;
+uint8_t sn_compass;
+uint8_t sn_sonar;
+uint8_t sn_mag;
+
 void initMotorWheels(){
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
     int i;
-    uint8_t sn;
-    FLAGS_T state;
-    uint8_t sn_touch;
-    uint8_t sn_color;
-    uint8_t sn_compass;
-    uint8_t sn_sonar;
-    uint8_t sn_mag;
     char s[ 256 ];
     int val;
     float value;
