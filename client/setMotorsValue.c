@@ -122,13 +122,26 @@ int main( void )
 		position = get_motor_position(66);
 	}
 	*/
-	int position;
+	
+	/*int position;
 	position = get_motor_position(66);
 	run_motor_pos(66,1000);
 	while(position>0){
 		position = get_motor_position(66);
 		sleep(1);
-	}
+	}*/
+	
+	//test with the angle of the wheels
+
+	int max_speed;
+	get_tacho_max_speed( sn, &max_speed );
+
+	set_tacho_speed_sp( sn, max_speed / 20 );
+	set_tacho_ramp_up_sp( sn, 0 );
+	set_tacho_ramp_down_sp( sn, 0 );
+	set_tacho_position_sp( sn, 360 );
+	set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+
 	printf( "*** ( EV3 ) Bye! ***\n" );
 	
 	return ( 0 );
