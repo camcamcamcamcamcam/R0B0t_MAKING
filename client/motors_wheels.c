@@ -21,6 +21,7 @@
 #include "motors_wheels.h"
 #define PI 3.14159265
 #define DIAMETRE 56  // diameter of the wheel : 56mm
+#define DIAMETRE_ROBOT 155 // width of the robot in mm
 
 uint8_t sn[2];
 FLAGS_T state;
@@ -44,17 +45,33 @@ void initMotorWheels(uint8_t *sn){
 }
 
 
-void goStraight(uint8_t *sn, int speed, int distance){  //todo Make then run at the same time
-/*make both wheels turn with the specified speed and distance*/
-        int angle = distance_to_angle(distance);
-        goStraightForAngle(sn[0], speed, angle);
-        goStraightForAngle(sn[1], speed, angle);
-    }
+void goStraight(uint8_t *sn, int speed, int distance){
+/*make both wheels turn with the specified speed and distance in the good direction*/
+    int angle = distance_to_angle(distance);
+    goStraightForAngle(sn[0], speed, angle);
+    goStraightForAngle(sn[1], speed, angle);
+}
+
+void rotation(uint8_t *sn, int speed, int angle){
+    /*make the robot do a rotation.
+     * if angle is positive, it turns to the right
+     * if angle is negatve, it turns to the left*/
+    int distance_roue = (angle * PI * DIAMETRE_ROBOT) / (360);
+    printf("distance roue : %d\n",distance_roue);
+    int angle_roue = distance_to_angle(distance_roue);
+    goStraightForAngle(sn[0], speed, angle_roue);
+    goStraightForAngle(sn[1], speed, -angle_roue);
+}
 
 
 void goStraightForAngle(uint8_t sn, int speed, int angle) {
-/*only make one wheel turn with the motor on the specified port*/
-
+/*only make one wheel turn with the motor on the specified port in the good direction*/
+    if (angle > 0){
+        set_tacho_polarity_inx(sn,TACHO_INVERSED);
+    } else{
+        set_tacho_polarity_inx(sn,TACHO_NORMAL);
+        angle = -angle;
+    }
     set_tacho_speed_sp(sn, speed);
 //  set_tacho_ramp_up_sp( sn, 0 );
 //  set_tacho_ramp_down_sp( sn, 0 );
@@ -103,9 +120,9 @@ int main( void ){
     printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
 */
 
-    get_motor_position(68);
-    goStraight(sn, max_speed / 12, 210);
-
+    //get_motor_position(68);
+    //goStraight(sn, max_speed / 12, 210);
+    rotation(sn, max_speed / 12, 720);
     /*while(1){
         Sleep(50);
         get_motor_position(68);
