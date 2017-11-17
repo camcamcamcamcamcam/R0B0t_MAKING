@@ -17,3 +17,12 @@
 
 //////////////////////////////////////////////////
 #endif
+
+void initMotorWheels();
+/*need to be started at the beginning
+ Allows to use the motors for the wheels*/
+void goStraightForAngleBoth(int speed, int angle);
+/*make both wheels turn with the specified speed and angle*/
+void goStraightForAngle(int port, int speed, int angle);
+/*only make one wheel turn with the motor on the specified port*/
+

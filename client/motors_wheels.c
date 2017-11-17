@@ -17,17 +17,39 @@
 
 //////////////////////////////////////////////////
 #endif
-void goStraightForAngle(int port, int speed, int angle);
 
+#include "motors_wheels.h"
 
-//make both wheels turn
+void initMotorWheels(){
+/*need to be started at the beginning
+ Allows to use the motors for the wheels*/
+    int i;
+    uint8_t sn;
+    FLAGS_T state;
+    uint8_t sn_touch;
+    uint8_t sn_color;
+    uint8_t sn_compass;
+    uint8_t sn_sonar;
+    uint8_t sn_mag;
+    char s[ 256 ];
+    int val;
+    float value;
+    uint32_t n, ii;
+
+    if ( ev3_init() == -1 ) return ( 1 );
+    while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
+}
+
 void goStraightForAngleBoth(int speed, int angle){  //todo Make then run at the same time
+/*make both wheels turn with the specified speed and angle*/
+
         goStraightForAngle(66, speed, angle);
         goStraightForAngle(68, speed, angle);
     }
 
-//only make one wheel turn
 void goStraightForAngle(int port, int speed, int angle) {
+/*only make one wheel turn with the motor on the specified port*/
+
     uint8_t sn;
     if (ev3_search_tacho_plugged_in(port, 0, &sn, 0)) {
 
@@ -44,29 +66,13 @@ void goStraightForAngle(int port, int speed, int angle) {
 }
 
 
+int main( void ){
 //to test each function, we need the main
-int main( void )
-{
 
-	int i;
-	uint8_t sn;
-	FLAGS_T state;
-	uint8_t sn_touch;
-	uint8_t sn_color;
-	uint8_t sn_compass;
-	uint8_t sn_sonar;
-	uint8_t sn_mag;
-	char s[ 256 ];
-	int val;
-	float value;
-	uint32_t n, ii;
-
-  if ( ev3_init() == -1 ) return ( 1 );
-  while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
-  int port=66;  //66 and 68
+    initMotorWheels();
     int max_speed;
     get_tacho_max_speed( sn, &max_speed );
 
-        goStraightForAngleBoth(max_speed / 12, 90);
+    goStraightForAngleBoth(max_speed / 12, 90);
 
 }
