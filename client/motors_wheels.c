@@ -23,7 +23,7 @@
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 155 // width of the robot in mm
 
-uint8_t sn[2];
+uint8_t sn[3];
 FLAGS_T state;
 uint8_t sn_touch;
 uint8_t sn_color;
@@ -41,6 +41,7 @@ void initMotorWheels(uint8_t *sn){
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
     ev3_search_tacho_plugged_in(66, 0, &sn[0], 0);
     ev3_search_tacho_plugged_in(68, 0, &sn[1], 0);
+	ev3_search_tacho_plugged_in(67, 0, &sn[2], 0);
 
 }
 
@@ -79,6 +80,22 @@ void goStraightForAngle(uint8_t sn, int speed, int angle) {
     set_tacho_command_inx(sn, TACHO_RUN_TO_REL_POS);
 }
 
+void goForAngleForever(uint8_t sn, int speed, int angle) {
+/*only make one wheel turn with the motor on the specified port in the good direction*/
+    if (angle > 0){
+        set_tacho_polarity_inx(sn,TACHO_INVERSED);
+    } else{
+        set_tacho_polarity_inx(sn,TACHO_NORMAL);
+        angle = -angle;
+    }
+    set_tacho_speed_sp(sn, speed);
+//  set_tacho_ramp_up_sp( sn, 0 );
+//  set_tacho_ramp_down_sp( sn, 0 );
+    set_tacho_position_sp(sn, angle);
+	set_tacho_stop_action_inx(sn, TACHO_HOLD);
+	set_tacho_command_inx(sn, TACHO_RUN_TO_ABS_POS);
+	//set_tacho_command_inx(sn, TACHO_RUN_FOREVER);
+}
 
 int get_motor_position(int port){
     //1 increment is equal to 1 degree
@@ -108,7 +125,6 @@ int main( void ){
 
     initMotorWheels(sn);
     int max_speed;
-    ev3_search_tacho_plugged_in(66, 0, sn, 0);
     get_tacho_max_speed( sn[0], &max_speed );
     //test
 
@@ -122,7 +138,9 @@ int main( void ){
 
     //get_motor_position(68);
     //goStraight(sn, max_speed / 12, 210);
-    rotation(sn, max_speed / 12, 720);
+    //rotation(sn, max_speed / 12, 720);
+	// angle absolu 25 : correspond au 0 attendu
+	goForAngleForever(sn[2], max_speed / 5, 17);
     /*while(1){
         Sleep(50);
         get_motor_position(68);
