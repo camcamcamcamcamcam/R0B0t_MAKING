@@ -17,8 +17,10 @@
 
 //////////////////////////////////////////////////
 #endif
-
-uint8_t sn;
+/*
+#include "motor_servo.h"
+*/
+uint8_t * sn;
 FLAGS_T state;
 uint8_t sn_touch;
 uint8_t sn_color;
@@ -27,12 +29,23 @@ uint8_t sn_sonar;
 uint8_t sn_mag;
 uint32_t n, ii;
 
+void initMotorServo(uint8_t * sn){
+/*need to be started at the beginning
+ Allows to use the SERVO MOTOR*/
+    if ( ev3_init() == -1 ) return ( 1 );
+    //while ( ev3_servo_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
+    if(ev3_search_servo_plugged_in(67, 0, sn, 0)){
+		printf("ok");
+	}
+	else{
+		printf("pas ok");
+	}
 
+}
 
 int main( void ){
 //to test each function, we need the main
-
-
-    ev3_search_servo_plugged_in("in2", 0, &sn, 0);
-
+	initMotorServo(sn);
+	//goForAngle(*sn,45);
+	printf("Hello world");
 }
