@@ -18,8 +18,15 @@
 //////////////////////////////////////////////////
 #endif
 
-void initMotorServo(uint8_t *sn);
+void initMotorServo();
 /*need to be started at the beginning
  Allows to use the servo motor*/
 void goForAngleForever(uint8_t sn, int speed, int angle);
 /*only make the servo motor turn until the specified angle has been reached.*/
+
+void servo_up();
+/*servo motor turns up*/
+
+void servo_down();
+/*servo motor turns horizontal*/
+
