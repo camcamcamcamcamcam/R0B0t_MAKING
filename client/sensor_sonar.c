@@ -29,11 +29,11 @@ void initSensorSonar(){
 
 }
 
-int get_sonar_distance(){
+float get_sonar_distance(){
     // return the distance in mm got by the sensor
-    int distance;
 	float value;
     get_sensor_value0(sn_sonar,&value);
+	printf("value is %f",value);
 	if(value>=750){
 		return 750;
 	}
@@ -45,11 +45,11 @@ int get_sonar_distance(){
 
 int main( void ){
 
-	int distance;
+	float distance;
     initSensorSonar();
     while(1){
 		distance = get_sonar_distance();
-		printf("Distance captée : %d \n",distance);
+		printf("Distance captée : %f \n",distance);
 		Sleep(1000);
 	}
 

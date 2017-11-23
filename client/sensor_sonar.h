@@ -20,6 +20,6 @@
 void initSensorSonar();
 /*need to be started at the beginning
  Allows to use the sonar sensor */
-int get_sonar_distance();
+float get_sonar_distance();
 /* return the distance found by the sensor in mm.
 */

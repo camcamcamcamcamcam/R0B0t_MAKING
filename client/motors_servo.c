@@ -22,8 +22,8 @@
 #define PI 3.14159265
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 155 // width of the robot in mm
-#define ANGLE_ZERO 28 //the horizontal one
-#define ANGLE_UP 45
+#define ANGLE_ZERO 23 //28 //the horizontal one
+#define ANGLE_UP 55 //45
 #define MAX_SPEED 1050
 uint8_t sn_servo;
 FLAGS_T state;
@@ -66,14 +66,14 @@ void goForAngleForever(uint8_t sn_servo, int speed, int angle) {
 }
 
 void servo_up(){
-    goForAngleForever(sn_servo, MAX_SPEED / 30, ANGLE_UP);
+    goForAngleForever(sn_servo, MAX_SPEED / 6, ANGLE_UP);
     //get_tacho_position_sp(sn_servo, &angle);
     //printf("l'angle est %d\n", angle);
     Sleep(3000);
 }
 
 void servo_down(){
-    goForAngleForever(sn_servo, MAX_SPEED / 30, ANGLE_ZERO);
+    goForAngleForever(sn_servo, MAX_SPEED / 6, ANGLE_ZERO);
     //get_tacho_position_sp(sn_servon, &angle);
     //printf("l'angle est %d\n", angle);
     Sleep(3000);
