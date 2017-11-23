@@ -23,7 +23,7 @@
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 155 // width of the robot in mm
 
-uint8_t sn[2];
+uint8_t sn_wheels[2];
 FLAGS_T state;
 uint8_t sn_touch;
 uint8_t sn_color;
@@ -33,26 +33,26 @@ uint8_t sn_mag;
 uint32_t n, ii;
 
 
-void initMotorWheels(uint8_t *sn){
+void initMotorWheels(){
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
 
     if ( ev3_init() == -1 ) return ( 1 );
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
-    ev3_search_tacho_plugged_in(66, 0, &sn[0], 0);
-    ev3_search_tacho_plugged_in(68, 0, &sn[1], 0);
+    ev3_search_tacho_plugged_in(66, 0, &sn_wheels[0], 0);
+    ev3_search_tacho_plugged_in(68, 0, &sn_wheels[1], 0);
 
 }
 
 
-void goStraight(uint8_t *sn, int speed, int distance){
+void goStraight(int speed, int distance){
 /*make both wheels turn with the specified speed and distance in the good direction*/
     int angle = distance_to_angle(distance);
-    goStraightForAngle(sn[0], speed, angle);
-    goStraightForAngle(sn[1], speed, angle);
+    goStraightForAngle(sn_wheels[0], speed, angle);
+    goStraightForAngle(sn_wheels[1], speed, angle);
 }
 
-void rotation(uint8_t *sn, int speed, int angle){
+void rotation(int speed, int angle){
     /*make the robot do a rotation.
      * if angle is positive, it turns to the right
      * if angle is negatve, it turns to the left*/
@@ -60,32 +60,32 @@ void rotation(uint8_t *sn, int speed, int angle){
     printf("distance roue : %d\n",distance_roue);
     int angle_roue = distance_to_angle(distance_roue);
 	printf("angle roue : %d\n",angle_roue);
-    goStraightForAngle(sn[0], speed, angle_roue);
-    goStraightForAngle(sn[1], speed, -angle_roue);
+    goStraightForAngle(sn_wheels[0], speed, angle_roue);
+    goStraightForAngle(sn_wheels[1], speed, -angle_roue);
 }
 
 
-void goStraightForAngle(uint8_t sn, int speed, int angle) {
+void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 /*only make one wheel turn with the motor on the specified port in the good direction*/
     if (angle > 0){
-        set_tacho_polarity_inx(sn,TACHO_INVERSED);
+        set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
     } else{
-        set_tacho_polarity_inx(sn,TACHO_NORMAL);
+        set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
         angle = -angle;
     }
-    set_tacho_speed_sp(sn, speed);
-//  set_tacho_ramp_up_sp( sn, 0 );
-//  set_tacho_ramp_down_sp( sn, 0 );
-    set_tacho_position_sp(sn, angle);
-    set_tacho_command_inx(sn, TACHO_RUN_TO_REL_POS);
+    set_tacho_speed_sp(sn_wheels, speed);
+//  set_tacho_ramp_up_sp( sn_wheels, 0 );
+//  set_tacho_ramp_down_sp( sn_wheels, 0 );
+    set_tacho_position_sp(sn_wheels, angle);
+    set_tacho_command_inx(sn_wheels, TACHO_RUN_TO_REL_POS);
 }
 
 int get_motor_position(int port){
     //1 increment is equal to 1 degree
-    uint8_t sn;
+    uint8_t sn_wheels;
     int position;
-    if( ev3_search_tacho_plugged_in(port,0,&sn,0) ){
-        get_tacho_position(sn,&position);
+    if( ev3_search_tacho_plugged_in(port,0,&sn_wheels,0) ){
+        get_tacho_position(sn_wheels,&position);
     }
     printf("position : %d \n",position);
     return position;
@@ -106,22 +106,23 @@ int distance_to_angle(int distance){
 int main( void ){
 //to test each function, we need the main
 
-    initMotorWheels(sn);
+    initMotorWheels(sn_wheels);
     int max_speed;
-    get_tacho_max_speed( sn[0], &max_speed );
+    get_tacho_max_speed( sn_wheels[0], &max_speed );
     //test
 
 /*    int tacho_rot;
-    get_tacho_count_per_rot(sn, &tacho_rot);
+    get_tacho_count_per_rot(sn_wheels, &tacho_rot);
 
     int tacho_m;
-    get_tacho_count_per_m(sn, &tacho_m);
+    get_tacho_count_per_m(sn_wheels, &tacho_m);
     printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
 */
 
     //get_motor_position(68);
-    //goStraight(sn, max_speed / 12, 210);
-    rotation(sn, max_speed / 12, 180);
+    goStraight(max_speed / 12, 210);
+    Sleep(2000);
+    rotation(max_speed / 12, 180);
     /*while(1){
         Sleep(50);
         get_motor_position(68);

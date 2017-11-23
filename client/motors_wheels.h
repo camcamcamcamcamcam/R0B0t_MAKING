@@ -18,10 +18,10 @@
 //////////////////////////////////////////////////
 #endif
 
-void initMotorWheels(uint8_t *sn);
+void initMotorWheels();
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/
-void goStraight(uint8_t *sn, int speed, int distance);
+void goStraight(int speed, int distance);
 /*make both wheels turn with the specified speed and distance in the good direction*/
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
@@ -31,7 +31,7 @@ int angle_to_distance(int angle);
 /* take in parameter the difference in angle for the wheels and returns the distance in mm*/
 int distance_to_angle(int distance);
 /* take in parameter the distance in mm and returns the difference in angle for the wheels */
-void rotation(uint8_t *sn, int speed, int angle);
+void rotation(int speed, int angle);
     /*make the robot do a rotation.
      * if angle is positive, it turns to the right
      * if angle is negatve, it turns to the left*/
