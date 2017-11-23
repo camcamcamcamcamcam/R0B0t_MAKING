@@ -32,6 +32,11 @@ motors_wheels:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_wheels.c -o motors_wheels.o
 	gcc motors_wheels.o -Wall -lm -lev3dev-c -o motors_wheels
 	./motors_wheels
+	
+motors_servo:	
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_servo.c -o motors_servo.o
+	gcc motors_servo.o -Wall -lm -lev3dev-c -o motors_servo
+	./motors_servo
 
 run:
 	./tester

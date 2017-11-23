@@ -63,7 +63,7 @@ int main( void )
 	while (1){
 		
 		value = getSonarDistance();
-		printf("Valeur détectée : %f cm",value);
+		printf("Valeur détectée : %f cm\n",value);
 		sleep(2);
 		
 	}

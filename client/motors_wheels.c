@@ -59,6 +59,7 @@ void rotation(uint8_t *sn, int speed, int angle){
     int distance_roue = (angle * PI * DIAMETRE_ROBOT) / (360);
     printf("distance roue : %d\n",distance_roue);
     int angle_roue = distance_to_angle(distance_roue);
+	printf("angle roue : %d\n",angle_roue);
     goStraightForAngle(sn[0], speed, angle_roue);
     goStraightForAngle(sn[1], speed, -angle_roue);
 }

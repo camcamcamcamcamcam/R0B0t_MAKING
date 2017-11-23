@@ -54,16 +54,19 @@ void goForAngleForever(uint8_t sn, int speed, int angle) {
     set_tacho_speed_sp(sn, speed);
 //  set_tacho_ramp_up_sp( sn, 0 );
 //  set_tacho_ramp_down_sp( sn, 0 );
+	
+	printf("angle : %d\n",angle);
     set_tacho_position_sp(sn, angle);
 	set_tacho_stop_action_inx(sn, TACHO_HOLD);
 	set_tacho_command_inx(sn, TACHO_RUN_TO_ABS_POS);
 	//set_tacho_command_inx(sn, TACHO_RUN_FOREVER);
+	//set_tacho_command_inx(sn, TACHO_RUN_TO_REL_POS);
 }
 
 int main( void ){
 //to test each function, we need the main
 
-    initMotorWheels(&sn);
+    initMotorServo(&sn);
     int max_speed;
     get_tacho_max_speed( sn, &max_speed );
     //test
@@ -80,7 +83,11 @@ int main( void ){
     //goStraight(sn, max_speed / 12, 210);
     //rotation(sn, max_speed / 12, 720);
 	// angle absolu 25 : correspond au 0 attendu
-	goForAngleForever(sn, max_speed / 5, 17);
+	goForAngleForever(sn, max_speed / 12, 25);
+	sleep(3);
+	goForAngleForever(sn, max_speed / 12, -1);
+	sleep(3);
+	goForAngleForever(sn, max_speed / 4, 70);
     /*while(1){
         Sleep(50);
         get_motor_position(68);
