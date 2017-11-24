@@ -25,15 +25,17 @@ uint8_t sn_sonar;
 void initSensorSonar(){
 	// initialise the sonar sensor
     if ( ev3_init() == -1 ) return ( 1 );
-    ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0);
+	ev3_sensor_init();
+	ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0);
 
 }
 
-float get_sonar_distance(){
+int get_sonar_distance(){
     // return the distance in mm got by the sensor
-	float value;
+	int value;
     get_sensor_value0(sn_sonar,&value);
-	printf("value is %f",value);
+	fflush( stdout );
+	printf("value is %d",value);
 	if(value>=750){
 		return 750;
 	}
@@ -45,11 +47,11 @@ float get_sonar_distance(){
 
 int main( void ){
 
-	float distance;
+	int distance;
     initSensorSonar();
     while(1){
 		distance = get_sonar_distance();
-		printf("Distance captée : %f \n",distance);
+		printf("Distance captée : %d \n",distance);
 		Sleep(1000);
 	}
 
