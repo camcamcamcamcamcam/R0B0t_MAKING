@@ -48,8 +48,9 @@ void initMotorWheels(){
 void goStraight(int speed, int distance){
 /*make both wheels turn with the specified speed and distance in the good direction*/
     int angle = distance_to_angle(distance);
-    goStraightForAngle(sn_wheels[0], speed, angle);
-    goStraightForAngle(sn_wheels[1], speed, angle);
+    //goStraightForAngle(sn_wheels[0], speed, angle);
+    //goStraightForAngle(sn_wheels[1], speed, angle);
+    synchronisedGoStraight(sn_wheels, speed, angle);
 }
 
 void rotation(int speed, int angle){
@@ -64,6 +65,22 @@ void rotation(int speed, int angle){
     goStraightForAngle(sn_wheels[1], speed, -angle_roue);
 }
 
+void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
+    /*make the two wheels turn with the motors in the good direction*/
+    if (angle > 0){
+        multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
+    } else{
+        multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
+        angle = -angle;
+    }
+    multi_set_tacho_speed_sp(sn_wheels, speed);
+//  set_tacho_ramp_up_sp( sn_wheels, 0 );
+//  set_tacho_ramp_down_sp( sn_wheels, 0 );
+    multi_set_tacho_position_sp(sn_wheels, angle);
+    multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
+}
+
 
 void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 /*only make one wheel turn with the motor on the specified port in the good direction*/
@@ -73,11 +90,13 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
         set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
         angle = -angle;
     }
+    printf("angle desire : %d\n",angle);
     set_tacho_speed_sp(sn_wheels, speed);
 //  set_tacho_ramp_up_sp( sn_wheels, 0 );
 //  set_tacho_ramp_down_sp( sn_wheels, 0 );
     set_tacho_position_sp(sn_wheels, angle);
-    set_tacho_command_inx(sn_wheels, TACHO_RUN_TO_REL_POS);
+    set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+    set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
 int get_motor_position(int port){
@@ -87,7 +106,7 @@ int get_motor_position(int port){
     if( ev3_search_tacho_plugged_in(port,0,&sn_wheels,0) ){
         get_tacho_position(sn_wheels,&position);
     }
-    printf("position : %d \n",position);
+    printf("port : %d position : %d \n",port,position);
     return position;
 }
 
@@ -120,12 +139,13 @@ int main( void ){
 */
 
     //get_motor_position(68);
-    goStraight(max_speed / 12, 210);
-    Sleep(2000);
-    rotation(max_speed / 12, 180);
-    /*while(1){
-        Sleep(50);
+    goStraight(max_speed / 2, 594*2);
+    //Sleep(2000);
+    //rotation(max_speed / 12, 180);
+    while(1){
+        Sleep(1000);
         get_motor_position(68);
-    }*/
+        get_motor_position(66);
+    }
 
 }

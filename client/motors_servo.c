@@ -23,7 +23,7 @@
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 155 // width of the robot in mm
 #define ANGLE_ZERO 23 //28 //the horizontal one
-#define ANGLE_UP 55 //45
+#define ANGLE_UP 160 //55 //45
 #define MAX_SPEED 1050
 uint8_t sn_servo;
 FLAGS_T state;

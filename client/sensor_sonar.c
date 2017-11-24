@@ -27,7 +27,6 @@ void initSensorSonar(){
     if ( ev3_init() == -1 ) return ( 1 );
 	ev3_sensor_init();
 	ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0);
-
 }
 
 int get_sonar_distance(){

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "ev3.h"
 #include "ev3_port.h"
-#include "ev3_tacho.h"
 #include "ev3_sensor.h"
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
@@ -18,37 +17,31 @@
 //////////////////////////////////////////////////
 #endif
 
+uint8_t sn_touch;
 
+void initTouchSensor(){
+    //initialize the touch sensor
+    if ( ev3_init() == -1 ) return ( 1 );
+    ev3_sensor_init();
+    ev3_search_sensor(LEGO_EV3_TOUCH, &sn_touch,0);
+
+}
 
 int isTouched(){
-
-    uint8_t sn_touch;
+    //return true if the sensor is pushed, false if not
     int value;
-
-    if (ev3_search_sensor(LEGO_EV3_TOUCH, &sn_touch,0)){
-        if ( !get_sensor_value0(sn_touch, &value )) {
-            value = 0;
-        }
-        fflush( stdout );
+    if ( !get_sensor_value0(sn_touch, &value )) {
+        value = 0;
     }
-    else{
-        value = -1;
-    }
+    fflush( stdout );
     return value;
 }
 
 int main( void )
 {
 
-    float value;
-
-    if ( ev3_init() == -1 ) return ( 1 );
-
-    printf( "*** ( EV3 ) Hello! ***\n" );
-
-//Run all sensors
-    ev3_sensor_init();
-
+    initTouchSensor();
+    int value;
     while (1){
 
         value = isTouched();
