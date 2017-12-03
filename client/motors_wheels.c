@@ -139,9 +139,9 @@ int main( void ){
 */
 
     //get_motor_position(68);
-    goStraight(max_speed / 2, 594*2);
+    //goStraight(max_speed / 2, 594*2);
     //Sleep(2000);
-    //rotation(max_speed / 12, 180);
+    rotation(max_speed / 12, 90);
     while(1){
         Sleep(1000);
         get_motor_position(68);

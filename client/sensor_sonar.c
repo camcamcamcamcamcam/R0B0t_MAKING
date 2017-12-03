@@ -31,19 +31,18 @@ void initSensorSonar(){
 
 int get_sonar_distance(){
     // return the distance in mm got by the sensor
-	int value;
+	float value;
     get_sensor_value0(sn_sonar,&value);
 	fflush( stdout );
-	printf("value is %d",value);
+	printf("value sensor : %f\n",value);
 	if(value>=750){
 		return 750;
 	}
 	else{
-		return value;
+		return (int) value;
 	}
 }
-
-
+/*
 int main( void ){
 
 	int distance;
@@ -55,3 +54,4 @@ int main( void ){
 	}
 
 }
+*/
