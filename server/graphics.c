@@ -3,6 +3,7 @@
 int graphicsInit () { return 0; }
 int graphicsInitWindow (int team1, int team2, int team3, int team4) { return 0; }
 void addCoordinate (int team, int x, int y) {}
+void addObstacle (int team, int x, int y, int r, int g, int b) {}
 void ballAction (int team, int x, int y) {}
 void graphicsDestroyWindow () {}
 void graphicsQuit () {}
@@ -26,6 +27,7 @@ void graphicsQuit () {}
 #define CMTOPXRATIO         1.5
 #define PXBORDER            20
 #define COORD_PER_PLAYER    300
+#define OBS_PER_PLAYER    1000
 #define PX(v)               ((int) (v*CMTOPXRATIO))
 
 #define OBSTACLE_WIDTH      15
@@ -57,6 +59,14 @@ struct coordinate {
     int y;
 };
 
+struct obstacleCoordinate {
+	int x;
+	int y;
+	int r;
+	int g;
+	int b;
+};	
+
 /* Init SDL */
 int graphicsInit () {
     if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
@@ -78,11 +88,18 @@ SDL_Window *window = NULL;
 SDL_GLContext openGLContext;
 struct coordinate * coordinates = NULL;
 struct coordinate * newCoordinates[4];
+struct obstacleCoordinate * obsCoordinates=NULL;
+struct obstacleCoordinate * newObsCoordinates[4];
 struct coordinate ballCoordinates[4];
 unsigned char teamIndex[15];
+int nbpoints[15];
+int nbpositions[15];
 int nbPlayers;
 pthread_mutex_t lock;
 pthread_t tid;
+	/* Arena size: */ 
+	int width=200;
+	int height=400;
 
 void drawCurrentPos (int x, int y) {
     int i;
@@ -114,6 +131,44 @@ void drawBalls () {
     pthread_mutex_unlock (&lock);
 }
 
+
+void drawObstacles () {
+     int team;
+
+    pthread_mutex_lock (&lock);
+
+    for (team=0; team<15; team++) {
+        if (teamIndex[team] != 255) {
+            struct obstacleCoordinate *coord, *newCoord;
+            coord = &obsCoordinates[OBS_PER_PLAYER*teamIndex[team]];
+            newCoord = newObsCoordinates[teamIndex[team]];
+
+
+
+            if (newCoord > coord+1) {
+                struct obstacleCoordinate *iter;
+                for (iter = coord; iter < newCoord; iter++) {
+					glColor3f ((float)iter->r/255.0, (float)iter->g/255.0, (float)iter->b/255.0);
+					glBegin(GL_QUADS);
+
+						glVertex2f(iter->x-2, iter->y-2);
+            			glVertex2f(iter->x-2, iter->y+2);
+            			glVertex2f(iter->x+2, iter->y-2);
+            			glVertex2f(iter->x+2, iter->y+2);
+
+					glEnd();
+
+                }
+            }
+        }
+    }
+
+
+    pthread_mutex_unlock (&lock);
+}
+
+
+
 void drawPath () {
     int team;
 
@@ -139,6 +194,8 @@ void drawPath () {
             if (newCoord != coord) {
                 drawCurrentPos ((newCoord-1)->x, (newCoord-1)->y);
             }
+
+			
         }
     }
 
@@ -172,8 +229,18 @@ void drawStartDestArea (int x, int y) {
 }
 
 void drawArena () {
+
     /* Draw arena */
     glColor3f (1,1,1);
+
+		glBegin(GL_QUADS);
+            glVertex2f(0, height);
+            glVertex2f(0, 0);
+            glVertex2f(width, 0);
+            glVertex2f(width, height);
+        glEnd();
+
+	/*
     if (nbPlayers == 2) {
         glBegin(GL_QUADS);
             glVertex2f(0, 200);
@@ -230,7 +297,9 @@ void drawArena () {
         drawStartDestArea (120-START_AREA_MARGIN-START_AREA_WIDTH, START_AREA_MARGIN);
         drawStartDestArea (120-START_AREA_MARGIN-START_AREA_WIDTH, 400-START_AREA_MARGIN-START_AREA_WIDTH);
         drawStartDestArea (START_AREA_MARGIN, 400-START_AREA_MARGIN-START_AREA_WIDTH);
-    }
+
+
+    }	*/
 }
 
 void glLoop () {
@@ -256,7 +325,9 @@ void glLoop () {
 
         drawArena ();
 
-        drawBalls ();
+       /* drawBalls ();*/
+
+        drawObstacles ();
 
         drawPath ();
 
@@ -279,6 +350,8 @@ void * graphicsInitWindowAux (void * __dummy) {
     if (!window) {
         free (coordinates);
         coordinates = NULL;
+        free (obsCoordinates);
+		obsCoordinates= NULL;
         return (void *) -1;
     }
 
@@ -286,6 +359,8 @@ void * graphicsInitWindowAux (void * __dummy) {
         SDL_DestroyWindow (window);
         free (coordinates);
         coordinates = NULL;
+        free (obsCoordinates);
+		obsCoordinates= NULL;
         window = NULL;
 
         return (void *) -1;
@@ -296,6 +371,8 @@ void * graphicsInitWindowAux (void * __dummy) {
         pthread_mutex_destroy (&lock);
         free (coordinates);
         coordinates = NULL;
+        free (obsCoordinates);
+		obsCoordinates= NULL;
         window = NULL;
 
         return (void *) -1;
@@ -308,23 +385,25 @@ void * graphicsInitWindowAux (void * __dummy) {
         pthread_mutex_destroy (&lock);
         free (coordinates);
         coordinates = NULL;
+        free (obsCoordinates);
+		obsCoordinates= NULL;
         window = NULL;
 
         return (void *) -1;
     }
 
 
-    if (nbPlayers == 4) {
-        glViewport(PXBORDER, PXBORDER, PX(240), PX(400));
+  /*  if (nbPlayers == 4) {*/
+        glViewport(PXBORDER, PXBORDER, PX(width), PX(height));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluOrtho2D(-120, 120, 0, 400);
-    } else {
+        gluOrtho2D(0, width, 0, height);
+/*    } else {
         glViewport(PXBORDER, PXBORDER, PX(120), PX(200));
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluOrtho2D(0, 120, 0, 200);
-    }
+    }*/
 
 
     glEnable(GL_POINT_SMOOTH);
@@ -342,16 +421,27 @@ int graphicsInitWindow (int team1, int team2, int team3, int team4) {
     int teams[4];
     int i;
 
-    nbPlayers = 3;
+    nbPlayers = 4;
     teams[0] = team1;
     teams[1] = team2;
     teams[2] = team3;
     teams[3] = team4;
 
     coordinates = (struct coordinate *) malloc (COORD_PER_PLAYER*nbPlayers*sizeof(struct coordinate));
+
+    obsCoordinates = (struct obstacleCoordinate *) malloc (OBS_PER_PLAYER*nbPlayers*sizeof(struct obstacleCoordinate));
     for (i=0; i < 4; i++) {
         newCoordinates[i] = &coordinates[COORD_PER_PLAYER*i];
     }
+
+    for (i=0; i < 4; i++) {
+        newObsCoordinates[i] = &obsCoordinates[OBS_PER_PLAYER*i];
+    }
+
+	for (i=0; i<15; i++){
+		nbpoints[i] = 0;
+		nbpositions[i] = 0;
+	}
 
     memset (teamIndex, 255, sizeof(teamIndex));
     for (i=0; i<4; i++) {
@@ -391,13 +481,37 @@ void ballAction (int team, int x, int y) {
     }
 }
 
+void addObstacle (int team, int x, int y, int r, int g, int b) {
+    if (!obsCoordinates) return;
+    if (x > width || x < 0 ||  y < 0 || y > height)return;
+    if (teamIndex[team] == 255 || teamIndex[team]<0 || teamIndex[team]>3)return;
+
+
+	nbpoints[team]++;
+	if (nbpoints[team] >= OBS_PER_PLAYER){
+		return;
+	}
+    pthread_mutex_lock (&lock);
+
+    newObsCoordinates[teamIndex[team]]->x = x;
+    newObsCoordinates[teamIndex[team]]->y = y;
+    newObsCoordinates[teamIndex[team]]->r = r;
+    newObsCoordinates[teamIndex[team]]->g = g;
+    newObsCoordinates[teamIndex[team]]->b = b;
+    newObsCoordinates[teamIndex[team]]++;
+
+    pthread_mutex_unlock (&lock);
+}
+
 void addCoordinate (int team, int x, int y) {
-    if (!coordinates)
-        return;
-    if (x > 120 || x < -120 || (x < 0 && nbPlayers == 2) || y < 0 || y > 100 * nbPlayers)
-        return;
-    if (teamIndex[team] == 255)
-        return;
+    if (!coordinates)return;
+    if (x > width || x < 0 ||  y < 0 || y > height)return;
+    if (teamIndex[team] == 255)return;
+
+	nbpositions[team]++;
+	if (nbpositions[team] > COORD_PER_PLAYER){
+		return;
+	}
 
     pthread_mutex_lock (&lock);
 
@@ -413,7 +527,9 @@ void graphicsDestroyWindow () {
     if (window) {
         pthread_mutex_lock (&lock);
         free (coordinates);
+        free (obsCoordinates);
         coordinates = NULL;
+		obsCoordinates= NULL;
         SDL_GL_DeleteContext (openGLContext);
         pthread_mutex_destroy (&lock);
         SDL_DestroyWindow (window);

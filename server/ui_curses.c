@@ -232,7 +232,7 @@ char curses_init () {
 
 void printLine (int color, const char *content, char newLine) {
     size_t l = strlen (content);
-    struct linePart *part = (struct linePart *) malloc (sizeof (struct linePart));
+    struct linePart *part = malloc (sizeof (struct linePart));
     part->next = NULL;
     part->length = l;
     part->color = color;

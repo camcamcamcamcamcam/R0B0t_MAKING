@@ -4,6 +4,7 @@
 int graphicsInit ();
 int graphicsInitWindow (int team1, int team2, int team3, int team4);
 void addCoordinate (int team, int x, int y);
+void addObstacle (int team, int x, int y, int r, int g, int b);
 void ballAction (int team, int x, int y);
 void graphicsDestroyWindow ();
 void graphicsQuit ();

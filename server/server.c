@@ -121,7 +121,7 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
     row_pointers = png_malloc (png_ptr, bitmap->height * sizeof (png_byte *));
     for (y = 0; y < bitmap->height; y++) {
         png_byte *row = 
-            png_malloc (png_ptr, sizeof (uint8_t) * bitmap->width * pixel_size);
+        png_malloc (png_ptr, sizeof (uint8_t) * bitmap->width * pixel_size);
         row_pointers[y] = row;
         for (x = 0; x < bitmap->width; x++) {
             pixel_t * pixel = pixel_at (bitmap, x, y);
@@ -147,12 +147,12 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
     }
     png_free (png_ptr, row_pointers);
     
- png_failure:
- png_create_info_struct_failed:
+ 	png_failure:
+ 	png_create_info_struct_failed:
     png_destroy_write_struct (&png_ptr, &info_ptr);
- png_create_write_struct_failed:
+ 	png_create_write_struct_failed:
     fclose (fp);
- fopen_failed:
+ 	fopen_failed:
     return status;
 }
 
@@ -346,6 +346,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
     int consumedBytes = 5;
 
     id = *((uint16_t *) buf);
+	
 
     for (i=0; i<MAXNAMESIZE-l; i++)
         teamAlinea [i] = ' ';
@@ -364,6 +365,12 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
             parseMessage (sendingTeam, buf+5, nbbytes-5);
         return;
     }
+	if (id> 1000){
+		log (KRED, "TEAM %d is sending too many messages ***\n", sendingTeam);
+		return;
+	}
+
+
 
     if (buf[3] != 0xFF && (buf[3] == 0 || buf[3] > game.nbTeams || !game.teams[buf[3]-1].active)) {
         log (KRED, "*** unknown or inactive receiver (%d) ***\n", buf[3]);
@@ -380,6 +387,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
         case MSG_ACK:
             {
     		
+
                 /* ACK */
                 uint16_t idAck;
 
@@ -507,15 +515,20 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
                     break;
                 }
                 
-
+				/*log (KRED, "positiondata  ***\n %d %d", *((int16_t *) &buf[5]), *((int16_t *) &buf[7]));*/
                 x = *((int16_t *) &buf[5]);
                 y = *((int16_t *) &buf[7]);
 
                 log (KNRM, "id=%d", id);
                 log (KNRM, alinea);
                 log (KNRM, "          POSITION x=%d y=%d\n", x, y);
-
-                addCoordinate (sendingTeam, x, y);
+	
+				if (x >=    map[sendingTeam].width || y >= map[sendingTeam].height || x< 0 || y< 0){
+					log (KRED, "*** INVALID COORDINATE  (%d , %d) ***\n", x,y);
+				}
+				else {
+	               addCoordinate (sendingTeam, x, y);
+				}
 
                 break;
             }
@@ -525,6 +538,21 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
 			int16_t x, y;
 			pixel_t * pixel;
 
+
+            x = *((int16_t *) &buf[5]);
+            y = *((int16_t *) &buf[7]);
+
+pixel = pixel_at (& map[sendingTeam], x, y);
+	            pixel->red = *((int8_t *) &buf[9]);
+	            pixel->green = *((int8_t *) &buf[10]);
+	            pixel->blue = *((int8_t *) &buf[11]);
+			debug (1, KNRM, teamAlinea);
+		   	debug (1, COL(sendingTeam),"%s", game.teams[sendingTeam].name);
+		    debug (1, KNRM, "] ");
+			debug (1, KNRM, "[DEBUG] id=%d", id);
+			debug (1, KNRM, "[DEBUG] 		MAPDATA AT x=%d y=%d r=%d g=%d b=%d\n", x, y, pixel->red, pixel->green, pixel->blue);		
+
+		
             if (nbbytes < 12) {
                     log (KRED, "*** MAPDATA message is too short (%d bytes) ***\n", nbbytes);
                     return;
@@ -532,25 +560,23 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
 
             consumedBytes = 12;
 
-            x = *((int16_t *) &buf[5]);
-            y = *((int16_t *) &buf[7]);
+	
+			if (x >=     map[sendingTeam].width || y >= map[sendingTeam].height || x<0 || y<0){
+					log (KRED, "*** INVALID OBSTACLE COORDINATE  (%d , %d) ***\n", x,y);
+				}
+			else {
 
+				pixel = pixel_at (& map[sendingTeam], x, y);
+	            pixel->red = *((int8_t *) &buf[9]);
+	            pixel->green = *((int8_t *) &buf[10]);
+	            pixel->blue = *((int8_t *) &buf[11]);
+				addObstacle (sendingTeam, x, y, pixel->red, pixel->green, pixel-> blue);
+			}
 
-			pixel = pixel_at (& map[sendingTeam], x, y);
-            pixel->red = *((int8_t *) &buf[9]);
-            pixel->green = *((int8_t *) &buf[10]);
-            pixel->blue = *((int8_t *) &buf[11]);
-
-			/*if (pixel->blue==0 && pixel->green==0 && pixel->red==0){
-                addCoordinate (sendingTeam, x, y);
-			}*/
+			
 			
 /* Print map data only in debug */
-			debug (1, KNRM, teamAlinea);
-		   	debug (1, COL(sendingTeam),"%s", game.teams[sendingTeam].name);
-		    debug (1, KNRM, "] ");
-			debug (1, KNRM, "[DEBUG] id=%d", id);
-			debug (1, KNRM, "[DEBUG] 		MAPDATA AT x=%d y=%d r=%d g=%d b=%d\n", x, y, pixel->red, pixel->green, pixel->blue);		
+
 		/*
 			log (KNRM, "id=%d", id);
             log (KNRM, alinea);
@@ -572,6 +598,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
 			/*Entire Map received, now draw it*/
              log (KRED, "Writing map\n");
 			sprintf(filename, "map%d.png", sendingTeam);
+		
  			save_png_to_file (& map[sendingTeam], filename);
 
 		    /*free (map[sendingTeam].pixels);*/
@@ -652,7 +679,7 @@ int main (int argc, char **argv) {
     socklen_t opt_in = sizeof(rem_addr_in);
     fd_set read_fd_set;
     char curses = 1;
-	int team;
+	int team, x,y;
     char displayPath = 0;
     int c;
 
@@ -661,7 +688,7 @@ int main (int argc, char **argv) {
     
 
     char buf[MAXMSG+1] = { 0 };
-
+			pixel_t * pixel;
     memset(game.teams, 0, MAXTEAM * sizeof(struct team));
 
     opterr = 0;
@@ -670,14 +697,24 @@ int main (int argc, char **argv) {
 	for (team=0; team<15; team++){
 
 
-    map[team].width = 40;
-    map[team].height = 40;
+    map[team].width = 80;
+    map[team].height = 80;
 
     map[team].pixels = calloc (map[team].width * map[team].height, sizeof (pixel_t));
 
-    if (! map[team].pixels) {
-		return -1;
-    }
+
+    	if (! map[team].pixels) {
+			return -1;
+    	}
+		for (x=0; x<map[team].width; x++){
+			for (y=0; y< map[team].height; y++){
+				pixel = pixel_at (& map[team], x, y);
+				pixel->red=254;
+				pixel->green=254;
+				pixel->blue=254;
+				
+			}
+		}
 	}
     while ((c = getopt (argc, argv, "hxdvo:")) != -1)
         switch (c) {
@@ -848,8 +885,8 @@ int main (int argc, char **argv) {
 		}
         if (displayPath && graphicsInitWindow (
                     game.robots[0],
-                    rankCmp > 1 ? game.robots[1] : -1,
-                    rankCmp > 2 ? game.robots[2] : -1,
+                    rankCmp > 1 ? game.robots[1] : 0,
+                    rankCmp > 2 ? game.robots[2] : 0,
 					0
                     ) < 0) {
             log (KNRM, alinea);
