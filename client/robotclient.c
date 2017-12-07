@@ -20,6 +20,7 @@
 #define MSG_POSITION 4
 #define MSG_MAPDATA     5
 #define MSG_MAPDONE 6
+#define MSG_OBSTACLE 7
 #define Sleep( msec ) usleep(( msec ) * 1000 )
 
 void debug (const char *fmt, ...) {
@@ -51,6 +52,84 @@ int read_from_server (int sock, char *buffer, size_t maxSize) {
     return bytes_read;
 }
 
+char size_message(char msg_type) {
+    switch (msg_type) {
+        /*case MSG_ACK :    only sent by the server
+            return 8;
+        case MSG_START:
+            return 5;
+        case MSG_STOP:
+            return 5;
+        case MSG_KICK:
+            return 6;*/
+        case MSG_POSITION:
+            return 9;
+        case MSG_MAPDATA:
+            return 12;
+        case MSG_MAPDONE:
+            return 5;
+        case MSG_OBSTACLE:
+            return 10;
+    }
+}
+
+char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act) {
+    /*
+     * int x, int y, int R, int G, int B, char act are optional, they should be put to 0 when unnecessary
+     * x and y are for position, R, G, B are colors between 0 and 255,
+     * act is 0 if the robot dropped an obstable, 1 if it picked it
+     */
+    char string[58];
+    *((uint16_t *) string) = msgId++;
+    string[2] = TEAM_ID;
+    string[3] = 0xFF;
+    string[4] = msg_type;
+    switch (msg_type) {
+        case MSG_POSITION: // to test
+            string[5] = x;          /* x */
+            string[6] = 0x00;
+            string[7] = y;              /* y */
+            string[8] = 0x00;
+            break;
+        case MSG_MAPDATA:
+            string[5] = x;          /* x */
+            string[6] = 0x00;
+            string[7] = y;          /* y */
+            string[8]= 0x00;
+            string[9]= R;
+            string[10]= G;
+            string[11]= B;
+            break;
+        case MSG_OBSTACLE:
+            string[5] = act;
+            string[6] = x;
+            string[7] = 0x00;
+            string[8] = y;
+            string[9] = 0x00;
+    }
+
+    write(s, string, size_message(msg_type));
+    return (1);
+}
+
+void robot2() {
+    /*
+     * second test to see if function sendMessage is working
+     */
+    int i, j;
+    for (i=0; i<30; i++){
+        sendMessage(MSG_POSITION,i,i,0,0,0,0);
+        Sleep(1000);
+    }
+    int x1 = rand() % 30;
+    int y1= rand() % 30;
+    for (i=0; i<30; i++) {
+        sendMessage(MSG_MAPDATA, x1 + i, y1 + i,0,0,0,0);
+        Sleep(1000);
+    }
+    sendMessage(MSG_MAPDONE,0,0,0,0,0,0);
+}
+
 void robot () {
     char string[58];
     char type;
@@ -68,7 +147,7 @@ void robot () {
         string[5] = i;          /* x */
         string[6] = 0x00;
         string[7] = i;              /* y */
-        string[8]= 0x00;
+        string[8] = 0x00;
         printf("%d \n", sizeof(msgId));
         write(s, string, 9);
         Sleep( 1000 );
@@ -214,7 +293,8 @@ int main(int argc, char **argv) {
 
 
         }
-        robot();
+        //robot();
+        robot2();
         close (s);
 
         sleep (5);
