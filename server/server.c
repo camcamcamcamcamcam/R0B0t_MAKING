@@ -167,6 +167,7 @@ int read_from_client (struct team *t, char *buffer, int maxSize) {
         return -1;
 
     debug (1, KNRM, "[DEBUG] received %d bytes : ", nbytes);
+    /*printf("[DEBUG] received %d bytes : \n", nbytes); */
     for (i=0; i<nbytes; i++)
         debug (1, KNRM, "0x%02X ", (unsigned char) buffer[i]);
     debug (1, KNRM, "\n");
@@ -339,7 +340,7 @@ void sendKick (int teamID) {
 void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
     uint16_t id;
 
-    
+
     char teamAlinea [MAXNAMESIZE+4] = {0};
     int i;
     int l = strlen (game.teams[sendingTeam].name);

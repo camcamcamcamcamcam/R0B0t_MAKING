@@ -69,6 +69,7 @@ void robot () {
         string[6] = 0x00;
         string[7] = i;              /* y */
         string[8]= 0x00;
+        printf("%d \n", sizeof(msgId));
         write(s, string, 9);
         Sleep( 1000 );
     }
@@ -167,14 +168,14 @@ void robot () {
             }
         }
     }
-    printf("Done sending map");
+    printf("Done sending map\n");
     *((uint16_t *) string) = msgId++;
     string[2] = TEAM_ID;
     string[3] = 0xFF;
     string[4] = MSG_MAPDONE;
     write(s, string, 5);
 
-    printf("I'm waiting for the stop message");
+    printf("I'm waiting for the stop message\n");
     while(1){
         //Wait for stop message
         read_from_server (s, string, 58);
@@ -206,6 +207,7 @@ int main(int argc, char **argv) {
         char string[58];
 
         /* Wait for START message */
+        printf("wait for START message\n");
         read_from_server (s, string, 9);
         if (string[4] == MSG_START) {
             printf ("Received start message!\n");
