@@ -6,20 +6,21 @@
 #include <stdarg.h>
 #include <time.h>
 #include <sys/socket.h>
+#include <math.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
 
-#define SERV_ADDR   "dc:53:60:ad:61:90"     /* Whatever the address of the server is */
-#define TEAM_ID     1                       /* Your team ID */
+#define SERV_ADDR   "5c:51:4f:29:bc:be" //"dc:53:60:ad:61:90"     /* Whatever the address of the server is */
+#define TEAM_ID     2                       /* Your team ID */
 
 #define MSG_ACK     0
 #define MSG_START    1
 #define MSG_STOP   2
 #define MSG_KICK    3
 #define MSG_POSITION 4
-#define MSG_MAPDATA 	5
+#define MSG_MAPDATA     5
 #define MSG_MAPDONE 6
-
+#define Sleep( msec ) usleep(( msec ) * 1000 )
 
 void debug (const char *fmt, ...) {
     va_list argp;
@@ -53,65 +54,142 @@ int read_from_server (int sock, char *buffer, size_t maxSize) {
 void robot () {
     char string[58];
     char type;
+    int x1, x2, y1, y2;
     printf ("I'm navigating...\n");
 
-	srand(time(NULL));
-    /* Send 3 POSITION messages, a BALL message, 1 position message, then a NEXT message */
+    srand(time(NULL));
+    /* Send 30 POSITION messages, a BALL message, 1 position message, then a NEXT message */
     int i, j;
-    for (i=0; i<3; i++){
-		*((uint16_t *) string) = msgId++;
- 		string[2] = TEAM_ID;
-    	string[3] = 0xFF;
-    	string[4] = MSG_POSITION;
-    	string[5] = i;          /* x */
-		string[6] = 0x00;
-    	string[7] = i;		/* y */
-		string[8]= 0x00;
-		write(s, string, 9);
+    for (i=0; i<30; i++){
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = MSG_POSITION;
+        string[5] = i;          /* x */
+        string[6] = 0x00;
+        string[7] = i;              /* y */
+        string[8]= 0x00;
+        write(s, string, 9);
+        Sleep( 1000 );
     }
-	
+
     printf ("I'm sending my map...\n");
-	/* MAP data is in the form MAPDATA | X  X |Y  Y | R | G | B */
 
-	for (i=0; i<10; i++){
-		for (j=0; j<10; j++){
-			*((uint16_t *) string) = msgId++;
-			string[2] = TEAM_ID;
-	    	string[3] = 0xFF;
-	    	string[4] = MSG_MAPDATA;
-    		string[5] = i;          /* x */
-			string[6] = 0x00;
-    		string[7] = j;		/* y */
-			string[8]= 0x00;
-			string[9]= rand() % 255;
-			string[10]=rand() % 255;
-			string[11]= rand()% 255;
-			write(s, string, 12);
-		}
-	}
-	printf("Done sending map");
-	*((uint16_t *) string) = msgId++;
-	string[2] = TEAM_ID;
-	string[3] = 0xFF;
-	string[4] = MSG_MAPDONE;
-	write(s, string, 5);	
+    /* MAP data is in the form MAPDATA | X  X |Y  Y | R | G | B */
 
-	printf("I'm waiting for the stop message");
-	while(1){
-		//Wait for stop message
-		read_from_server (s, string, 58);
+    /* Create 1 square green obstacle and 1 round red obstacle*/
+    /* Send only the outline */
+    x1 = rand() % 30;
+    y1= rand() % 30;
+
+    for (i=x1; i<x1+10; i++){
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = MSG_MAPDATA;
+        string[5] = i;          /* x */
+        string[6] = 0x00;
+        string[7] = y1;             /* y */
+        string[8]= 0x00;
+        string[9]= 0;
+        string[10]=254;
+        string[11]= 0;
+        write(s, string, 12);
+        Sleep( 100 );
+    }
+    for (i=x1; i<x1+10; i++){
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = MSG_MAPDATA;
+        string[5] = i;          /* x */
+        string[6] = 0x00;
+        string[7] = y1+10;          /* y */
+        string[8]= 0x00;
+        string[9]= 0;
+        string[10]=254;
+        string[11]= 0;
+        write(s, string, 12);
+        Sleep( 100 );
+    }
+    for (j=y1; j<y1+10; j++){
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = MSG_MAPDATA;
+        string[5] = x1;          /* x */
+        string[6] = 0x00;
+        string[7] = j;              /* y */
+        string[8]= 0x00;
+        string[9]= 0;
+        string[10]=254;
+        string[11]= 0;
+        write(s, string, 12);
+        Sleep( 100 );
+    }
+
+    for (j=y1; j<y1+10; j++){
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = MSG_MAPDATA;
+        string[5] = x1+10;          /* x */
+        string[6] = 0x00;
+        string[7] = j;              /* y */
+        string[8]= 0x00;
+        string[9]= 0;
+        string[10]=254;
+        string[11]= 0;
+        write(s, string, 12);
+        Sleep( 100 );
+    }
+
+    x2 = 15 +rand() % 20;
+    y2= 15 + rand() % 20;
+
+
+    for (i=x2-15; i<x2+15; i++){
+        for (j=y2-15; j<y2+15; j++){
+            if (sqrt((i-x2)*(i-x2) + (j-y2)*(j-y2)) < 15 && sqrt((i-x2)*(i-x2) + (j-y2)*(j-y2))>14){
+                *((uint16_t *) string) = msgId++;
+                string[2] = TEAM_ID;
+                string[3] = 0xFF;
+                string[4] = MSG_MAPDATA;
+                string[5] = i;          /* x */
+                string[6] = 0x00;
+                string[7] = j;          /* y */
+                string[8]= 0x00;
+                string[9]= 254;
+                string[10]=0;
+                string[11]= 0;
+                write(s, string, 12);
+                Sleep( 100 );
+            }
+        }
+    }
+    printf("Done sending map");
+    *((uint16_t *) string) = msgId++;
+    string[2] = TEAM_ID;
+    string[3] = 0xFF;
+    string[4] = MSG_MAPDONE;
+    write(s, string, 5);
+
+    printf("I'm waiting for the stop message");
+    while(1){
+        //Wait for stop message
+        read_from_server (s, string, 58);
         type = string[4];
-		if (type ==MSG_STOP){
-			return;
-		}
-	}
+        if (type ==MSG_STOP){
+            return;
+        }
+    }
 }
 
 
 int main(int argc, char **argv) {
     struct sockaddr_rc addr = { 0 };
     int status;
-    
+
     /* allocate a socket */
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 
@@ -132,9 +210,9 @@ int main(int argc, char **argv) {
         if (string[4] == MSG_START) {
             printf ("Received start message!\n");
 
-			
+
         }
-		robot();
+        robot();
         close (s);
 
         sleep (5);
@@ -148,6 +226,3 @@ int main(int argc, char **argv) {
     close(s);
     return 0;
 }
-
-
-
