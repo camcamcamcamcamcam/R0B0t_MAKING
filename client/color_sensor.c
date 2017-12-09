@@ -27,9 +27,10 @@ int value_r;
 int value_g;
 int value_b;
 
+uint8_t sn_color;
+
 void getColor(){
 
-    uint8_t sn_color;
 
     if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
         printf( "COLOR sensor is found, reading COLOR...\n" );

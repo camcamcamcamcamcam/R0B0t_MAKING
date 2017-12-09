@@ -17,6 +17,8 @@
 //////////////////////////////////////////////////
 #endif
 
+uint8_t sn_sonar;
+
 void initSensorSonar();
 /*need to be started at the beginning
  Allows to use the sonar sensor */

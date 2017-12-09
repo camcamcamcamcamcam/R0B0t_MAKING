@@ -3,6 +3,8 @@
 
 #endif //R0B0T_MAKING_COLOR_SENSOR_H
 
+uint8_t sn_color;
+
 int getColor();
 //return an array with
 

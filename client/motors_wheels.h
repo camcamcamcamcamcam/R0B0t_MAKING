@@ -18,6 +18,8 @@
 //////////////////////////////////////////////////
 #endif
 
+uint8_t sn_wheels[2];
+
 void initMotorWheels();
 /*need to be started at the beginning
  Allows to use the motors for the wheels*/

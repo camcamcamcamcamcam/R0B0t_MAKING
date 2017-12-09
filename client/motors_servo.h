@@ -18,6 +18,8 @@
 //////////////////////////////////////////////////
 #endif
 
+uint8_t sn_servo[2];
+
 void initMotorServo();
 /*need to be started at the beginning
  Allows to use the servo motor*/
@@ -37,4 +39,7 @@ void servo_arm_down();
 /*servo motor turns horizontal*/
 
 void servo_sonar(int angle);
-/* make the servo linked to the sonar turn from a certain angle. */
+/* make the servo motor linked to the sonar turn from a certain angle. */
+
+void absolute_servo_sonar(int angle);
+/* make the sonar turn from a certain angle. */

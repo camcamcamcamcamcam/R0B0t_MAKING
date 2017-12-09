@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_tacho.h"
@@ -25,13 +26,8 @@
 #define ANGLE_ZERO 0 //40 //the horizontal one
 #define ANGLE_UP 90 //55 //45
 #define MAX_SPEED 1050
+#define R 0.857142
 uint8_t sn_servo[2];
-FLAGS_T state;
-uint8_t sn_touch;
-uint8_t sn_color;
-uint8_t sn_compass;
-uint8_t sn_sonar;
-uint8_t sn_mag;
 uint32_t n, ii;
 
 int angle_servo_arm(){
@@ -68,15 +64,25 @@ void servo_arm_down(){
 }
 
 void servo_sonar(int angle){
-    goForAngleForever(sn_servo[1],MAX_SPEED / 20, -angle);
-	while(angle_servo_sonar()>angle+2 || angle_servo_sonar()<angle-2){
-		Sleep(1);
-	}
+    goForAngleForever(sn_servo[1],MAX_SPEED / 6, -angle);
+	printf("Angle servo sonar : %d\n",angle_servo_sonar());
+	Sleep(100);
+	/*while(fabs(angle_servo_sonar()-angle)>2){
+		printf("Angle servo sonar : %d\n",angle_servo_sonar());
+	}*/
 	//while(angle_servo_sonar()!=angle){
 	//	Sleep(10);
 	//}
     //get_tacho_position_sp(sn_servon, &angle);
     //printf("l'angle est %d\n", angle);
+}
+
+void absolute_servo_sonar(int angle){
+	
+	int motor_angle;
+	motor_angle = angle *(1/R);
+	servo_sonar(motor_angle);
+	
 }
 
 void initMotorServo(){

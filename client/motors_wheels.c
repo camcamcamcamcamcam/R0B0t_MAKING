@@ -21,15 +21,9 @@
 #include "motors_wheels.h"
 #define PI 3.14159265
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define DIAMETRE_ROBOT 155 // width of the robot in mm
+#define DIAMETRE_ROBOT 180 // width of the robot in mm
 
 uint8_t sn_wheels[2];
-FLAGS_T state;
-uint8_t sn_touch;
-uint8_t sn_color;
-uint8_t sn_compass;
-uint8_t sn_sonar;
-uint8_t sn_mag;
 uint32_t n, ii;
 
 
