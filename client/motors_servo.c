@@ -64,7 +64,7 @@ void servo_arm_down(){
 }
 
 void servo_sonar(int angle){
-    goForAngleForever(sn_servo[1],MAX_SPEED / 6, angle);
+    goForAngleForever(sn_servo[1],MAX_SPEED / 6, -angle);
 	printf("Angle servo sonar : %d\n",angle_servo_sonar());
 	Sleep(100);
 	//while(fabs(angle_servo_sonar()-angle)>10){
