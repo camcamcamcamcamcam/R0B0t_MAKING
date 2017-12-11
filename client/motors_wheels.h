@@ -27,6 +27,8 @@ void goStraight(int speed, int distance);
 /*make both wheels turn with the specified speed and distance in the good direction*/
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
+void stopMotors();
+/* stop the motors */
 int get_motor_position(int port);
 
 int angle_to_distance(int angle);

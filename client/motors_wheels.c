@@ -76,6 +76,10 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
+void stopMotors(){
+	multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+}
+
 
 void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 /*only make one wheel turn with the motor on the specified port in the good direction*/
