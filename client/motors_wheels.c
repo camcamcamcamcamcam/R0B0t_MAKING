@@ -158,7 +158,13 @@ void preciseRotation(int angle,int max_speed){
     }
 }
 
-   
+int getTachoMaxSpeed(){
+    int max_speed;
+    get_tacho_max_speed( sn_wheels[0], &max_speed );
+    return max_speed;
+}
+
+/*
 int main( void ){
 //to test each function, we need the main
 
@@ -169,13 +175,13 @@ int main( void ){
     get_tacho_max_speed( sn_wheels[0], &max_speed );
     //test
 
-/*    int tacho_rot;
+    int tacho_rot;
     get_tacho_count_per_rot(sn_wheels, &tacho_rot);
 
     int tacho_m;
     get_tacho_count_per_m(sn_wheels, &tacho_m);
     printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
-*/
+
 
     //get_motor_position(68);
     //goStraight(max_speed / 2, 594*2);
@@ -190,3 +196,4 @@ int main( void ){
     ev3_uninit();
 
 }
+*/

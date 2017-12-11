@@ -43,3 +43,5 @@ int getAngleGyro();
 /*Returns the angle from the gyro*/
 void preciseRotation(int angle, int max_speed);
 /*MAke sure the rotation is precise with the gyro*/
+int getTachoMaxSpeed();
+
