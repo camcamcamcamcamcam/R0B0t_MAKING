@@ -62,11 +62,11 @@ void rotation(int speed, int angle){
 
 void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
     /*make the two wheels turn with the motors in the good direction*/
-    if (angle > 0){
+    if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
+        angle = -angle;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
-        angle = -angle;
     }
     multi_set_tacho_speed_sp(sn_wheels, speed);
 //  set_tacho_ramp_up_sp( sn_wheels, 0 );
@@ -77,13 +77,14 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 }
 
 void stopMotors(){
-	multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+    multi_set_tacho_position_sp(sn_wheels, 0);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
 
 void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 /*only make one wheel turn with the motor on the specified port in the good direction*/
-    if (angle > 0){
+    if (angle < 0){
         set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
     } else{
         set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);

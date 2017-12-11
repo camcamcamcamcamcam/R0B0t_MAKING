@@ -26,10 +26,10 @@
 #include "motors_servo.h"
 #include "sensor_sonar.h"
 
-int get_distance(int angle){
+int getDistance(int angle){
 	
 	int distance = 0;
-	
+
 	if(angle>=50 || angle<=-50){
 		printf("Angle not adapted to the configuration : should be between -50° and 50°\n");
 	}
