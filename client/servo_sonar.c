@@ -43,6 +43,7 @@ int get_distance(int angle){
 	
 }
 
+/*
 int main( void ){
 //to test each function, we need the main
 
@@ -77,3 +78,4 @@ int main( void ){
 	servo_sonar(0);
 
 }
+*/
