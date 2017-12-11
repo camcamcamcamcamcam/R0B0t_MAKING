@@ -30,18 +30,18 @@ int getDistance(int angle){
 	
 	int distance = 0;
 
-	if(angle>=50 || angle<=-50){
+	if(angle>60 || angle<-60){
 		printf("Angle not adapted to the configuration : should be between -50° and 50°\n");
 	}
 	else{
 		absolute_servo_sonar(angle);
-		Sleep(100);
 		distance = get_sonar_distance();
 	}
 	
 	return distance;
 	
 }
+
 
 /*
 int main( void ){
