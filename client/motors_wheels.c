@@ -21,9 +21,10 @@
 #include "motors_wheels.h"
 #define PI 3.14159265
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define DIAMETRE_ROBOT 180 // width of the robot in mm
+#define DIAMETRE_ROBOT 170 // width of the robot in mm
 
 uint8_t sn_wheels[2];
+uint8_t sn_gyro;
 uint32_t n, ii;
 
 
@@ -116,11 +117,55 @@ int distance_to_angle(int distance){
     return ((distance*360)/(PI*DIAMETRE));
 }
 
+void initGyro(){
+	ev3_sensor_init();
+        if ( ev3_search_sensor( LEGO_EV3_GYRO, &sn_gyro, 0 )) {
+                printf( "GYRO sensor is found\n" );
+                set_sensor_mode( sn_gyro, "GYRO-ANG" );
+                set_sensor_mode( sn_gyro, "GYRO-G&A" );
+                int test_init;
+                get_sensor_value(0,sn_gyro,&test_init);
+                printf("test_init %d \n",test_init);
+        } else {
+                printf( "GYRO sensor is NOT found\n" );
+        }
+}
+
+int getAngleGyro(){
+        int val;
+	get_sensor_value(0,sn_gyro,&val);
+	return val;
+}
+
+void preciseRotation(int angle,int max_speed){
+    int angle_gyro;
+    int difference;
+    int compteur;
+
+    rotation(max_speed / 12, angle);
+    initGyro();
+    angle_gyro = getAngleGyro();
+    difference = angle - angle_gyro;
+    printf("angle_gyro = %d, difference = %d\n",angle_gyro,difference);
+    compteur = 0;
+    while(difference!=0 && compteur <100){
+        if (difference <= 180 && difference >= -180) rotation(max_speed / 12, difference);
+        Sleep(1000);
+        angle_gyro = getAngleGyro();
+        difference = angle - angle_gyro;
+        printf("difference = %d, angle_gyro = %d, compteur = %d \n",difference,angle_gyro,compteur);
+        compteur++;
+    }
+}
+
+   
 int main( void ){
 //to test each function, we need the main
 
     initMotorWheels(sn_wheels);
     int max_speed;
+    int angle;
+
     get_tacho_max_speed( sn_wheels[0], &max_speed );
     //test
 
@@ -135,11 +180,13 @@ int main( void ){
     //get_motor_position(68);
     //goStraight(max_speed / 2, 594*2);
     //Sleep(2000);
-    rotation(max_speed / 12, 90);
+    angle = 180;
+    preciseRotation(angle,max_speed);
     while(1){
         Sleep(1000);
-        get_motor_position(68);
-        get_motor_position(66);
+        //get_motor_position(68);
+        //get_motor_position(66);
     }
+    ev3_uninit();
 
 }

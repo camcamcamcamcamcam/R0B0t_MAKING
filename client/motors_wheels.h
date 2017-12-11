@@ -37,3 +37,9 @@ void rotation(int speed, int angle);
     /*make the robot do a rotation.
      * if angle is positive, it turns to the right
      * if angle is negatve, it turns to the left*/
+void initGyro();
+/*Initialize gyro sensor*/
+int getAngleGyro();
+/*Returns the angle from the gyro*/
+void preciseRotation(int angle, int max_speed);
+/*MAke sure the rotation is precise with the gyro*/
