@@ -22,6 +22,7 @@
 #define PI 3.14159265
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 170 // width of the robot in mm
+#define MAX_SPEED 1050
 
 uint8_t sn_wheels[2];
 uint8_t sn_gyro;
@@ -137,19 +138,19 @@ int getAngleGyro(){
 	return val;
 }
 
-void preciseRotation(int angle,int max_speed){
+void preciseRotation(int angle,int speed){
     int angle_gyro;
     int difference;
     int compteur;
 
-    rotation(max_speed / 12, angle);
+    rotation(speed,angle);
     initGyro();
     angle_gyro = getAngleGyro();
     difference = angle - angle_gyro;
     printf("angle_gyro = %d, difference = %d\n",angle_gyro,difference);
     compteur = 0;
     while(difference!=0 && compteur <100){
-        if (difference <= 180 && difference >= -180) rotation(max_speed / 12, difference);
+        if (difference <= 180 && difference >= -180) rotation(speed, difference);
         Sleep(1000);
         angle_gyro = getAngleGyro();
         difference = angle - angle_gyro;

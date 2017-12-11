@@ -18,6 +18,8 @@
 //////////////////////////////////////////////////
 #endif
 
+#define MAX_SPEED 1050
+
 uint8_t sn_wheels[2];
 uint8_t sn_gyro;
 
@@ -42,5 +44,5 @@ void initGyro();
 /*Initialize gyro sensor*/
 int getAngleGyro();
 /*Returns the angle from the gyro*/
-void preciseRotation(int angle, int max_speed);
+void preciseRotation(int angle, int speed);
 /*MAke sure the rotation is precise with the gyro*/
