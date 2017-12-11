@@ -19,6 +19,7 @@
 #endif
 
 uint8_t sn_wheels[2];
+uint8_t sn_gyro;
 
 void initMotorWheels();
 /*need to be started at the beginning
