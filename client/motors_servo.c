@@ -4,7 +4,6 @@
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_tacho.h"
-#include "ev3_sensor.h"
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 
@@ -20,65 +19,185 @@
 #endif
 
 #include "motors_servo.h"
+
+#ifndef PI
 #define PI 3.14159265
-#define DIAMETRE 56  // diameter of the wheel : 56mm
-#define DIAMETRE_ROBOT 155 // width of the robot in mm
-#define ANGLE_ZERO 0 //40 //the horizontal one
-#define ANGLE_UP 90 //55 //45
+#endif
+
+// Define the variable important for the servo using the arm.
+#define ANGLE_ZERO 0
+#define ANGLE_UP 90
+
+// Max speed of the tacho motor of the ev3 dev
+#ifndef MAX_SPEED
 #define MAX_SPEED 1050
-#define R 0.857142
+#endif
+
+// Reduction ratio between the gears for the servo using the sonar
+#define R 0.857142 
+
+// Global variables
 uint8_t sn_servo[2];
 uint32_t n, ii;
+int polarity_servo;
+
+void initMotorServo(){
+	/*
+	Initializing 2 servo motors :
+	- the one used to move the sonar : servo_sonar
+	- the one used to catch obstacles : servo_arm
+	*/
+
+    if ( ev3_init() == -1 ) return ( 1 );
+    while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
+    ev3_search_tacho_plugged_in(67, 0, &sn_servo[0], 0);
+    ev3_search_tacho_plugged_in(65, 0, &sn_servo[1], 0);
+	
+	/*
+	Initialization of the absolute position "0" of the servo_arm
+	We ask the user the position of the servo_arm until this one moves to 0.
+	-90° corresponds to the up position
+	-0° corresponds to the down position
+	*/
+	printf("/// Initializing the servo_arm of the robot. /// \n");
+	int initialValue;
+	printf("Current angle of the servo_arm : \n");
+	scanf("%d",&initialValue);
+	set_tacho_position(sn_servo[0], initialValue);
+	printf("\n");
+	servo_arm_down();
+	
+	while(initialValue!=0){
+		printf("Current angle of the servo_arm : \n");
+		scanf("%d",&initialValue);
+		set_tacho_position(sn_servo[0], initialValue);
+		printf("\n");
+		servo_arm_down();
+	}
+	//End Initialization of the servo_arm of the robot
+	
+	/*
+	Initialization of the absolute position "0" of the servo_sonar
+	We ask the user the position of the servo_sonar until this one moves to 0.
+	0° : the sonar_arm is looking forward
+	*/
+	printf("/// Initializing the servo_sonar of the robot. /// \n");
+	printf("Current angle of the servo_sonar : \n");
+	scanf("%d",&initialValue);
+	set_tacho_position(sn_servo[1], initialValue);
+	printf("\n");
+	absolute_servo_sonar(0);
+	
+	while(initialValue!=0){
+		printf("Current angle of the servo_sona : \n");
+		scanf("%d",&initialValue);
+		set_tacho_position(sn_servo[1], initialValue);
+		printf("\n");
+		absolute_servo_sonar(0);
+	}
+	//End Initialization of the servo_sonar of the robot
+}
 
 int angle_servo_arm(){
+	/*
+	Detect the asolute angle of the servo using the arm
+	Return an integer : the angle detected in degree.
+	*/
 	int angle;
 	get_tacho_position(sn_servo[0], &angle);
 	return angle;
 }
 
 int angle_servo_sonar(){
+	/*
+	Detect the asolute angle of the servo using the sonar
+	Return an integer : the angle detected in degree.
+	*/
 	int angle;
-	get_tacho_position(sn_servo[1], &angle);
-	return angle;
+	get_tacho_position_sp(sn_servo[1], &angle);
+	return polarity_servo*angle*R;
 }
 
 void servo_arm_up(){
-	//int angle;
-    //get_tacho_position_sp(sn_servo, &angle);
-    //printf("l'angle avant est %d\n", angle);
-    goForAngleForever(sn_servo[0],MAX_SPEED / 6, -ANGLE_UP); // else the robot 
-	while(angle_servo_arm()<ANGLE_UP){
+	/*
+	The function enables to put the servo using the arm at the angle ANGLE_UP (usually 90°).
+	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
+	*/
+	
+    go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_UP); // launchs the motor
+	
+	while(servo_arm_is_running()){ // waiting until the speed of the motor has reached 0.
 		Sleep(10);
 	}
-	//get_tacho_position_sp(sn_servo, &angle);
-    //printf("l'angle après est %d\n", angle);
+	
 }
 
 void servo_arm_down(){
-    goForAngleForever(sn_servo[0],MAX_SPEED / 6, ANGLE_ZERO);
-	while(angle_servo_arm()>ANGLE_ZERO){
+	/*
+	The function enables to put the servo using the arm at the angle ANGLE_DOWN (usually 0°).
+	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
+	*/
+	
+    go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_ZERO);
+	
+	while(servo_arm_is_running()){ // waiting until the speed of the motor has reached 0.
 		Sleep(10);
 	}
-    //get_tacho_position_sp(sn_servon, &angle);
-    //printf("l'angle est %d\n", angle);
+	
+}
+
+int servo_arm_is_running(){
+	/*
+	The function returns 0 if the servo_arm is not running and 1 else.
+	*/
+	
+	int speed;
+	get_tacho_speed( sn_servo[0], &speed);
+	if(speed==0){
+		return 0;
+	}
+	else{
+		return 1;
+	}
+	
+}
+
+int servo_sonar_is_running(){
+	/*
+	The function returns 0 if the servo_arm is not running and 1 else.
+	*/
+	
+	int speed;
+	get_tacho_speed( sn_servo[1], &speed);
+	if(speed==0){
+		return 0;
+	}
+	else{
+		return 1;
+	}
+	
 }
 
 void servo_sonar(int angle){
-    goForAngleForever(sn_servo[1],MAX_SPEED / 6, -angle);
-	printf("Angle servo sonar : %d\n",angle_servo_sonar());
-	Sleep(100);
-	//while(fabs(angle_servo_sonar()-angle)>10){
-		//printf("Angle servo sonar : %d\n",angle_servo_sonar());
-	//	Sleep(10);
-	//}
-	//while(angle_servo_sonar()!=angle){
-	//	Sleep(10);
-	//}
-    //get_tacho_position_sp(sn_servon, &angle);
-    //printf("l'angle est %d\n", angle);
+	/*
+	The function enables to move the servo using the sonar to the specified angle "angle".
+	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
+	*/
+	
+    go_to_angle(sn_servo[1],MAX_SPEED / 5, angle);
+	
+	while(servo_sonar_is_running()){ // waiting until the speed of the motor has reached 0.
+		Sleep(10);
+	}
+	
 }
 
 void absolute_servo_sonar(int angle){
+	/*
+	Some gears are placed between the sonar and the servo_sonar.
+	We have to take the reduction ratio in account.
+	The function enables to move the sonar to the specified angle "angle".
+	*/
 	
 	int motor_angle;
 	motor_angle = angle *(1/R);
@@ -86,112 +205,23 @@ void absolute_servo_sonar(int angle){
 	
 }
 
-void initMotorServo(){
-/*need to be started at the beginning
- Allows to use the motors for the wheels*/
-
-    if ( ev3_init() == -1 ) return ( 1 );
-    while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
-    ev3_search_tacho_plugged_in(67, 0, &sn_servo[0], 0);
-    ev3_search_tacho_plugged_in(65, 0, &sn_servo[1], 0);
-	int initialValue;
+void go_to_angle(uint8_t sn_servo,int speed, int angle) {
+	/*
+	The function moves the specified servo to a certain angle
+	*/
 	
-	printf("Angle actuel du servo bras : \n");
-	scanf("%d",&initialValue);
-	set_tacho_position(sn_servo[0], initialValue);
-	printf("\n");
-	servo_arm_down();
-	while(initialValue!=0){
-		printf("Angle actuel du servo bras : \n");
-		scanf("%d",&initialValue);
-		set_tacho_position(sn_servo[0], initialValue);
-		printf("\n");
-		servo_arm_down();
-	}
-	
-	
-	printf("Angle actuel du servo sonar : \n");
-	scanf("%d",&initialValue);
-	set_tacho_position(sn_servo[1], initialValue);
-	printf("\n");
-	servo_sonar(0);
-	while(initialValue!=0){
-		printf("Angle actuel du servo sonar : \n");
-		scanf("%d",&initialValue);
-		set_tacho_position(sn_servo[1], initialValue);
-		printf("\n");
-		servo_sonar(0);
-	}
-
-}
-
-void goForAngleForever(uint8_t sn_servo,int speed, int angle) {
-/*only make one wheel turn with the motor on the specified port in the good direction*/
+	// taking the sign of the angle into account
     if (angle > 0){
-        set_tacho_polarity_inx(sn_servo,TACHO_INVERSED);
-    } else{
         set_tacho_polarity_inx(sn_servo,TACHO_NORMAL);
+		polarity_servo = 1;
+    } else{
+        set_tacho_polarity_inx(sn_servo,TACHO_INVERSED);
         angle = -angle;
+		polarity_servo = -1;
     }
-    set_tacho_speed_sp(sn_servo, speed);
-//  set_tacho_ramp_up_sp( sn_servo, 0 );
-//  set_tacho_ramp_down_sp( sn_servo, 0 );
 	
-	set_tacho_position_sp(sn_servo, angle);
+    set_tacho_speed_sp(sn_servo, speed); // defining the speed of the motor
+	set_tacho_position_sp(sn_servo, angle); // defining the desired position.
 	set_tacho_stop_action_inx(sn_servo, TACHO_HOLD);
-	set_tacho_command_inx(sn_servo, TACHO_RUN_TO_ABS_POS);
-	//set_tacho_command_inx(sn_servo, TACHO_RUN_FOREVER);
-	//set_tacho_command_inx(sn_servo, TACHO_RUN_TO_REL_POS);
+	set_tacho_command_inx(sn_servo, TACHO_RUN_TO_ABS_POS); // running the motor to the absolute position
 }
-
-/*
-int main( void ){
-//to test each function, we need the main
-
-    initMotorServo();
-    int max_speed;
-    get_tacho_max_speed( sn_servo[0], &max_speed );
-    printf("max_speed is %d\n", max_speed);
-    //test
-
-    //int tacho_rot;
-    //get_tacho_count_per_rot(sn_servo, &tacho_rot);
-
-    //int tacho_m;
-    //get_tacho_count_per_m(sn_servo, &tacho_m);
-    //printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
-
-    //get_motor_position(68);
-    //goStraight(sn_servo, max_speed / 12, 210);
-    //rotation(sn_servo, max_speed / 12, 720);
-	// angle absolu 25 : correspond au 0 attendu
-	int i = 0;
-    while (i<5){
-		servo_arm_up();
-		printf("l'angle servo est %d\n", angle_servo_arm());
-		Sleep(1000);
-        servo_arm_down();
-		printf("l'angle servo est %d\n", angle_servo_arm());
-		Sleep(1000);
-		i=i+1;
-    }
-	
-	i=0;
-	while (i<5){
-		servo_sonar(45);
-		printf("l'angle sonar est %d\n", angle_servo_sonar());
-		Sleep(1000);
-        servo_sonar(0);
-		printf("l'angle sonar est %d\n", angle_servo_sonar());
-		Sleep(1000);
-		i=i+1;
-    }
-
-
-    //while(1){
-    //   Sleep(50);
-    //  get_motor_position(68);
-    //}
-
-}
-*/

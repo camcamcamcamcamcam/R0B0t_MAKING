@@ -19,18 +19,53 @@
 #endif
 
 #include "motors_wheels.h"
+
+#ifndef PI
 #define PI 3.14159265
+#endif
+
+// Max speed of the tacho motor of the ev3 dev
+#ifndef MAX_SPEED
+#define MAX_SPEED 1050
+#endif
+
 #define DIAMETRE 56  // diameter of the wheel : 56mm
 #define DIAMETRE_ROBOT 170 // width of the robot in mm
 
+// Global variables
 uint8_t sn_wheels[2];
 uint8_t sn_gyro;
-uint32_t n, ii;
 
+// Define the variable used to have the precise absolute position of the robot
+int X; // position x en mm.
+int Y; // position y en mm.
+int TETA; // angle absolu du robot en degré
+
+
+int get_left_motor_position(){
+    /*
+	The function enables to get the position of the left motor
+	*/
+	
+    int position;
+    get_tacho_position(sn_wheels[1],&position);
+    return position;
+}
+
+int get_right_motor_position(){
+    /*
+	The function enables to get the position of the right motor
+	*/
+	
+    int position;
+    get_tacho_position(sn_wheels[0],&position);
+    return position;
+}
 
 void initMotorWheels(){
-/*need to be started at the beginning
- Allows to use the motors for the wheels*/
+	/*
+	Initializing 2 motors_wheels :
+	*/
 
     if ( ev3_init() == -1 ) return ( 1 );
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
@@ -39,29 +74,59 @@ void initMotorWheels(){
 
 }
 
+int robot_is_moving(){
+	/*
+	The function returns 0 if the robot is not moving and 1 else.
+	*/
+	
+	int speed;
+	int speed2;
+	get_tacho_speed( sn_wheels[0], &speed);
+	get_tacho_speed( sn_wheels[1], &speed2);
+	Sleep(10);
+	if(speed == 0 && speed2 == 0){
+		return 0;
+	}
+	else{
+		return 1;
+	}
+	
+}
 
 void goStraight(int speed, int distance){
-/*make both wheels turn with the specified speed and distance in the good direction*/
+	/*
+	The function enables to ask the robot to go straight for a certain distance (in mm) at a specified speed.
+	It is a blocking function : the thread including this function won't continue before the robot has reached the desired position.
+	*/
     int angle = distance_to_angle(distance);
-    //goStraightForAngle(sn_wheels[0], speed, angle);
-    //goStraightForAngle(sn_wheels[1], speed, angle);
     synchronisedGoStraight(sn_wheels, speed, angle);
+	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
+		Sleep(10);
+	}
+	
 }
 
 void rotation(int speed, int angle){
-    /*make the robot do a rotation.
-     * if angle is positive, it turns to the right
-     * if angle is negatve, it turns to the left*/
+    /*
+	The function enables to ask the robot to do a rotation of a certain angle (in°) at a specified speed.
+	It is a blocking function : the thread including this function won't continue before the robot has reached the desired position.
+	*/
     int distance_roue = (angle * PI * DIAMETRE_ROBOT) / (360);
-    printf("distance roue : %d\n",distance_roue);
     int angle_roue = distance_to_angle(distance_roue);
-	printf("angle roue : %d\n",angle_roue);
+	
     goStraightForAngle(sn_wheels[0], speed, angle_roue);
     goStraightForAngle(sn_wheels[1], speed, -angle_roue);
+	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
+		Sleep(10);
+	}
+	
 }
 
 void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
-    /*make the two wheels turn with the motors in the good direction*/
+    /*
+	The function enables to ask the robot to run the two motors at the same time until they both reached a certain angle.
+	It is a non self-blocking function.
+	*/
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
         angle = -angle;
@@ -69,56 +134,47 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
     }
     multi_set_tacho_speed_sp(sn_wheels, speed);
-//  set_tacho_ramp_up_sp( sn_wheels, 0 );
-//  set_tacho_ramp_down_sp( sn_wheels, 0 );
     multi_set_tacho_position_sp(sn_wheels, angle);
-    multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
 void stopMotors(){
+	/*
+	The function enables to astop the motors. It could be useful in cas of interrupts for example.
+	*/
     multi_set_tacho_position_sp(sn_wheels, 0);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
 
 void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
-/*only make one wheel turn with the motor on the specified port in the good direction*/
+	/*
+	The function enables to ask a motor to run to a certain angle at a certain speed.
+	*/
     if (angle < 0){
         set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
+		angle = -angle;
     } else{
         set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
-        angle = -angle;
     }
-    printf("angle desire : %d\n",angle);
     set_tacho_speed_sp(sn_wheels, speed);
-//  set_tacho_ramp_up_sp( sn_wheels, 0 );
-//  set_tacho_ramp_down_sp( sn_wheels, 0 );
     set_tacho_position_sp(sn_wheels, angle);
     set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
-int get_motor_position(int port){
-    //1 increment is equal to 1 degree
-    uint8_t sn_wheels;
-    int position;
-    if( ev3_search_tacho_plugged_in(port,0,&sn_wheels,0) ){
-        get_tacho_position(sn_wheels,&position);
-    }
-    printf("port : %d position : %d \n",port,position);
-    return position;
-}
-
-
 int angle_to_distance(int angle){
-/* take in parameter the difference in angle for the wheels and returns the distance in mm*/
+	/* 
+	The function enables to compute the distance in mm corresponding to a certain angle (°) for the motor.
+	*/
     return ((angle/360)*PI*DIAMETRE);
 }
 
 
 int distance_to_angle(int distance){
-/* take in parameter the distance in mm and returns the difference in angle for the wheels */
+	/* 
+	The function enables to compute the angle in ° corresponding to a certain distance (in mm) for the motor.
+	*/
     return ((distance*360)/(PI*DIAMETRE));
 }
 
@@ -168,37 +224,3 @@ int getTachoMaxSpeed(){
     get_tacho_max_speed( sn_wheels[0], &max_speed );
     return max_speed;
 }
-
-/*
-int main( void ){
-//to test each function, we need the main
-
-    initMotorWheels(sn_wheels);
-    int max_speed;
-    int angle;
-
-    get_tacho_max_speed( sn_wheels[0], &max_speed );
-    //test
-
-    int tacho_rot;
-    get_tacho_count_per_rot(sn_wheels, &tacho_rot);
-
-    int tacho_m;
-    get_tacho_count_per_m(sn_wheels, &tacho_m);
-    printf("tacho rot is : %d and tacho m is : %d \n",tacho_rot,tacho_m);
-
-
-    //get_motor_position(68);
-    //goStraight(max_speed / 2, 594*2);
-    //Sleep(2000);
-    angle = 180;
-    preciseRotation(angle,max_speed);
-    while(1){
-        Sleep(1000);
-        //get_motor_position(68);
-        //get_motor_position(66);
-    }
-    ev3_uninit();
-
-}
-*/

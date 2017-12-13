@@ -69,5 +69,11 @@ test_1:
 	gcc -pthread motors_wheels.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lev3dev-c -o test_1
 	./test_1
 
+test_servo:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_servo.c -o motors_servo.o
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_servo.c -o test_servo.o
+	gcc motors_servo.o test_servo.o -Wall -lm -lev3dev-c -o test_servo
+	./test_servo
+
 run:
 	./tester

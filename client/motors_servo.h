@@ -23,7 +23,7 @@ uint8_t sn_servo[2];
 void initMotorServo();
 /*need to be started at the beginning
  Allows to use the servo motor*/
-void goForAngleForever(uint8_t sn_servo, int speed, int angle);
+void go_to_angle(uint8_t sn_servo, int speed, int angle);
 /*only make the servo motor turn until the specified angle has been reached.*/
 
 int angle_servo_arm();
@@ -43,3 +43,12 @@ void servo_sonar(int angle);
 
 void absolute_servo_sonar(int angle);
 /* make the sonar turn from a certain angle. */
+
+int servo_sonar_is_running();
+/* returns 1 if the servo corresponding to the sonar is running. 0 else. */
+
+int servo_arm_is_running();
+/* returns 1 if the servo corresponding to the arm is running. 0 else. */
+
+void stop_servo_sonar();
+/* stop the servo motor linked to the sonar. */
