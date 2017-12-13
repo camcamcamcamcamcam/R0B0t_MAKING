@@ -66,8 +66,9 @@ test_scan_attrape:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c servo_sonar.c -o servo_sonar.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_gyro.c -o sensor_gyro.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c objet_interaction.c -o objet_interaction.o
-	gcc servo_sonar.o motors_servo.o sensor_sonar.o sensor_gyro.o objet_interaction.o -Wall -lm -lev3dev-c -o servo_sonar
-	./servo_sonar
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_scan_attrape.c -o test_scan_attrape.o
+	gcc test_scan_attrape.o servo_sonar.o motors_servo.o sensor_sonar.o sensor_gyro.o objet_interaction.o -Wall -lm -lev3dev-c -o test_scan_attrape
+	./test_scan_attrape
 
 
 run:

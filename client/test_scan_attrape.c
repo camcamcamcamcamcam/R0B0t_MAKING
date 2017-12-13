@@ -47,7 +47,7 @@ int[2] scan(int angle){
 	Sleep(500);
 	rotationPrecise(angle,MAX_SPEED/24);
 	distMin=getSonarValue();
-	while(!motorStopped()){
+	while(!robot_is_moving()){
 		distSonar=getSonarValue();
 		if (distSonar<distmin){
 			distmin=distSonar();
