@@ -11,7 +11,11 @@ void stop_motor(){
     stopMotors();
 }
 
+
 void motor(){
+    //struct sched_param param;
+    //param.sched_policy = 0;
+    //pthread_setschedparam(pthread_self(),SCHED_OTHER, &param);
     while (distanceChecked == 0) Sleep(10);
     while(goOn) {
         goStraight(getTachoMaxSpeed()/12,400);
@@ -21,6 +25,9 @@ void motor(){
 }
 
 void sonar(pthread_t * tid_motor){
+    //struct sched_param param;
+    //param.sched_policy = 0;
+    //pthread_setschedparam(pthread_self(),SCHED_OTHER, &param);
     if (getDistance(0) > 100) goOn = 1;
     distanceChecked = 1;
     int i = -30;
@@ -50,14 +57,27 @@ void main (int argc, char **argv) {
     pthread_attr_init(&attr_motor);
     signal(SIGALRM, stop_motor);
 
+    //struct sched_param param;
+
+    //pthread_attr_getschedparam(&attr_sonar,&param);
+    //param.sched_priority = 0;
+    //pthread_setschedparam(&attr_sonar,SCHED_OTHER, &param);
+
+    //pthread_attr_getschedparam(&attr_motor,&param);
+    //param.sched_priority = 0;
+    //pthread_setschedparam(&attr_motor,SCHED_OTHER, &param);
+
     char a;
     pthread_create(&tid_motor, &attr_motor, (void *) motor, (void *)&a);
     pthread_create(&tid_sonar, &attr_sonar, (void *) sonar, &tid_motor);
-	while(1){
+    int i = 0;
+	for (i=0; i < 10; i++){
 		Sleep(1000);
 		printf("X=%d \n",X);
 		printf("Y=%d \n",Y);
 		printf("TETA=%d \n",TETA);
 	}
+    pthread_kill(tid_motor, SIGKILL);
+    pthread_kill(tid_sonar, SIGKILL);
     return;
 }

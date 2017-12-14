@@ -279,7 +279,7 @@ void stopMotors(){
 	The function enables to astop the motors. It could be useful in cas of interrupts for example.
 	*/
     multi_set_tacho_position_sp(sn_wheels, 0);
-    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_STOP);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
 		Sleep(10);
 	}

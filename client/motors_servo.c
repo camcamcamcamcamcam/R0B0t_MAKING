@@ -201,23 +201,23 @@ void absolute_servo_sonar(int angle){
 	
 }
 
-void go_to_angle(uint8_t sn_servo,int speed, int angle) {
+void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {
 	/*
 	The function moves the specified servo to a certain angle
 	*/
 	
 	// taking the sign of the angle into account
     if (angle >= 0){
-        set_tacho_polarity_inx(sn_servo,TACHO_NORMAL);
+        set_tacho_polarity_inx(sn_servo_local,TACHO_NORMAL);
 		polarity_servo = 1;
     } else{
-        set_tacho_polarity_inx(sn_servo,TACHO_INVERSED);
+        set_tacho_polarity_inx(sn_servo_local,TACHO_INVERSED);
         angle = -angle;
 		polarity_servo = -1;
     }
 	
-    set_tacho_speed_sp(sn_servo, speed); // defining the speed of the motor
-	set_tacho_position_sp(sn_servo, angle); // defining the desired position.
-	set_tacho_stop_action_inx(sn_servo, TACHO_HOLD);
-	set_tacho_command_inx(sn_servo, TACHO_RUN_TO_ABS_POS); // running the motor to the absolute position
+    set_tacho_speed_sp(sn_servo_local, speed); // defining the speed of the motor
+	set_tacho_position_sp(sn_servo_local, angle); // defining the desired position.
+	set_tacho_stop_action_inx(sn_servo_local, TACHO_HOLD);
+	set_tacho_command_inx(sn_servo_local, TACHO_RUN_TO_ABS_POS); // running the motor to the absolute position
 }
