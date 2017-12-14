@@ -21,11 +21,11 @@ void motor(){
 }
 
 void sonar(pthread_t * tid_motor){
-    if (getDistance(0) > 50) goOn = 1;
+    if (getDistance(0) > 100) goOn = 1;
     distanceChecked = 1;
     int i = -30;
     int sens = 1;
-    while(getDistance(i) > 50){
+    while(getDistance(i) > 100){
         if (sens) i = i + 5;
         else i = i - 5;
         if (i == 30) sens = 0;
@@ -53,6 +53,11 @@ void main (int argc, char **argv) {
     char a;
     pthread_create(&tid_motor, &attr_motor, (void *) motor, (void *)&a);
     pthread_create(&tid_sonar, &attr_sonar, (void *) sonar, &tid_motor);
-    sleep(100000);
+	while(1){
+		Sleep(1000);
+		printf("X=%d \n",X);
+		printf("Y=%d \n",Y);
+		printf("TETA=%d \n",TETA);
+	}
     return;
 }
