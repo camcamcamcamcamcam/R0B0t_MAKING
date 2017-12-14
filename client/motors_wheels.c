@@ -145,9 +145,12 @@ void goStraight(int speed, int distance){
 	
     int angle = distance_to_angle(distance);
     synchronisedGoStraight(sn_wheels, speed, angle);
+	Sleep(100);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
-		Sleep(10);
+		Sleep(100);
+		/*
 		refreshGlobalPosition();
+		*/
 	}
 	
 	refreshPosition();
@@ -233,7 +236,8 @@ void refreshPosition(){
 		
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
-		difference = (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
+		difference = (int) (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
+		difference = difference%360;
 		TETA1 = TETA1 + rotationPolarity*difference;
 		TETA = TETA1;
 		initPosition();
@@ -262,7 +266,8 @@ void refreshGlobalPosition(){
 		
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
-		difference = ((difference/(PI*DIAMETRE_ROBOT))*360)%360; // compute the rotation angle of the robot
+		difference = (int) (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
+		difference = difference%360;
 		TETA = TETA1 + rotationPolarity*difference;
 		
 	}

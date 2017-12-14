@@ -61,10 +61,7 @@ void initMotorServo(){
 	*/
 	printf("/// Initializing the servo_arm of the robot. /// \n");
 	int initialValue;
-	printf("Current angle of the servo_arm : \n");
-	scanf("%d",&initialValue);
-	set_tacho_position(sn_servo[0], initialValue);
-	printf("\n");
+	initialValue=1;
 	servo_arm_down();
 	
 	while(initialValue!=0){
@@ -74,6 +71,9 @@ void initMotorServo(){
 		printf("\n");
 		servo_arm_down();
 	}
+	initialValue=1;
+	printf("/// End of initialization. /// \n");
+	Sleep(1000);
 	//End Initialization of the servo_arm of the robot
 	
 	/*
@@ -82,14 +82,10 @@ void initMotorServo(){
 	0° : the sonar_arm is looking forward
 	*/
 	printf("/// Initializing the servo_sonar of the robot. /// \n");
-	printf("Current angle of the servo_sonar : \n");
-	scanf("%d",&initialValue);
-	set_tacho_position(sn_servo[1], initialValue);
-	printf("\n");
 	absolute_servo_sonar(0);
 	
 	while(initialValue!=0){
-		printf("Current angle of the servo_sona : \n");
+		printf("Current angle of the servo_sonar : \n");
 		scanf("%d",&initialValue);
 		set_tacho_position(sn_servo[1], initialValue);
 		printf("\n");
@@ -211,7 +207,7 @@ void go_to_angle(uint8_t sn_servo,int speed, int angle) {
 	*/
 	
 	// taking the sign of the angle into account
-    if (angle > 0){
+    if (angle >= 0){
         set_tacho_polarity_inx(sn_servo,TACHO_NORMAL);
 		polarity_servo = 1;
     } else{

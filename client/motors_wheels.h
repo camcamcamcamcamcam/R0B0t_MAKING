@@ -19,6 +19,9 @@
 #endif
 
 uint8_t sn_wheels[2];
+int X;
+int Y;
+int TETA;
 
 void initMotorWheels();
 /*need to be started at the beginning
