@@ -46,17 +46,22 @@ int red_obstacle(){
     getColor();
     //if ((value_r > 10) && (value_g < 10) && (value_b < 10)) printf("obstacle red found\n");	/*tests a modifier, mais l'idee est là*/
     //else printf("not red\n");
+	if( value_r >= value_g + value_b ){
+		printf("red\n");
+	} else {
+		printf("not red\n");
+	}
 	printf("returned values are %d %d %d\n",value_r,value_g,value_b);
-	return ((value_r > 10) && (value_g < 10) && (value_b < 10));
+	//return ((value_r > 10) && (value_g < 10) && (value_b < 10));
+	return( value_r > value_g + value_b );
 }
 
-int main( void )
-{
+int main(){
 
     if ( ev3_init() == -1 ) return ( 1 );
 
     printf( "*** ( EV3 ) Hello! ***\n" );
-
+ 
 //Run all sensors
     ev3_sensor_init();
 

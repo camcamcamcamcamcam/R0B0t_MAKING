@@ -5,7 +5,7 @@
 
 uint8_t sn_color;
 
-int getColor();
+void getColor();
 //return an array with
 
 int red_obstacle();
