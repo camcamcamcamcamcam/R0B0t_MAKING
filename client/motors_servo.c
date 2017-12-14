@@ -181,8 +181,8 @@ void servo_sonar(int angle){
 	*/
 	
     go_to_angle(sn_servo[1],MAX_SPEED / 5, angle);
-	
-	while(servo_sonar_is_running()){ // waiting until the speed of the motor has reached 0.
+	int timer = 0;
+	while(servo_sonar_is_running() && timer++ < 50){ // waiting until the speed of the motor has reached 0 or 500 ms.
 		Sleep(10);
 	}
 	

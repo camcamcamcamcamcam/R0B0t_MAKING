@@ -31,7 +31,7 @@
 #endif
 
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define DIAMETRE_ROBOT 170 // width of the robot in mm
+#define DIAMETRE_ROBOT 175 // width of the robot in mm
 
 // Global variables
 uint8_t sn_wheels[2];
