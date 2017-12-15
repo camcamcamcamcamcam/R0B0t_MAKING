@@ -10,7 +10,7 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
      */
 
 
-void init_client();
+void initClient();
 #define MSG_ACK     0
 #define MSG_START    1
 #define MSG_STOP   2
