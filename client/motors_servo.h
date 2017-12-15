@@ -49,6 +49,3 @@ int servo_sonar_is_running();
 
 int servo_arm_is_running();
 /* returns 1 if the servo corresponding to the arm is running. 0 else. */
-
-void stop_servo_sonar();
-/* stop the servo motor linked to the sonar. */

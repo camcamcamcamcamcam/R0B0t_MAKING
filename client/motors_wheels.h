@@ -28,6 +28,8 @@ void initMotorWheels();
  Allows to use the motors for the wheels*/
 void goStraight(int speed, int distance);
 /*make both wheels turn with the specified speed and distance in the good direction*/
+void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle);
+/* go straight using synchronized method providing by the API. */
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
 void stopMotors();
@@ -46,6 +48,10 @@ void rotation(int speed, int angle);
     /*make the robot do a rotation.
      * if angle is positive, it turns to the right
      * if angle is negatve, it turns to the left*/
+void refreshPosition();
+/* refreshing position at each checkpoint. */
+void refreshGlobalPosition();
+/* refreshing position at each checkpoint. */
 void initGyro();
 /*Initialize gyro sensor*/
 int getAngleGyro();
@@ -53,4 +59,3 @@ int getAngleGyro();
 void preciseRotation(int angle, int max_speed);
 /*MAke sure the rotation is precise with the gyro*/
 int getTachoMaxSpeed();
-

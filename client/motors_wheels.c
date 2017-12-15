@@ -145,12 +145,11 @@ void goStraight(int speed, int distance){
 	
     int angle = distance_to_angle(distance);
     synchronisedGoStraight(sn_wheels, speed, angle);
-	Sleep(100);
+	Sleep(10);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
-		Sleep(100);
-		/*
+		printf("Robot moving\n");
+		Sleep(10);
 		refreshGlobalPosition();
-		*/
 	}
 	
 	refreshPosition();
@@ -175,6 +174,7 @@ void rotation(int speed, int angle){
     int angle_roue = distance_to_angle(distance_roue);
     goStraightForAngle(sn_wheels[0], speed, angle_roue);
     goStraightForAngle(sn_wheels[1], speed, -angle_roue);
+	Sleep(10);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
 		Sleep(10);
 		refreshGlobalPosition();
@@ -255,19 +255,21 @@ void refreshGlobalPosition(){
 	int meanAngle;
 	
 	if(rotationPolarity==0){
-		
+		printf("RotationPolarity=0\n");
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
+		printf("Difference Distance=%d\n");
 		X = X1 + difference*sin(TETA*PI/180);
 		Y = Y1 + difference*cos(TETA*PI/180);
 		
 	}
 	else{
-		
+		printf("RotationPolarity=%d\n",rotationPolarity);
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
 		difference = (int) (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
 		difference = difference%360;
+		printf("Difference angle : %d \n",difference);
 		TETA = TETA1 + rotationPolarity*difference;
 		
 	}

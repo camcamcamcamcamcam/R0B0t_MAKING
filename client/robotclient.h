@@ -11,6 +11,11 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
 
 
 void initClient();
+char size_message(char msg_type);
+int read_from_server (int sock, char *buffer, size_t maxSize);
+void robot2();
+void robot();
+char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
 #define MSG_ACK     0
 #define MSG_START    1
 #define MSG_STOP   2
