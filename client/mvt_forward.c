@@ -43,6 +43,7 @@ void go_to_distance_no_sweep(int speed, int distance, int securityDistance){
 	if(distance_sonar>securityDistance){
 		goStraight_NonBlocking(speed, distance);
 	}
+	Sleep(50);
 	printf("Before the loop \n");
 	while(distance_sonar>securityDistance && robot_is_moving()){
 		printf("X : %d \n",X);
@@ -61,11 +62,12 @@ void go_to_distance_sweep(int speed, int distance, int securityDistance,int ampl
 	initPosition();
 	int distance_sonar = 0;
 	distance_sonar = getDistance(0);
-	//printf("Distance sonar : %d\n", distance_sonar);
+	printf("Distance sonar : %d\n", distance_sonar);
 	//printf("Distance security : %d\n", securityDistance);
 	if(distance_sonar>securityDistance){
 		goStraight_NonBlocking(speed, distance);
 	}
+	Sleep(50);
 	//printf("Before the loop \n");
 	int i = -amplitudeSweep;
 	int order = 1;

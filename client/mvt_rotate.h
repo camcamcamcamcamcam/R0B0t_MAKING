@@ -21,4 +21,4 @@
 
 void rotate_to_angle(int speed, int angle);
 
-void rotate_to_closest_obstacle(int speed, int amplitudeAngle, int precisionAngle);
+int rotate_to_closest_obstacle(int speed, int amplitudeAngle, int precisionAngle);

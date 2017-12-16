@@ -17,7 +17,7 @@ char main (void) {
     // initClient(); // will STOP the program if the server is not lauched !
 
 	int speed = getTachoMaxSpeed()/5;
-	int angle = 40;
+	int angle = 90;
 	int distance = 10000;
 	int securityDistance = 150;
 	int amplitudeSweep = 50;
@@ -30,7 +30,9 @@ char main (void) {
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		printf("TETA=%d\n",TETA);
+		printf("AVANT ROTATION");
 		rotate_to_angle(speed, angle);
+		printf("APRES ROTATION");
 	}
     return 1;
 }

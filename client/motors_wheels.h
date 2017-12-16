@@ -59,6 +59,7 @@ void initGyro();
 /*Initialize gyro sensor*/
 int getAngleGyro();
 /*Returns the angle from the gyro*/
-void preciseRotation(int angle, int max_speed);
+void preciseRotation(int angle, int speed);
 /*MAke sure the rotation is precise with the gyro*/
+void smallRotation(int angle, int speed);
 int getTachoMaxSpeed();

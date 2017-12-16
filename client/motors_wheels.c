@@ -207,6 +207,22 @@ void rotation(int speed, int angle){
 	
 }
 
+void smallRotation(int speed, int angle){
+	/*
+	The function enables to ask the robot to do a precise rotation of a certain angle (in°) at a specified speed, using the gyroscope.
+	It is a blocking function : the thread including this function won't continue before the robot has reached the desired position.
+	*/
+	
+    int difference;
+	initPosition();
+    rotation(speed, angle);
+	TETA1 = (TETA1 + angle)%360;
+	TETA = TETA1;
+	//printf("TETA=%d \n",TETA);
+	initPosition();
+	
+}
+
 void preciseRotation(int speed, int angle){
 	/*
 	The function enables to ask the robot to do a precise rotation of a certain angle (in°) at a specified speed, using the gyroscope.

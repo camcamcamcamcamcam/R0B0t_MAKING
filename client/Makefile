@@ -95,8 +95,9 @@ test_mvt_rotate:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_sonar.c -o sensor_sonar.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c servo_sonar.c -o servo_sonar.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c mvt_rotate.c -o mvt_rotate.o
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c mvt_forward.c -o mvt_forward.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_mvt_rotate.c -o test_mvt_rotate.o
-	gcc -pthread motors_wheels.o mvt_rotate.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_rotate.o -Wall -lm -lev3dev-c -o test_mvt_rotate
+	gcc -pthread motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_rotate.o -Wall -lm -lev3dev-c -o test_mvt_rotate
 	./test_mvt_rotate
 	
 test_final_1:	
