@@ -94,7 +94,6 @@ int robot_is_moving(){
 	int speed2;
 	get_tacho_speed( sn_wheels[0], &speed);
 	get_tacho_speed( sn_wheels[1], &speed2);
-	Sleep(10);
 	if(speed == 0 && speed2 == 0){
 		return 0;
 	}
@@ -108,12 +107,15 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 	/*
 	The function enables to ask a motor to run to a certain angle at a certain speed.
 	*/
+	int position;
+    get_tacho_position(sn_wheels,&position);
     if (angle < 0){
         set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
 		angle = -angle;
     } else{
         set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
     }
+	set_tacho_position(sn_wheels,position);
     set_tacho_speed_sp(sn_wheels, speed);
     set_tacho_position_sp(sn_wheels, angle);
     set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
@@ -125,14 +127,22 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 	The function enables to ask the robot to run the two motors at the same time until they both reached a certain angle.
 	It is a non self-blocking function.
 	*/
+	
+	int position_left;
+    get_tacho_position(sn_wheels[1],&position_left);
+	int position_right;
+    get_tacho_position(sn_wheels[0],&position_right);
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
         angle = -angle;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
     }
+	set_tacho_position(sn_wheels[1],position_left);
+	set_tacho_position(sn_wheels[0],position_right);
     multi_set_tacho_speed_sp(sn_wheels, speed);
     multi_set_tacho_position_sp(sn_wheels, angle);
+	multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
@@ -147,12 +157,28 @@ void goStraight(int speed, int distance){
     synchronisedGoStraight(sn_wheels, speed, angle);
 	Sleep(10);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
-		printf("Robot moving\n");
+		//printf("Robot moving\n");
 		Sleep(10);
 		refreshGlobalPosition();
 	}
 	
 	refreshPosition();
+	
+}
+
+void slow_down(int speed){
+	multi_set_tacho_speed_sp(sn_wheels, speed);
+}
+
+void goStraight_NonBlocking(int speed, int distance){
+	/*
+	The function enables to ask the robot to go straight for a certain distance (in mm) at a specified speed.
+	It is a non blocking function : the thread including this function won't continue before the robot has reached the desired position.
+	*/	
+    int angle = distance_to_angle(distance);
+    //goStraightForAngle(sn_wheels[0], speed, angle);
+	//goStraightForAngle(sn_wheels[1], speed, angle);
+	synchronisedGoStraight(sn_wheels, speed, angle);
 	
 }
 
@@ -162,7 +188,6 @@ void rotation(int speed, int angle){
 	It is a blocking function : the thread including this function won't continue before the robot has reached the desired position.
 	*/
 	
-	initPosition();
 	if(angle<0){
 		rotationPolarity = -1;
 	}
@@ -172,15 +197,13 @@ void rotation(int speed, int angle){
 	
     int distance_roue = (angle * PI * DIAMETRE_ROBOT) / (360);
     int angle_roue = distance_to_angle(distance_roue);
-    goStraightForAngle(sn_wheels[0], speed, angle_roue);
-    goStraightForAngle(sn_wheels[1], speed, -angle_roue);
+    goStraightForAngle(sn_wheels[0], speed, -angle_roue);
+    goStraightForAngle(sn_wheels[1], speed, angle_roue);
 	Sleep(10);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
 		Sleep(10);
-		refreshGlobalPosition();
 	}
 	
-	refreshPosition();
 	
 }
 
@@ -192,15 +215,23 @@ void preciseRotation(int speed, int angle){
 	
     int angle_gyro;
     int difference;
-	
+	initPosition();
+	//printf("commencer angle : %d \n",angle);
 	initGyro();
+	angle_gyro = getAngleGyro();
+	//printf("angle gyro avant : %d \n",(int) getAngleGyro());
     rotation(speed, angle);
-	
+	//printf("angle gyro apres : %d \n",(int) getAngleGyro());
 	angle_gyro = getAngleGyro();
     difference = angle - angle_gyro;
+	//printf("angle restant : %d \n",difference);
 	if(difference!=0){
 		rotation(speed, difference);
 	}
+	TETA1 = (TETA1 + angle)%360;
+	TETA = TETA1;
+	//printf("TETA=%d \n",TETA);
+	initPosition();
 	
 }
 
@@ -210,6 +241,8 @@ void initPosition(){
 	*/
 	leftStartPosition = get_left_motor_position();
 	rightStartPosition = get_right_motor_position();
+	//printf("Left start pos : %d\n", leftStartPosition);
+	//printf("Right start pos : %d\n", rightStartPosition);
 	rotationPolarity = 0;
 }
 
@@ -223,23 +256,14 @@ void refreshPosition(){
 	
 	if(rotationPolarity==0){
 		
+		//printf("Left motor pos=%d\n", (int) get_left_motor_position());
+		//printf("Right motor pos=%d\n", (int) get_left_motor_position());
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
 		X1 = X1 + difference*sin(TETA*PI/180);
 		Y1 = Y1 + difference*cos(TETA*PI/180);
 		X=X1;
 		Y=Y1;
-		initPosition();
-		
-	}
-	else{
-		
-		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
-		difference = angle_to_distance(meanAngle);
-		difference = (int) (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
-		difference = difference%360;
-		TETA1 = TETA1 + rotationPolarity*difference;
-		TETA = TETA1;
 		initPosition();
 		
 	}
@@ -255,22 +279,15 @@ void refreshGlobalPosition(){
 	int meanAngle;
 	
 	if(rotationPolarity==0){
-		printf("RotationPolarity=0\n");
-		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
+		//printf("RotationPolarity=0\n");
+		//printf("Left motor pos=%d\n", (int) get_left_motor_position());
+		//printf("Right motor pos=%d\n", (int) get_left_motor_position());
+		meanAngle = (int) (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
+		//printf("meanAngle=%d\n", meanAngle);
 		difference = angle_to_distance(meanAngle);
-		printf("Difference Distance=%d\n");
+		//printf("Difference Distance=%d\n",difference);
 		X = X1 + difference*sin(TETA*PI/180);
 		Y = Y1 + difference*cos(TETA*PI/180);
-		
-	}
-	else{
-		printf("RotationPolarity=%d\n",rotationPolarity);
-		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
-		difference = angle_to_distance(meanAngle);
-		difference = (int) (difference/(PI*DIAMETRE_ROBOT))*360; // compute the rotation angle of the robot
-		difference = difference%360;
-		printf("Difference angle : %d \n",difference);
-		TETA = TETA1 + rotationPolarity*difference;
 		
 	}
 	
@@ -292,7 +309,7 @@ int angle_to_distance(int angle){
 	/* 
 	The function enables to compute the distance in mm corresponding to a certain angle (°) for the motor.
 	*/
-    return ((angle/360)*PI*DIAMETRE);
+    return (angle*PI*DIAMETRE)/360;
 }
 
 

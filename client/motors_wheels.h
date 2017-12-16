@@ -28,10 +28,13 @@ void initMotorWheels();
  Allows to use the motors for the wheels*/
 void goStraight(int speed, int distance);
 /*make both wheels turn with the specified speed and distance in the good direction*/
+void goStraight_NonBlocking(int speed, int distance);
+/*make both wheels turn with the specified speed : non blocking function */
 void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle);
 /* go straight using synchronized method providing by the API. */
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
+void slow_down(int speed);
 void stopMotors();
 /* stop the motors */
 int get_left_motor_position();

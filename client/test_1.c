@@ -16,7 +16,7 @@ void motor(){
 
     while(1) {
         if (forward) {
-            goStraight(getTachoMaxSpeed() / 5, 10);
+            goStraight_Interrupt(getTachoMaxSpeed() / 5);
         }
         else if(inRotation){
 			preciseRotation(getTachoMaxSpeed() / 5, 30);

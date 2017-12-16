@@ -34,7 +34,7 @@ int get_sonar_distance(){
 	float value;
     get_sensor_value0(sn_sonar,&value);
 	fflush( stdout );
-	printf("value sensor : %f\n",value);
+	//printf("value sensor : %f\n",value);
 	if(value>=750){
 		return 750;
 	}
