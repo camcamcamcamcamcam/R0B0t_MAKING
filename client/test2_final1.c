@@ -13,8 +13,18 @@
 
 void client_position(){
     while(1){
+        //we send a random map
+        int i;
+        int j;
+        for (i=0; i<20; i++) {
+            for (j=o; j<20; j++) {
+                sendMessage(MSG_MAPDATA, i, j, 0, 0, 0, 0);
+                Sleep(100);
+            }
+            sendMessage(MSG_MAPDONE,0,0,0,0,0,0);
+        }
         Sleep(2000);
-        sendMessage(MSG_POSITION, X, Y, 0, 0, 0, 0);
+        sendMessage(MSG_POSITION, (int) X/50, (int) Y/50, 0, 0, 0, 0);
 
     }
 }
@@ -28,7 +38,7 @@ char main (void) {
     initMotorWheels();
     servo_arm_up();
     //while the server did not send the START_MESSAGE, the robot will wait in init_client()
-    initClient(); // will STOP the program if the server is not lauched !
+    initClient(); // will STOP the program if the server is not launched !
 
     pthread_t tid_client_position;
     pthread_attr_t attr_client_position;
