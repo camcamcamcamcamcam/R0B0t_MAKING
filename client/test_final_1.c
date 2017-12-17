@@ -1,4 +1,4 @@
-#include <pthread.h>
+ #include <pthread.h>
 #include <signal.h>
 #include "servo_sonar.h"
 #include "motors_wheels.h"
@@ -21,7 +21,7 @@ char main (void) {
 	int distance = 10000;
 	int securityDistance = 150;
 	int amplitudeSweep = 50;
-	
+
 	while(1){
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
