@@ -70,17 +70,17 @@ int main(){
 	servo_arm_up();
 	minDistance = rotate_to_closest_obstacle(MAX_SPEED/12,90,10);
 	printf("fin de rotate_to_obstacle 1\n");
-	go_to_distance_no_sweep(MAX_SPEED/5, minDistance-50, 50);
+	go_to_distance_no_sweep(MAX_SPEED/5, minDistance-35, 35);
 	Sleep(50);
 	minDistance = rotate_to_closest_obstacle(MAX_SPEED/12, 25, 3);
 	printf("fin de rotate_to_obstacle 2\n");
 	if(isMovableObstacle()){
 		printf("dans la boucle is MovableObstacle\n");
 		takeObject();
-		go_to_distance_sweep(MAX_SPEED/6,100,RMIN,40);
+		go_to_distance_sweep(MAX_SPEED/6,500,RMIN,40);
 	}
 	else{
 		rotate_to_angle(MAX_SPEED/6,90);
-		go_to_distance_sweep(MAX_SPEED/6,100,RMIN,40);
+		go_to_distance_sweep(MAX_SPEED/6,500,RMIN,40);
 	}
 }

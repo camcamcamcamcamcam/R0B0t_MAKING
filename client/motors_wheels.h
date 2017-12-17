@@ -56,6 +56,8 @@ void refreshPosition();
 /* refreshing position at each checkpoint. */
 void refreshGlobalPosition();
 /* refreshing position at each checkpoint. */
+void initPosition();
+/*Initializes postion.*/
 void preciseRotation(int angle, int speed);
 /*MAke sure the rotation is precise with the gyro*/
 void smallRotation(int angle, int speed);

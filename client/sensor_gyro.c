@@ -53,7 +53,9 @@ void initGyro(){
                 printf( "GYRO sensor is found\n" );
                 set_sensor_mode( sn_gyro, "GYRO-ANG" );
                 set_sensor_mode( sn_gyro, "GYRO-G&A" );
+                Sleep(100);
                 get_sensor_value(0,sn_gyro,&test_init);
+                Sleep(100);
                 printf("test_init %d \n",test_init);
         } else {
                 printf( "GYRO sensor is NOT found\n" );

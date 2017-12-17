@@ -6,6 +6,7 @@
 #include <signal.h>
 #include "servo_sonar.h"
 #include "motors_wheels.h"
+#include "motors_servo.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
 #include "robotclient.h"
@@ -18,11 +19,6 @@ void client_position(){
     }
 }
 
-pthread_t tid_client_position;
-pthread_attr_t attr_client_position;
-pthread_attr_init(&attr_client_position);
-
-
 char main (void) {
 /*
  * The robot go straight and stop when he detects a wall to close ( < 50 mm )
@@ -34,6 +30,9 @@ char main (void) {
     //while the server did not send the START_MESSAGE, the robot will wait in init_client()
     initClient(); // will STOP the program if the server is not lauched !
 
+    pthread_t tid_client_position;
+    pthread_attr_t attr_client_position;
+  	pthread_attr_init(&attr_client_position);
     char a;
     pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
 

@@ -55,11 +55,11 @@ int isMovableObstacle(){
 /*Fonction pour savoir si l'object devant est un obstacle mobile ou non
  A faire : enregistrer la position de l'objet si ce n'est pas un objet mobile*/
 	int a;
-	absolute_servo_sonar(60);
-	Sleep(100);
+	absolute_servo_sonar(-70);
+	Sleep(1000);
 	a=red_obstacle();
-	Sleep(100);
-	absolute_servo_sonar(-60);
+	Sleep(1000);
+	absolute_servo_sonar(70);
 	Sleep(100);
 	return(a);
 }

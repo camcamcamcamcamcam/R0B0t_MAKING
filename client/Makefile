@@ -85,8 +85,8 @@ servo_sonar: motors_servo.o sensor_sonar.o
 test_1.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_1.c -o test_1.o
 
-test_1: motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o test_1.o
-	gcc -pthread motors_wheels.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lev3dev-c -o test_1
+test_1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o test_1.o
+	gcc -pthread sensor_gyro.o motors_wheels.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lev3dev-c -o test_1
 	./test_1
 
 test_1V2:
@@ -96,7 +96,7 @@ test_1V2:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c servo_sonar.c -o servo_sonar.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c robotclient.c -o robotclient.o
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_1.c -o test_1.o
-	gcc -pthread motors_wheels.o robotclient.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lbluetooth -lev3dev-c -o test_1V2
+	gcc -pthread sensor_gyro.o motors_wheels.o robotclient.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lbluetooth -lev3dev-c -o test_1V2
 	./test_1V2
 
 mvt_forward.o:
@@ -105,8 +105,8 @@ mvt_forward.o:
 test_mvt_forward.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_mvt_forward.c -o test_mvt_forward.o
 
-test_mvt_forward: motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_mvt_forward.o
-	gcc -pthread motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_forward.o -Wall -lm -lev3dev-c -o test_mvt_forward
+test_mvt_forward: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_mvt_forward.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_forward.o -Wall -lm -lev3dev-c -o test_mvt_forward
 	./test_mvt_forward
 
 mvt_rotate.o:
@@ -115,14 +115,14 @@ mvt_rotate.o:
 test_mvt_rotate.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_mvt_rotate.c -o test_mvt_rotate.o
 
-test_mvt_rotate: motors_wheels.o sensor_sonar.o motors_servo.o servo_sonar.o mvt_rotate.o mvt_forward.o test_mvt_rotate.o
-	gcc -pthread motors_wheels.o mvt_rotate.o servo_sonar.o motors_servo.o sensor_sonar.o mvt_forward.o test_mvt_rotate.o -Wall -lm -lev3dev-c -o test_mvt_rotate
+test_mvt_rotate: sensor_gyro.o motors_wheels.o sensor_sonar.o motors_servo.o servo_sonar.o mvt_rotate.o mvt_forward.o test_mvt_rotate.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o servo_sonar.o motors_servo.o sensor_sonar.o mvt_forward.o test_mvt_rotate.o -Wall -lm -lev3dev-c -o test_mvt_rotate
 
 test_scan_attrape.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_scan_attrape.c -o test_scan_attrape.o
 
-test_scan_attrape:  motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o
-	gcc -pthread  motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o -Wall -lm -lev3dev-c -o test_scan_attrape
+test_scan_attrape: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o
+	gcc -pthread  sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o -Wall -lm -lev3dev-c -o test_scan_attrape
 
 object_interaction.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c object_interaction.c -o object_interaction.o
@@ -130,22 +130,22 @@ object_interaction.o:
 test_final_1.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_1.c -o test_final_1.o
 
-test_final_1: motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_1.o
-	gcc -pthread motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_1.o -Wall -lm -lev3dev-c -o test_final_1
+test_final_1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_1.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_1.o -Wall -lm -lev3dev-c -o test_final_1
 	./test_final_1
 
 test_final_2.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_2.c -o test_final_2.o
 
-test_final_2: motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_2.o
-	gcc -pthread motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_2.o -Wall -lm -lev3dev-c -o test_final_2
+test_final_2: sensro_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_2.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_2.o -Wall -lm -lev3dev-c -o test_final_2
 	./test_final_2
 
-test2_final_1.o:
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test2_final_1.c -o test2_final_1.o robotclient.o
+test2_final1.o:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test2_final1.c -o test2_final1.o
 
-test2_final_1: motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test2_final_1.o robotclient.o
-	gcc -pthread motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o robotclient.o test2_final_1.o -Wall -lm -lbluetooth -lev3dev-c -o test2_final_1
+test2_final1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o test2_final1.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o robotclient.o test2_final1.o -Wall -lm -lbluetooth -lev3dev-c -o test2_final1
 	./test2_final_1
 
 test_servo.o:
