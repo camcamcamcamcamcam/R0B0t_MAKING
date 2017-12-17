@@ -4,6 +4,7 @@
 #include "ev3_port.h"
 #include "ev3_tacho.h"
 #include "ev3_sensor.h"
+#include "sensor_gyro.h"
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 
@@ -55,10 +56,6 @@ void refreshPosition();
 /* refreshing position at each checkpoint. */
 void refreshGlobalPosition();
 /* refreshing position at each checkpoint. */
-void initGyro();
-/*Initialize gyro sensor*/
-int getAngleGyro();
-/*Returns the angle from the gyro*/
 void preciseRotation(int angle, int speed);
 /*MAke sure the rotation is precise with the gyro*/
 void smallRotation(int angle, int speed);

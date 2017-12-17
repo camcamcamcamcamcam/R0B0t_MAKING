@@ -60,7 +60,7 @@ int rotate_to_closest_obstacle(int speed, int amplitudeAngle, int precisionAngle
 		Sleep(2000);
 	}
 	printf("1st phase finished");
-	rotate_to_angle(speed,-amplitudeAngle+minAngle-precisionAngle);
+	rotate_to_angle(speed,-amplitudeAngle+minAngle+precisionAngle);
 
 	return minDistance;
 
