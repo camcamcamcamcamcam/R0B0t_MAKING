@@ -43,17 +43,19 @@ int getDistance(int angle){
 }
 
 int getMinDistance(int amplitudeAngle, int precisionAngle){
-	angle = -amplitudeAngle;
+	int angle = -amplitudeAngle;
 	int minDistance;
 	//int minAngle;
 	minDistance = getDistance(angle);
 	while(angle<amplitudeAngle){
-		angle = angle+15;
+		angle = angle+precisionAngle;
 		if (getDistance(angle)<minDistance){
 			minDistance = getDistance(angle);
 		}
+		Sleep(10);
 		//printf("Distance sonar : %d \n",distance_sonar);
 	}
+	getDistance(0);
 	return minDistance;
 }
 

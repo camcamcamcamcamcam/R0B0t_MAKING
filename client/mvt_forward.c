@@ -72,8 +72,8 @@ void go_to_distance_sweep(int speed, int distance, int securityDistance,int ampl
 	int i = -amplitudeSweep;
 	int order = 1;
 	while(distance_sonar>securityDistance && robot_is_moving()){
-		if(distance_sonar<200){
-			slow_down(speed/3);
+		if(distance_sonar<300){
+			slow_down(speed/2);
 		}
 		printf("X : %d \n",X);
 		printf("Y : %d \n",Y);

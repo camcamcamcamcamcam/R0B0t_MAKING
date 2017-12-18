@@ -10,7 +10,7 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
 
-#define SERV_ADDR   "00:1a:7d:da:71:06"   //"benjiii bluetooth address 5c:51:4f:29:bc:be" //"dc:53:60:ad:61:90"     /* Whatever the address of the server is */
+#define SERV_ADDR  "5c:51:4f:29:bc:be"   //"benjiii bluetooth address 5c:51:4f:29:bc:be" //"dc:53:60:ad:61:90"    PROF"00:1a:7d:da:71:06" /* Whatever the address of the server is */
 #define TEAM_ID     2                       /* Your team ID */
 
 #define MSG_ACK     0

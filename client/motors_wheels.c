@@ -82,6 +82,11 @@ void initMotorWheels(){
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
     ev3_search_tacho_plugged_in(66, 0, &sn_wheels[0], 0);
     ev3_search_tacho_plugged_in(68, 0, &sn_wheels[1], 0);
+    printf("Current value X : \n");
+    scanf("%d",&X);
+    printf("Current value Y: \n");
+    scanf("%d",&Y);
+    TETA = 0;
 	initPosition();
 
 }
@@ -169,6 +174,8 @@ void goStraight(int speed, int distance){
 
 void slow_down(int speed){
 	multi_set_tacho_speed_sp(sn_wheels, speed);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
+
 }
 
 void goStraight_NonBlocking(int speed, int distance){

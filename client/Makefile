@@ -145,6 +145,13 @@ test_final_5: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_5.o -Wall -lm -lev3dev-c -o test_final_5
 	./test_final_5
 
+test_final_6.o:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_6.c -o test_final_6.o
+
+test_final_6: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o test_final_6.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o robotclient.o test_final_6.o -Wall -lm -lbluetooth -lev3dev-c -o test_final_6
+	./test_final_6
+
 test2_final1.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test2_final1.c -o test2_final1.o
 
