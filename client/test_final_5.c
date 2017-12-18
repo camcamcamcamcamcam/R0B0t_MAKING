@@ -30,27 +30,45 @@ char main (void) {
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceShort, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceShort, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
 		distanceLng = distanceLng +170;
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
 		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
 		distanceLng = distanceLng +170;
 	}
     return 1;

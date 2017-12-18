@@ -79,14 +79,13 @@ void go_to_distance_sweep(int speed, int distance, int securityDistance,int ampl
 		printf("Y : %d \n",Y);
 		printf("TETA : %d \n",TETA);
 		refreshGlobalPosition();
-		Sleep(1);
 		if(i>amplitudeSweep){
 			order = -1;
 		}
 		else if(i<-amplitudeSweep){
 			order = 1;
 		}
-		i = i + 5*order;
+		i = i + 15*order;
 		distance_sonar = getDistance(i);
 		//printf("Distance sonar : %d \n",distance_sonar);
 	}

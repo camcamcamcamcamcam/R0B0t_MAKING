@@ -19,3 +19,6 @@
 
 int getDistance(int angle);
 /* get the distance found in the specified angle. */
+
+int getMinDistance(int amplitudeAngle, int precisionAngle);
+/* get the min distance in the nearby. */
