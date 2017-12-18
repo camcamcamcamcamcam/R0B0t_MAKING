@@ -137,9 +137,13 @@ test_final_1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_
 test_final_2.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_2.c -o test_final_2.o
 
-test_final_2: sensro_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_2.o
+test_final_2: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_2.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_2.o -Wall -lm -lev3dev-c -o test_final_2
 	./test_final_2
+	
+test_final_5: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_5.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_5.o -Wall -lm -lev3dev-c -o test_final_5
+	./test_final_5
 
 test2_final1.o:
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test2_final1.c -o test2_final1.o
