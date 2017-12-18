@@ -7,11 +7,14 @@ html {
 }
 
 body {
-    margin: 60px auto;
+    margin: auto 40px;
     width: 70%;
 }
 
 h1 {
     font-size: 3em;
     font-family:'Helvetica', 'Arial', 'Sans-Serif';
+    color: white;
+    margin-bottom: 1px;
+    margin-top: 0;
 }
