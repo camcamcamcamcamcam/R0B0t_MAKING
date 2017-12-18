@@ -61,7 +61,8 @@ int rotate_to_closest_obstacle(int speed, int amplitudeAngle, int precisionAngle
 	}
 	printf("1st phase finished");
 	// pour que ça marche on a rajouter une precision d'angle
-	rotate_to_angle(speed,-amplitudeAngle+minAngle-precisionAngle);
+	rotate_to_angle(speed,-amplitudeAngle+minAngle+precisionAngle);
+	printf("minAngle = %d",minAngle);
 
 	return minDistance;
 
