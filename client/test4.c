@@ -33,14 +33,15 @@
 
 //////////////////////////////////////////////////
 #endif
-
+#define MAX_SPEED 1050
 
 int main(){
-	initMotorsWheels();
-	initMotorsServo();
-	go_to_distance_sweep(MAX_SPEED/6,300,35,40);
+	initMotorWheels();
+	initMotorServo();
+	go_to_distance_sweep(MAX_SPEED/6,300,50,40);
+	Sleep(2000);
 	dropObject();
 	Sleep(200);
-	go_to_distance_sweep(MAX_SPEED/6,300,35,40);
+	go_to_distance_sweep(MAX_SPEED/6,300,50,40);
 	return 0;
 }

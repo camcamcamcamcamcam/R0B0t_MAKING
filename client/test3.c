@@ -20,6 +20,7 @@
 #include "object_interaction.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
+
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 
@@ -36,8 +37,9 @@
 
 
 int main(){
-	initMotorsWheels();
-	initMotorsServo();
+	initMotorWheels();
+	initMotorServo();
+	servo_arm_up();
 	go_to_distance_no_sweep(MAX_SPEED/8,500,50);
 	if (isMovableObstacle()){
 		printf("IS MOVABLE OBJECT");
