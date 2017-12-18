@@ -55,11 +55,11 @@ int isMovableObstacle(){
 /*Fonction pour savoir si l'object devant est un obstacle mobile ou non
  A faire : enregistrer la position de l'objet si ce n'est pas un objet mobile*/
 	int a;
-	rotate_to_angle(MAX_SPEED/6,-10);
+	rotate_to_angle(MAX_SPEED/8,-15);
 	Sleep(1000);
 	a=red_obstacle();
 	Sleep(1000);
-	rotate_to_angle(MAX_SPEED/6,10);
+	rotate_to_angle(MAX_SPEED/8, 15);
 	Sleep(100);
 	return(a);
 }
