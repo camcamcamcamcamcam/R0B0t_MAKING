@@ -23,6 +23,7 @@
 #include "motors_servo.h"
 #include "sensor_sonar.h"
 #include "mvt_forward.h"
+#include "servo_sonar.h"
 
 #ifndef PI
 #define PI 3.14159265
