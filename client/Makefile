@@ -155,5 +155,17 @@ test_servo: motors_servo.o test_servo.o
 	gcc motors_servo.o test_servo.o -Wall -lm -lev3dev-c -o test_servo
 	./test_servo
 
+test3.o:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test3.c -o test3.o
+
+test3: color_sensor.o sensor_gyro.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test3.o
+	gcc color_sensor.o sensor_gyro.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test3.o -Wall -lm -lev3dev-c -o test3
+
+test4.o:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test4.c -o test4.o
+
+test4: color_sensor.o sensor_gyro.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o
+	gcc color_sensor.o sensor_gyro.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o -Wall -lm -lev3dev-c -o test4
+
 run:
 	./tester
