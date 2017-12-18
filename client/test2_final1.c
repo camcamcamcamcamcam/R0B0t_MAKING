@@ -10,21 +10,30 @@
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
 #include "robotclient.h"
+#define MAP_HEIGHT 80
+#define MAP_WIDTH 80
 
 void client_position(){
     while(1){
+        /*
         //we send a random map
         int i;
         int j;
         for (i=0; i<20; i++) {
-            for (j=o; j<20; j++) {
+            for (j=0; j<20; j++) {
                 sendMessage(MSG_MAPDATA, i, j, 0, 0, 0, 0);
                 Sleep(100);
             }
-            sendMessage(MSG_MAPDONE,0,0,0,0,0,0);
         }
+        sendMessage(MSG_MAPDONE,0,0,0,0,0,0);
+        */
         Sleep(2000);
-        sendMessage(MSG_POSITION, (int) X/50, (int) Y/50, 0, 0, 0, 0);
+        int x = (int) (X/50);
+        int y = (int) (Y/50);
+        //x and y must be between 0 and 80 (ie inside the map)
+        x = (x < (MAP_WIDTH-1)) ? ((x >= 0) ? x : 0) : (MAP_WIDTH-1);
+        y = (y < (MAP_HEIGHT-1)) ? ((y >= 0) ? y : 0 ) : (MAP_HEIGHT-1);
+        sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
 
     }
 }
@@ -33,6 +42,9 @@ char main (void) {
 /*
  * The robot go straight and stop when he detects a wall to close ( < 50 mm )
  */
+    //starting position in arena 1
+    X=40;
+    Y=10;
     initMotorServo();
     initSensorSonar();
     initMotorWheels();
