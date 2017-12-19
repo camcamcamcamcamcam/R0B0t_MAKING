@@ -28,7 +28,7 @@ void client_position(){
 
 char main (void) {
 /*
- * The robot go straight and stop when he detects a wall to close ( < 50 mm )
+ * The robot is doing a simple algorithm "snail".
  */
     //starting position in arena 1
     initMotorServo();
@@ -44,60 +44,61 @@ char main (void) {
     char a;
     pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
 
-    int speed = getTachoMaxSpeed()/5;
-    int angle = 90;
-    int distanceShort = 170;
-    int distanceLng = 170;
-    int securityDistance = 150;
-    int amplitudeSweep = 50;
+	int speed = getTachoMaxSpeed()/5;
+	int angle = 90;
+	int distanceShort = 170;
+	int distanceLng = 170;
+	int securityDistance = 150;
+	int amplitudeSweep = 50;
 
-    rotate_to_angle(speed, angle);
-
-    while(1){
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceShort, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, -angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, -angle);
-        }
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, -angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, -angle);
-        }
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, angle);
-        }
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceShort, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, angle);
-        }
-        distanceLng = distanceLng +170;
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, angle);
-        }
-        printf("X=%d\n",X);
-        printf("Y=%d\n",Y);
-        go_to_distance_sweep(speed, distanceLng, securityDistance, amplitudeSweep);
-        rotate_to_angle(speed, -angle);
-        while(getMinDistance(45,15)<securityDistance){
-            rotate_to_angle(speed, -angle);
-        }
-        distanceLng = distanceLng +170;
-    }
+	rotate_to_angle(speed, angle);
+	
+	while(1){
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceShort, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceShort, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
+		distanceLng = distanceLng +170;
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, angle);
+		}
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+		rotate_to_angle(speed, -angle);
+		while(getMinDistance(45,15)<securityDistance){
+			rotate_to_angle(speed, -angle);
+		}
+		distanceLng = distanceLng +170;
+	}
+	
     return 1;
 }

@@ -18,10 +18,16 @@
 #endif
 
 uint8_t sn_sonar;
+int bufferSonar[5]; // contains the ten last values of the sonar value.
+int indexSonar; // index of the next element to write in the buffer
 
 void initSensorSonar();
 /*need to be started at the beginning
  Allows to use the sonar sensor */
 int get_sonar_distance();
 /* return the distance found by the sensor in mm.
+*/
+int getMinBufferSonar();
+/*
+return the minimum value of the sonar sensor over the last measures done by the sonar.
 */
