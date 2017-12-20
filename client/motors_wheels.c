@@ -60,6 +60,7 @@ int get_left_motor_position(){
 
     int position;
     get_tacho_position(sn_wheels[1],&position);
+	//printf("position motor left : %d \n",position);
     return position;
 }
 
@@ -70,6 +71,7 @@ int get_right_motor_position(){
 
     int position;
     get_tacho_position(sn_wheels[0],&position);
+	//printf("position motor left : %d \n",position);
     return position;
 }
 
@@ -174,7 +176,7 @@ void goStraight(int speed, int distance){
 
 void slow_down(int speed){
 	multi_set_tacho_speed_sp(sn_wheels, speed);
-    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD); // Has to be replace !!
 
 }
 

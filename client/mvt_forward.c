@@ -56,6 +56,7 @@ void go_to_distance_no_sweep(int speed, int distance, int securityDistance){
 		//printf("Distance sonar : %d \n",distance_sonar);
 	}
 	stopMotors();
+	clearBuffer();
 }
 
 void go_to_distance_sweep(int speed, int distance, int securityDistance,int amplitudeSweep){
@@ -91,6 +92,7 @@ void go_to_distance_sweep(int speed, int distance, int securityDistance,int ampl
 		//printf("Distance sonar : %d \n",distance_sonar);
 	}
 	stopMotors();
+	clearBuffer();
 	distance_sonar = getDistance(0);
 }
 
@@ -115,10 +117,11 @@ void go_to_distance_sweep_regular_braking(int speed, int distance, int securityD
 	int i = -amplitudeSweep;
 	int order = 1;
 	distance_sonar = getDistance(0);
-	while(distance_sonar>securityDistance && robot_is_moving()){
-		if(getMinBufferSonar()<brakingDistance){
+	int minBuffer = getMinBufferSonar();
+	while(minBuffer>securityDistance && robot_is_moving()){
+		if(minBuffer<brakingDistance && minBuffer>securityDistance){
 			// linear braking from speed to speed/5. The speed begins to decrease when reaching 30cm distance from the obstacle.
-			newSpeed = speed - (((speedDivider-1)*speed/speedDivider)*(brakingDistance-getMinBufferSonar()))/(brakingDistance-securityDistance);
+			newSpeed = speed - (((speedDivider-1)*speed/speedDivider)*(brakingDistance-minBuffer))/(brakingDistance-securityDistance);
 			slow_down(newSpeed);
 		}
 		printf("X : %d \n",X);
@@ -134,7 +137,9 @@ void go_to_distance_sweep_regular_braking(int speed, int distance, int securityD
 		i = i + 15*order;
 		distance_sonar = getDistance(i);
 		//printf("Distance sonar : %d \n",distance_sonar);
+		minBuffer = getMinBufferSonar();
 	}
 	stopMotors();
+	clearBuffer();
 	distance_sonar = getDistance(0);
 }

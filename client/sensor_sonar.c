@@ -20,7 +20,8 @@
 #include "sensor_sonar.h"
 
 uint8_t sn_sonar;
-int bufferSonar[5]; // contains the ten last values of the sonar value.
+int bufferSonarSize = 10;
+int bufferSonar[10] = {1000,1000,1000,1000,1000,1000,1000,1000,1000,1000}; // contains the ten last values of the sonar value.
 int indexSonar; // index of the next element to write in the buffer
 
 
@@ -37,28 +38,29 @@ int get_sonar_distance(){
     get_sensor_value0(sn_sonar,&value);
 	fflush( stdout );
 	printf("Sonar sensor : %f\n",value);
-	if(value>=750){
-		bufferSonar[indexSonar] = 750;
-		indexSonar = (indexSonar+1)%5;
-		return 750;
-	}
-	else{
-		bufferSonar[indexSonar] = (int) value;
-		indexSonar = (indexSonar+1)%5;
-		return (int) value;
-	}
+	bufferSonar[indexSonar] = (int) value;
+	indexSonar = (indexSonar+1)%bufferSonarSize;
+	return (int) value;
 }
 
 int getMinBufferSonar(){
 	int i=1;
 	int minDistance=bufferSonar[0];
-	while(i<5){
+	while(i<bufferSonarSize){
 		if(bufferSonar[i]<minDistance){
 			minDistance = bufferSonar[i];
 		}
 		i = i+1;
 	}
 	return minDistance;
+}
+
+void clearBuffer(){
+	int i=1;
+	while(i<bufferSonarSize){
+		bufferSonar[i] = 1000;
+		i = i+1;
+	}
 }
 /*
 int main( void ){
