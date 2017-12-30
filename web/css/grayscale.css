@@ -30,6 +30,34 @@ p {
     line-height: 1.5;
 }
 
+.design1{
+	color:white;
+	background-color:black;
+}
+
+.design2{
+	background-color:white;
+	color:black;
+}
+
+.interest{
+	color: #FF3232;
+}
+
+.design1 .interest{
+	color: #FF3232;
+}
+
+.design2 .interest{
+	color: #FF3232;
+}
+
+.content-section {
+	padding-top: 50px;
+	padding-bottom:50px;
+	border-bottom:1px solid gray;
+}
+
 @media(min-width:767px) {
     p {
         margin: 0 0 35px;
@@ -39,7 +67,7 @@ p {
 }
 
 a {
-    color: #28c3ab;
+    color: #FF3232;
     -webkit-transition: all .2s ease-in-out;
     -moz-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
@@ -48,7 +76,7 @@ a {
 a:hover,
 a:focus {
     text-decoration: none;
-    color: #176e61;
+    color: #FF3232;
 }
 
 .light {
@@ -141,7 +169,7 @@ a:focus {
 }
 
 .brand-heading {
-    font-size: 40px;
+    font-size: 35px;
 }
 
 .intro-text {
@@ -155,7 +183,7 @@ a:focus {
     }
 
     .brand-heading {
-        font-size: 100px;
+        font-size: 80px;
     }
 
     .intro-text {
@@ -237,10 +265,6 @@ a:focus {
     }
 }
 
-.content-section {
-    padding-top: 100px;
-}
-
 .download-section {
     width: 100%;
     padding: 50px 0;
@@ -260,9 +284,6 @@ a:focus {
 }
 
 @media(min-width:767px) {
-    .content-section {
-        padding-top: 250px;
-    }
 
     .download-section {
         padding: 100px 0;
@@ -284,17 +305,17 @@ a:focus {
 }
 
 .btn-default {
-    border: 1px solid #28c3ab;
-    color: #28c3ab;
+    border: 1px solid #FF3232;
+    color: #FF3232;
     background-color: transparent;
 }
 
 .btn-default:hover,
 .btn-default:focus {
-    border: 1px solid #28c3ab;
+    border: 1px solid #FF3232;
     outline: 0;
     color: #000;
-    background-color: #28c3ab;
+    background-color: #FF3232;
 }
 
 .btn-huge {
