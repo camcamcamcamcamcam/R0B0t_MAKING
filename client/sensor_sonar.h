@@ -25,8 +25,3 @@ void initSensorSonar();
 int get_sonar_distance();
 /* return the distance found by the sensor in mm.
 */
-int getMinBufferSonar();
-/*
-return the minimum value of the sonar sensor over the last measures done by the sonar.
-*/
-void clearBuffer();

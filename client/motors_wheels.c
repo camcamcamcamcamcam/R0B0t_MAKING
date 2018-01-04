@@ -126,7 +126,7 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 	set_tacho_position(sn_wheels,position);
     set_tacho_speed_sp(sn_wheels, speed);
     set_tacho_position_sp(sn_wheels, angle);
-    set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+    //set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
@@ -150,7 +150,7 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 	set_tacho_position(sn_wheels[0],position_right);
     multi_set_tacho_speed_sp(sn_wheels, speed);
     multi_set_tacho_position_sp(sn_wheels, angle);
-	multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
+	//multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
@@ -177,13 +177,18 @@ void goStraight(int speed, int distance){
 void slow_down(int speed){
 	multi_set_tacho_speed_sp(sn_wheels, speed);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD); // Has to be replace !!
+}
 
+
+void slow_down_new(int speed,int distance){
+	multi_set_tacho_ramp_down_sp(sn_wheels, speed);
+	//multi_set_tacho_command_inx(sn_wheels, TACHO_RUN_DIRECT);
 }
 
 void goStraight_NonBlocking(int speed, int distance){
 	/*
 	The function enables to ask the robot to go straight for a certain distance (in mm) at a specified speed.
-	It is a non blocking function : the thread including this function won't continue before the robot has reached the desired position.
+	It is a non blocking function : the thread including this function will continue.
 	*/
     int angle = distance_to_angle(distance);
     //goStraightForAngle(sn_wheels[0], speed, angle);
@@ -270,6 +275,8 @@ void initPosition(){
 	//printf("Left start pos : %d\n", leftStartPosition);
 	//printf("Right start pos : %d\n", rightStartPosition);
 	rotationPolarity = 0;
+	X1 = X;
+	Y1 = Y;
 }
 
 void refreshPosition(){
