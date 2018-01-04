@@ -197,3 +197,7 @@ test4: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o 
 
 run:
 	./tester
+
+recalibration:
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c recalibration.c -o recal.o
+	gcc recal.o -Wall -lm -lev3dev-c -o recal
