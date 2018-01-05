@@ -22,7 +22,7 @@ char main (void) {
 	int distanceShort = 170;
 	int distanceLng = 800;
 	int securityDistance = 100;
-	int amplitudeSweep = 50;
+	int amplitudeSweep = 45;
 	
 	while(1){
 		printf("X=%d\n",X);

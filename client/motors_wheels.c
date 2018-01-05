@@ -53,6 +53,10 @@ int leftStartPosition = 0;
 int rightStartPosition = 0;
 int rotationPolarity = 0;
 
+// define some variables used to manage the evolution of absolute variables X, Y, TETA
+int leftFinalPosition = 0;
+int rightFinalPosition = 0;
+
 int get_left_motor_position(){
     /*
 	The function enables to get the position of the left motor
@@ -126,7 +130,6 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 	set_tacho_position(sn_wheels,position);
     set_tacho_speed_sp(sn_wheels, speed);
     set_tacho_position_sp(sn_wheels, angle);
-    //set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
 
@@ -136,13 +139,11 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 	It is a non self-blocking function.
 	*/
 
-	int position_left;
-    get_tacho_position(sn_wheels[1],&position_left);
-	int position_right;
-    get_tacho_position(sn_wheels[0],&position_right);
+	int position_left = get_left_motor_position();
+	int position_right = get_right_motor_position();
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
-        angle = -angle;
+		angle = -angle;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
     }
@@ -150,6 +151,8 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 	set_tacho_position(sn_wheels[0],position_right);
     multi_set_tacho_speed_sp(sn_wheels, speed);
     multi_set_tacho_position_sp(sn_wheels, angle);
+	leftFinalPosition = position_left + angle;
+	rightFinalPosition = position_right + angle;
 	//multi_set_tacho_stop_action_inx(sn_wheels, TACHO_STOP_ACTION__NONE_);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD);
 }
@@ -180,9 +183,29 @@ void slow_down(int speed){
 }
 
 
-void slow_down_new(int speed,int distance){
-	multi_set_tacho_ramp_down_sp(sn_wheels, speed);
-	//multi_set_tacho_command_inx(sn_wheels, TACHO_RUN_DIRECT);
+void manage_speed(int max_speed, int maxDistance,int securityDistance,int brakingDistance, int speedDivider){
+	int distance;
+	int angle;
+	int deltaAngle = fabs(leftFinalPosition-leftStartPosition)-fabs(get_left_motor_position()-leftStartPosition);
+	if(deltaAngle<0){
+		distance=0;
+		deltaAngle=0;
+	}
+	else{
+		distance = angle_to_distance(deltaAngle);
+	}
+	printf("Distance remaining : %d \n",distance);
+	printf("Maximum distance that the robot should do : %d \n",maxDistance);
+	if(distance>maxDistance){
+		distance = maxDistance;
+		deltaAngle = distance_to_angle(distance);
+		leftFinalPosition = get_left_motor_position() + deltaAngle;
+		rightFinalPosition = get_right_motor_position() + deltaAngle;
+	}
+	int newSpeed = max_speed - (((speedDivider-1)*max_speed/speedDivider)*(brakingDistance-distance))/(brakingDistance-securityDistance);
+	multi_set_tacho_speed_sp(sn_wheels, newSpeed);
+	multi_set_tacho_position_sp(sn_wheels, deltaAngle);
+    multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD); // Has to be replace !!
 }
 
 void goStraight_NonBlocking(int speed, int distance){
