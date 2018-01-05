@@ -91,88 +91,110 @@
         <div class="row">
           <div class="col-lg-12 mx-auto">
             <h2>Architecture</h2>
-            <p>Robbie is using 4 motors and 3/4 sensors to achieve the cartography of the space.
+            <p>Robbie is using <span class="interest">4 motors</span> and <span class="interest">3/4 sensors</span> to achieve the cartography of the space : <br>
+			a sonar, a color sensor and an accelerometer. (and a compass)<br><br>
+			Thanks to our own design, the robot is included in a circle, the diameter of which is the length between the wheels.<br>
+			Robbie stays in the circle when it turns, what is a guarantee of safety.
 			</p>
           </div>
         </div>
       </div>
 	</section>
 	
-	<section id="section1" class="content-section design2 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 mx-auto">
-            <h2>Video</h2>
-			<br>
-            <video src="movie/example.mp4" class="col-lg-8 col-lg-offset-2 text-center mx-auto" controls>
-			</video>
-          </div>
-        </div>
-      </div>
-	</section>
-	
-	<section id="section1bis" class="content-section design2 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 mx-auto">
-            <h2>Exemple de Paragraphe 2</h2>
-            <p>Je suis un exemple de paragraphe sans image associée.<br>
-			Je suis la suite avec ce point <span class="interest">particulièrement intéressant</span></p>
-          </div>
-        </div>
-      </div>
-	</section>
-	
-	<section id="section2" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section2" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto">
-            <h2>Exemple de Paragraphe 2</h2>
-            <p>Je suis un exemple de paragraphe avec une image associée à droite.</p>
+            <h2>Motors for wheels</h2>
+            <p>Two motors are used to steer the wheels. They can run independently, what enables Robbie to move forward, backward and to turn right or turn left. </p>
           </div>
 		  <div class="col-lg-4 mx-auto">
-           <img src="img/test.png" style="width:100%">
+           <img src="img/motors_wheels.png" style="width:100%">
           </div>
         </div>
       </div>
 	</section>
 	
-	<section id="section2bis" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
-      <div class="container">
-        <div class="row">
-		  <div class="col-lg-6 mx-auto">
-			<pre><code class="C#">
-int main( void )
-{
-	uint8_t sn_sonar;
-	char s[ 256 ];
-	float value;
-	
-	if ( ev3_init() == -1 ) return ( 1 );
-
-	while ( ev3_tacho_init() < 1 ) Sleep( 1000 );
-
-	printf( "*** ( EV3 ) Hello! ***\n" );
-}
-			</code></pre>
-          </div>
-          <div class="col-lg-6 mx-auto">
-            <h2>Exemple de Paragraphe 2</h2>
-            <p>Je suis un exemple de paragraphe avec du code C associé.</p>
-          </div>
-        </div>
-      </div>
-	</section>
-	
-	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
 		  <div class="col-lg-4 mx-auto">
-           <img src="img/test.png" style="width:100%">
+           <img src="img/head.png" style="width:100%">
           </div>
           <div class="col-lg-8 mx-auto">
-            <h2>Exemple de Paragraphe 3</h2>
-            <p>Je suis un exemple de paragraphe avec une image associée à droite.</p>
+            <h2>The head of Robbie</h2>
+            <p>A third servomotor manages an axis on which are fixed the sonar and the color sensor.<br>
+			These two sensors can move independently from the body of Robbie and hence scan the environment when the robot is moving.</p>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section4" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>The arm</h2>
+            <p>The fourth and last motor manages an arm that is located at the back of the robot. It has two possible positions : up an down. <br>When the arm is up, it is located in the circle defined by the body of Robbie. When the arm is down, it can catch balls and move them.</p>
+          </div>
+		  <div class="col-lg-4 mx-auto">
+           <img src="img/arm.png" style="width:100%">
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section5" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+		  <div class="col-lg-4 mx-auto">
+           <img src="img/sonar.png" style="width:100%">
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <h2>The sonar</h2>
+            <p>The sonar is located on the front of the robot and can move to both sides. It measures the distance between Robbie and any obstacle in front of it. This captor is mainly used for detection of obstacles and positioning.</p>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section6" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>The color sensor</h2>
+            <p>The color sensor is located just next to the sonar and can also move due to a servomotor. The sensor is used to analyze the color of obstacles and differentiate non-movable objects from movable objects (which are red).</p>
+          </div>
+		  <div class="col-lg-4 mx-auto">
+           <img src="img/color_sensor.png" style="width:100%">
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section7" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+		  <div class="col-lg-4 mx-auto">
+           <img src="img/accelerometer.png" style="width:100%">
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <h2>The accelerometer</h2>
+            <p>The accelerometer is fixed on the top of the robot, exactly between the wheels. It is used to correct the rotation of the robot for large angles.</p>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section6" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>The compass</h2>
+            <p> In coming </p>
+          </div>
+		  <div class="col-lg-4 mx-auto">
+           <img src="img/compass.png" style="width:100%">
           </div>
         </div>
       </div>
@@ -185,7 +207,7 @@ int main( void )
           <div class="col-lg-12 mx-auto">
             <h2>More details about our project</h2>
             <p>Visit our Github account</p>
-			<a href="https://github.com/BlackrockDigital/startbootstrap" class="btn btn-default btn-lg">
+			<a href="https://github.com/camcamcamcamcamcam/R0B0t_MAKING" class="btn btn-default btn-lg">
 			  <i class="fa fa-github fa-fw"></i>
 			  <span class="network-name">Github</span>
 			</a>
