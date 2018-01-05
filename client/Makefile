@@ -189,6 +189,10 @@ test_chenille.o: test_chenille.c
 test_chenille: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille.o -Wall -lm -lev3dev-c -o test_chenille
 	./test_chenille
+	
+test_chenille_thread: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille_thread.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille_thread.o -Wall -lm -lev3dev-c -o test_chenille_thread
+	./test_chenille_thread
 
 test3.o: test3.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test3.c -o test3.o

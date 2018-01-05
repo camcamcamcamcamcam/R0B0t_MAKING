@@ -78,6 +78,27 @@ int getDistance_weighted(int angle){
 	return distance;
 }
 
+int getDistance_current_weighted(){
+	// the function returns the projection of the distance detected over the current axis (angle = 0) of the robot
+	// if the distance detected will not disturb the robot (when it moves forward), the distance that is detected is 1000.
+	int distance = 0;
+	int horiz_distance;
+	
+	int angle = get_absolute_angle_servo();
+	distance = get_sonar_distance();
+	horiz_distance = distance*sin(angle*PI/180);
+	if(horiz_distance>DIAMETRE_ROBOT/2){
+		distance = 1000;
+	}
+	else{
+		distance = distance*cos(angle*PI/180);
+	}
+	bufferSonar[indexSonar] = (int) distance;
+	indexSonar = (indexSonar+1)%bufferSonarSize;
+	
+	return distance;
+}
+
 int getMinBufferSonar(){
 	int i=0;
 	int minDistance=bufferSonar[0];
