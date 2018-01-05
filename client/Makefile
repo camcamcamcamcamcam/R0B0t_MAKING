@@ -13,10 +13,22 @@ i2c:
 	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
 	./i2c
 
+sensor_compass.o: sensor_compass.c sensor_compass.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_compass.c -o sensor_compass.o
+
+sensor_compass:
+	gcc sensor_compass.o -Wall -lm -lev3dev-c -o sensor_compass
+
+test_compass.o: test_compass.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_compass.c -o test_compass.o
+
+test_compass: test_compass.o
+	gcc -pthread sensor_compass.o -Wall -lm -lev3dev-c -o test_compass
+
 sensor_gyro.o: sensor_gyro.c sensor_gyro.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_gyro.c -o sensor_gyro.o
 
-sensor_gyro:
+sensor_gyro: sensor_gyro.o
 	gcc sensor_gyro.o -Wall -lm -lev3dev-c -o sensor_gyro
 
 sensor_sonar.o: sensor_sonar.c sensor_sonar.h
@@ -108,7 +120,7 @@ test_mvt_forward.o: test_mvt_forward.c
 test_mvt_forward: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_mvt_forward.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_forward.o -Wall -lm -lev3dev-c -o test_mvt_forward
 	./test_mvt_forward
-	
+
 test_avancee_simple.o: test_avancee_simple.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_avancee_simple.c -o test_avancee_simple.o
 
@@ -150,14 +162,14 @@ test_final_2: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_
 
 test_final_5.o: test_final_5.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_5.c -o test_final_5.o
-	
+
 test_final_5: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_5.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_5.o -Wall -lm -lev3dev-c -o test_final_5
 	./test_final_5
-	
+
 test_algo_simple.o: test_algo_simple.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_algo_simple.c -o test_algo_simple.o
-	
+
 test_algo_simple: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_algo_simple.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_algo_simple.o -Wall -lm -lev3dev-c -o test_algo_simple
 	./test_algo_simple
