@@ -1,17 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "ev3.h"
+#include "ev3_port.h"
+#include "ev3_tacho.h"
+#include "ev3_servo.h"
+#include "ev3_sensor.h"
 #include "servo_sonar.h"
+#include "sensor_sonar.h"
+#include "motors_servo.h"
 #include "motors_wheels.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
 
-char recalibration(void){
-	int speed = getTachoMaxSpeed()/5;
-	int angle = 5;
+int recalibration(int speed){
+	int a = 5;
 	int dist_zero;
 	int dist_a;
 
 	dist_zero = getDistance(0);
 	dist_a = getDistance(-a);
-	absolute_servo_sonar(a);
+	getDistance(a);
 	
 	int teta;
 	teta = (dist_a * a)/(dist_a + dist_zero);
@@ -21,15 +29,16 @@ char recalibration(void){
 }
 
 //test
-char main(void){
+int main(void){
 	initMotorServo();
     initSensorSonar();
     initMotorWheels();
-	servo_arm_up();
+	
+	int speed = getTachoMaxSpeed()/5;
 	
 	go_to_distance_no_sweep(speed,500,100);
-	int correction = recalibration();
-	printf("Recalibration of %d ° \n",teta)
+	int teta = recalibration(speed);
+	printf("Recalibration of %d ° \n",teta);
 	return 1; 
 }
 

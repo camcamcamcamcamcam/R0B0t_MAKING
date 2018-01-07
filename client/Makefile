@@ -13,10 +13,22 @@ i2c:
 	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
 	./i2c
 
+	sensor_compass.o: sensor_compass.c sensor_compass.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_compass.c -o sensor_compass.o
+
+sensor_compass: sensor_compass.o
+	gcc sensor_compass.o -Wall -lm -lev3dev-c -o sensor_compass
+
+test_compass.o: test_compass.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_compass.c -o test_compass.o
+
+test_compass: sensor_compass.o test_compass.o
+	gcc -pthread sensor_compass.o test_compass.o -Wall -lm -lev3dev-c -o test_compass
+	
 sensor_gyro.o: sensor_gyro.c sensor_gyro.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_gyro.c -o sensor_gyro.o
 
-sensor_gyro:
+sensor_gyro: sensor_gyro.o
 	gcc sensor_gyro.o -Wall -lm -lev3dev-c -o sensor_gyro
 
 sensor_sonar.o: sensor_sonar.c sensor_sonar.h
@@ -195,9 +207,11 @@ test4.o: test4.c
 test4: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o
 	gcc color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o -Wall -lm -lev3dev-c -o test4
 
+recal.o: recalibration.c servo_sonar.c servo_sonar.h sensor_sonar.c sensor_sonar.h motors_servo.c motors_servo.h motors_wheels.c motors_wheels.h mvt_forward.c mvt_forward.h mvt_rotate.c mvt_rotate.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c recalibration.c -o recal.o
+
+recal: recal.o servo_sonar.o sensor_sonar.o  motors_servo.o motors_wheels.o mvt_forward.o mvt_rotate.o
+	gcc recal.o servo_sonar.o sensor_sonar.o motors_servo.o motors_wheels.o mvt_forward.o mvt_rotate.o -Wall -lm -lev3dev-c -o recal
+
 run:
 	./tester
-
-recalibration:
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c recalibration.c -o recal.o
-	gcc recal.o -Wall -lm -lev3dev-c -o recal
