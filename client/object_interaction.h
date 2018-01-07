@@ -19,6 +19,11 @@
 #include "motors_servo.h"
 #include "mvt_rotate.h"
 #include "mvt_forward.h"
+#include "robotclient.h"
+
+#ifndef PI
+#define PI 3.14159265
+#endif
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 

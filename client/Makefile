@@ -16,14 +16,14 @@ i2c:
 sensor_compass.o: sensor_compass.c sensor_compass.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_compass.c -o sensor_compass.o
 
-sensor_compass:
+sensor_compass: sensor_compass.o
 	gcc sensor_compass.o -Wall -lm -lev3dev-c -o sensor_compass
 
 test_compass.o: test_compass.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_compass.c -o test_compass.o
 
-test_compass: test_compass.o
-	gcc -pthread sensor_compass.o -Wall -lm -lev3dev-c -o test_compass
+test_compass: sensor_compass.o test_compass.o
+	gcc -pthread sensor_compass.o test_compass.o -Wall -lm -lev3dev-c -o test_compass
 
 sensor_gyro.o: sensor_gyro.c sensor_gyro.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_gyro.c -o sensor_gyro.o

@@ -29,6 +29,7 @@
 #endif
 
 uint8_t sn_compass;
+int init_compass;
 
 int getCompassAngle(){
         int val;
@@ -40,12 +41,12 @@ int getCompassAngle(){
 
 
 void initCompass(){
-        int test_init;
+
 	      ev3_sensor_init();
-        if ( ev3_search_sensor( HT_NXT_COMPASS_SENSOR, &sn_compass, 0 )) {
+        if ( ev3_search_sensor( HT_NXT_COMPASS, &sn_compass, 0 )) {
                 printf( "COMPASS sensor is found\n" );
-                get_sensor_value(0,sn_gyro,&test_init);
-                printf("COMPASS test_init %d \n",test_init);
+                get_sensor_value(0,sn_compass,&init_compass);
+                printf("COMPASS test_init %d \n",init_compass);
         } else {
                 printf( "COMPASS sensor is NOT found\n" );
         }

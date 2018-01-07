@@ -19,6 +19,11 @@
 #include "motors_wheels.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
+#include "robotclient.h"
+
+#ifndef PI
+#define PI 3.14159265
+#endif
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 
@@ -41,14 +46,23 @@ void dropObject(){
 /*Fonction pour relacher un objet
  A faire : enregistrer la position de l'objet lâché sur la carte.*/
 	servo_arm_up();
+	int x=(X-150*sin(TETA*PI/180))/50;
+	int y=(Y-150*cos(TETA*PI/180))/50;
+	//send("MSG_OBSTACLE",x,y,0,0,0,0); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	printf("dropObject sent MSG_OBSTACLE at x=%d y=%d",x,y);
 }
 
 void takeObject(){
 /*Fonction pour prendre un objet mobile
- *Makes a uturn take the object make a second uturn*/
- rotate_to_angle(MAX_SPEED/6,180);
- servo_arm_down();
- rotate_to_angle(MAX_SPEED/6,-180);
+ *Makes a uturn take the object make a second uturn
+ *Send a message to the sever*/
+	rotate_to_angle(MAX_SPEED/6,180);
+	servo_arm_down();
+	int y=(Y/50+200*cos(TETA*PI/180))/50;
+	int x=(X+200*sin(TETA*PI/180))/50;
+	//send("MSG_OBSTACLE",x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	printf("takeObjet sent MSG_OBSTACLE at x=%d y=%d",x,y);
+	rotate_to_angle(MAX_SPEED/6,-180);
 }
 
 int isMovableObstacle(){
@@ -56,10 +70,9 @@ int isMovableObstacle(){
  A faire : enregistrer la position de l'objet si ce n'est pas un objet mobile*/
 	int a;
 	rotate_to_angle(MAX_SPEED/8,-15);
-	Sleep(1000);
-	a=red_obstacle();
-	Sleep(1000);
-	rotate_to_angle(MAX_SPEED/8, 15);
 	Sleep(100);
+	a=red_obstacle();
+	Sleep(100);
+	rotate_to_angle(MAX_SPEED/8, 15);
 	return(a);
 }
