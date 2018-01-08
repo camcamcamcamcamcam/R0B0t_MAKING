@@ -194,6 +194,17 @@ test_servo.o: test_servo.c
 test_servo: motors_servo.o test_servo.o
 	gcc motors_servo.o test_servo.o -Wall -lm -lev3dev-c -o test_servo
 	./test_servo
+	
+test_chenille.o: test_chenille.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_chenille.c -o test_chenille.o
+	
+test_chenille: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille.o -Wall -lm -lev3dev-c -o test_chenille
+	./test_chenille
+	
+test_chenille_thread: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille_thread.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille_thread.o -Wall -lm -lev3dev-c -o test_chenille_thread
+	./test_chenille_thread
 
 test3.o: test3.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test3.c -o test3.o
@@ -206,6 +217,12 @@ test4.o: test4.c
 
 test4: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o
 	gcc color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o -Wall -lm -lev3dev-c -o test4
+
+map_construction.o: map_construction.c map_construction.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c map_construction.c -o map_construction.o
+
+map_construction: robotclient.o map_construction.o
+    gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
 
 run:
 	./tester

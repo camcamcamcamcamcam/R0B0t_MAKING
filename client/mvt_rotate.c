@@ -37,6 +37,7 @@
 void rotate_to_angle(int speed, int angle){
 
 	preciseRotation(speed, angle);
+	clearBuffer();
 
 }
 

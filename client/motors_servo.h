@@ -44,8 +44,13 @@ void servo_sonar(int angle);
 void absolute_servo_sonar(int angle);
 /* make the sonar turn from a certain angle. */
 
+int get_absolute_angle_servo();
+
 int servo_sonar_is_running();
 /* returns 1 if the servo corresponding to the sonar is running. 0 else. */
 
 int servo_arm_is_running();
 /* returns 1 if the servo corresponding to the arm is running. 0 else. */
+
+void thread_sweep();
+void end_thread_sweep();

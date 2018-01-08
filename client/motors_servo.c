@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <pthread.h>
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_tacho.h"
@@ -40,6 +41,8 @@
 uint8_t sn_servo[2];
 uint32_t n, ii;
 int polarity_servo;
+pthread_t tid_sweep;
+pthread_attr_t attr_sweep;
 
 void initMotorServo(){
 	/*
@@ -199,6 +202,32 @@ void absolute_servo_sonar(int angle){
 	motor_angle = angle *(1/R);
 	servo_sonar(motor_angle);
 	
+}
+
+int get_absolute_angle_servo(){
+	int angle;
+	get_tacho_position(sn_servo[1],&angle);
+	return (int) R*angle;
+}
+
+void continuous_sweep(){
+	int amplitudeAngle = 45;
+	while(1){
+		absolute_servo_sonar(-amplitudeAngle);
+		absolute_servo_sonar(amplitudeAngle);
+	}
+}
+
+void thread_sweep(){
+	
+	char a;
+    pthread_attr_init(&attr_sweep);
+    pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
+	
+}
+
+void end_thread_sweep(){
+	pthread_exit(&tid_sweep);
 }
 
 void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {

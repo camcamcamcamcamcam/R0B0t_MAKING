@@ -20,5 +20,17 @@
 int getDistance(int angle);
 /* get the distance found in the specified angle. */
 
+int getDistance_weighted(int angle);
+/* get the distance found in the specified angle. */
+
+int getDistance_current_weighted();
+/* get the current distance detected by the sonar considering the current angle of the servo. */
+
 int getMinDistance(int amplitudeAngle, int precisionAngle);
 /* get the min distance in the nearby. */
+
+int getMinBufferSonar();
+/*
+return the minimum value of the sonar sensor over the last measures done by the sonar.
+*/
+void clearBuffer();

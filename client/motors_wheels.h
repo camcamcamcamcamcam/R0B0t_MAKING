@@ -36,6 +36,7 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle);
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
 void slow_down(int speed);
+void manage_speed(int speed, int maxDistance,int securityDistance,int brakingDistance, int speedDivider);
 void stopMotors();
 /* stop the motors */
 int get_left_motor_position();
