@@ -36,7 +36,7 @@ int getCompassAngle(){
         if ( !get_sensor_value( 0, sn_compass, &val ) ) {
             val = 0;
         }
-        return (val);
+        return ((val-init_compass)%360);
 }
 
 

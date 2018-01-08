@@ -58,7 +58,7 @@ void takeObject(){
  *Send a message to the sever*/
 	rotate_to_angle(MAX_SPEED/6,180);
 	servo_arm_down();
-	int y=(Y/50+200*cos(TETA*PI/180))/50;
+	int y=(Y+200*cos(TETA*PI/180))/50;
 	int x=(X+200*sin(TETA*PI/180))/50;
 	//send("MSG_OBSTACLE",x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
 	printf("takeObjet sent MSG_OBSTACLE at x=%d y=%d",x,y);
