@@ -222,7 +222,7 @@ map_construction.o: map_construction.c map_construction.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c map_construction.c -o map_construction.o
 
 map_construction: robotclient.o map_construction.o
-    gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
+	gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
 
 run:
 	./tester

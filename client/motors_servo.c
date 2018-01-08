@@ -43,6 +43,7 @@ uint32_t n, ii;
 int polarity_servo;
 pthread_t tid_sweep;
 pthread_attr_t attr_sweep;
+int sweep_state;
 
 void initMotorServo(){
 	/*
@@ -99,7 +100,7 @@ void initMotorServo(){
 
 int angle_servo_arm(){
 	/*
-	Detect the asolute angle of the servo using the arm
+	Detect the absolute angle of the servo using the arm
 	Return an integer : the angle detected in degree.
 	*/
 	int angle;
@@ -109,7 +110,7 @@ int angle_servo_arm(){
 
 int angle_servo_sonar(){
 	/*
-	Detect the asolute angle of the servo using the sonar
+	Detect the absolute angle of the servo using the sonar
 	Return an integer : the angle detected in degree.
 	*/
 	int angle;
@@ -210,24 +211,40 @@ int get_absolute_angle_servo(){
 	return (int) R*angle;
 }
 
-void continuous_sweep(){
-	int amplitudeAngle = 45;
-	while(1){
-		absolute_servo_sonar(-amplitudeAngle);
-		absolute_servo_sonar(amplitudeAngle);
-	}
-}
-
-void thread_sweep(){
-	
+void thread_sweep(){	
 	char a;
+	sweep_state = 1;
     pthread_attr_init(&attr_sweep);
     pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
 	
 }
 
+void start_sweep(){
+	sweep_state = 1;
+}
+
+void continuous_sweep(){
+	int amplitudeAngle = 60;
+	while(1){
+		if(sweep_state==1){
+			absolute_servo_sonar(-amplitudeAngle);
+			absolute_servo_sonar(amplitudeAngle);
+		} else {
+			if(sweep_state == 2){
+				return;
+			}
+		}
+	}
+}
+
+void stop_sweep(){
+	sweep_state = 0;
+}
+
 void end_thread_sweep(){
+	sweep_state = 2;
 	pthread_exit(&tid_sweep);
+	printf("Thread exit\n");
 }
 
 void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {

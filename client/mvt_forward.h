@@ -22,3 +22,9 @@
 void go_to_distance_no_sweep(int speed, int distance, int securityDistance);
 
 void go_to_distance_sweep(int speed, int distance, int securityDistance,int amplitudeSweep);
+
+void go_to_distance_sweep_regular_braking(int speed, int distance, int securityDistance,int amplitudeSweep);
+
+void go_to_distance_sweep_regular_braking_new(int speed, int distance, int securityDistance,int amplitudeSweep);
+
+void go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int securityDistance,int amplitudeSweep);
