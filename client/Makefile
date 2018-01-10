@@ -126,7 +126,6 @@ test_avancee_simple.o: test_avancee_simple.c
 
 test_avancee_simple: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_avancee_simple.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_avancee_simple.o -Wall -lm -lev3dev-c -o test_avancee_simple
-	./test_avancee_simple
 
 mvt_rotate.o: mvt_rotate.c mvt_rotate.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c mvt_rotate.c -o mvt_rotate.o

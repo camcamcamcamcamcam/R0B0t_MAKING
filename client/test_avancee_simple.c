@@ -8,7 +8,7 @@
 #include "servo_sonar.h" */
 
 
-char main (void) {
+int main (void) {
 /*
  * The robot is doing a simple algorithm "snail".
  */
@@ -23,8 +23,16 @@ char main (void) {
 	int angle = 90;
 	int distanceLng = 100000;
 	int securityDistance = 100;
-	int amplitudeSweep = 60;
+	int amplitudeSweep = 45;
 	
+	absolute_servo_sonar(amplitudeSweep);
+	sleep(10);
+	absolute_servo_sonar(-amplitudeSweep);
+	sleep(10);
+	absolute_servo_sonar(amplitudeSweep);
+	sleep(10);
+	absolute_servo_sonar(-amplitudeSweep);
+
 	//go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
 	go_to_distance_sweep_regular_braking_new_v2(speed, distanceLng, securityDistance, amplitudeSweep);
     return 1;

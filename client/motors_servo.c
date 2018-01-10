@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
@@ -189,6 +189,7 @@ void servo_sonar(int angle){
 	while(servo_sonar_is_running() && timer++ < 50){ // waiting until the speed of the motor has reached 0 or 500 ms.
 		Sleep(10);
 	}
+	//printf("Rotation finished\n");
 	
 }
 
@@ -224,9 +225,10 @@ void start_sweep(){
 }
 
 void continuous_sweep(){
-	int amplitudeAngle = 60;
+	int amplitudeAngle = 45;
 	while(1){
 		if(sweep_state==1){
+			printf("*****Beginning of the sweep*****\n");
 			absolute_servo_sonar(-amplitudeAngle);
 			absolute_servo_sonar(amplitudeAngle);
 		} else {
