@@ -20,6 +20,7 @@
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
 #include "robotclient.h"
+#include "map_construction.h"
 
 #ifndef PI
 #define PI 3.14159265
@@ -75,4 +76,85 @@ int isMovableObstacle(){
 	Sleep(100);
 	rotate_to_angle(MAX_SPEED/8, 15);
 	return(a);
+}
+
+int direction(){
+	return (floor(TETA+45)/90)%4);
+}
+int checkForward(){
+	int gauche=0;
+	int face=0;
+	int droite=0;
+	int x;
+	int y;
+	int delta_x;
+	int delta_y;
+	char type = -1;
+	//stop_sweep(); //sweep_thread
+	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8, 50, 40, 30);
+	sleep(50);
+	int dir = direction();
+	switch(dir)
+  {
+   case 0: delta_x=1;
+	 	break;
+   case 1: delta_y=-1;
+	 	break;
+   case 2: delta_x=-1;
+	 	break;
+   case 3: delta_y=1;
+   default: ;
+  }
+	face = get_sonar_distance();
+	if (face<100){
+		if(type<0){
+			if (isMovableObstacle){
+				type = 100;
+			}
+			else{
+				type = 1;
+			}
+			setMapData(x,y,type);
+		}
+	}
+	else{
+			setMapData(x,y,0);
+	}
+	absolute_servo_sonar(-25);
+	gauche = get_sonar_distance();
+	if (gauche<100){
+		if(type<0){
+			if (isMovableObstacle){
+				type = 100;
+			}
+			else{
+				type = 1;
+			}
+			setMapData(x,y,type);
+		}
+	}
+	else{
+			setMapData(x-x_delta,y-y_delta,0);
+	}
+	absolute_servo_sonar(50);
+	droite = get_sonar_distance();
+	if (droite<100){
+		if(type<0){
+			if (isMovableObstacle){
+				type = 100;
+			}
+			else{
+				type = 1;
+			}
+			setMapData(x,y,type);
+		}
+	}
+	else{
+			setMapData(x+x_delta,y+y_delta,0);
+	}
+	absolute_servo_sonar(-25);
+	go_to_angle(-180);
+	int move_x = (X/50)%3;
+	int move_y = (Y/50)%3;
+	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8,max(move_x,move_y)*10,40,30);
 }

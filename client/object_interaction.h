@@ -20,6 +20,7 @@
 #include "mvt_rotate.h"
 #include "mvt_forward.h"
 #include "robotclient.h"
+#include "map_construction.h"
 
 #ifndef PI
 #define PI 3.14159265
