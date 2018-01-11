@@ -5,13 +5,7 @@ import matplotlib.cm as cm
 import random
 import os
 
-# MAP CONSTRUCTION : RANDOM AND RECURSIVE APPROACH #
-
 def recursive(width,height):
-    """
-    From one pixel representing a wall and situated in (height,width) coordinates, build recursively walls or obstacles situated around.
-    A probability p2 is used to define the expansion probability from one obstacle's pixel.
-    """
     if Map[height][width]==0:
         return 0
     else:
@@ -33,11 +27,39 @@ def recursive(width,height):
                 return recursive(width+1,height)
         return 0
 
+def show_table_1(i):
+    data = np.array(255-Map*255)
+    img = Image.fromarray(data)
+    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
+    #plt.show()
+    plt.imsave("test"+str(i)+"/map.png",img)
+    plt.close()
+
+def show_table_2(name,i):
+    data = np.array(Map2)
+    img = Image.fromarray(data)
+    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
+    #plt.show()
+    plt.imsave("test"+str(i)+"/map_"+str(name)+".png",img)
+    plt.close()
+
+def show_table_final(name,i):
+    Mapfinal = Map2
+    for k in range(h):
+        for j in range(w):
+            if Map[k][j]==1:
+                Mapfinal[k][j]=128     
+    data = np.array(Mapfinal)
+    img = Image.fromarray(data)
+    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
+    plt.show()
+    #plt.imsave("test"+str(i)+"/final_map_"+str(name)+".png",img)
+    plt.close()
+
+def rectangle(w1,h1,w2,h2):
+    Map[h1:h2,w1:w2] = 1
+
 def build_map_highly_random():
-    """
-    Building a map with height h (global variable) and width w.
-    It uses the recursive process implemented in recursive function.
-    """
     # Editing the border
     Map[:,0] = 1
     Map[-1,:] = 1
@@ -48,28 +70,26 @@ def build_map_highly_random():
         for j in range(1,w-1):
             Map[i][j] = np.random.binomial(1,p1)
 
-    # Build group of obstacles, wall around the filled pixels.
     for i in range(h):
         for j in range(1,w):
             if Map[i][j] ==1:
                 recursive(j,i)
 
-def rectangle(w1,h1,w2,h2):
-    """
-    Colorate the rectangle from (h1,w1) to (h2,w2) as a wall.
-    """
-    Map[h1:h2,w1:w2] = 1
+def build_map_blocs():
+    # Editing the border
+    Map[:,0] = 1
+    Map[-1,:] = 1
+    Map[:,-1] = 1
 
-#################################################
-    
-# MAP CONSTRUCTION : RANDOM BLOCS CREATION #
+    # Choosing some filled pixel randomly with a probability p1
+    for i in range(9,h-5):
+        for j in range(1,w-5):
+            if Map[i][j] !=1:
+                Map[i][j] = np.random.binomial(1,p1bis)
+                if Map[i][j] ==1:
+                    rectangle(j,i,j+random.randint(1,10),i+random.randint(1,10))
 
 def build_map_blocs_wall():
-    """
-    Building a whole map with:
-    - probability p1 to get the place of obstacles
-    - random size of rectangular obstacle
-    """
     # Editing the border
     Map[:,0] = 1
     Map[-1,:] = 1
@@ -83,72 +103,18 @@ def build_map_blocs_wall():
                 if Map[i][j] ==1:
                     rectangle(j,i,j+random.randint(1,10),i+random.randint(1,10))
 
-#################################################
-    
-# FUNCTION TO SHOW AND SAVE THE MAPS #
-
-def show_table_1(i):
-    """
-    The function is used to show the real map.
-    The input i is just here to select the destination folder.
-    """
-    data = np.array(255-Map*255)
-    img = Image.fromarray(data)
-    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
-    #plt.show()
-    plt.imsave("test"+str(i)+"/map.png",img)
-    plt.close()
-
-def show_table_2(name,i):
-    """
-    The function is used to show the map representing the current knowledge of the robot.
-    The input i is just here to select the destination folder.
-    """
-    data = np.array(Map2)
-    img = Image.fromarray(data)
-    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
-    #plt.show()
-    plt.imsave("test"+str(i)+"/map_"+str(name)+".png",img)
-    plt.close()
-
-def show_table_final(name,i):
-    """
-    The function is used to show the map representing the current knowledge of the robot + the theoretical place of the obstacles and the walls.
-    The input i is just here to select the destination folder.
-    """
-    Mapfinal = Map2
-    for k in range(h):
-        for j in range(w):
-            if Map[k][j]==1:
-                Mapfinal[k][j]=128     
-    data = np.array(Mapfinal)
-    img = Image.fromarray(data)
-    plt.imshow(img, cmap=cm.gray, vmin=0, vmax=255)
-    plt.show()
-    plt.imsave("test"+str(i)+"/final_map_"+str(name)+".png",img)
-    plt.close()
-
 def colour_start_space():
-    """
-    The function is used to colour the start space in the map known by the robot
-    """
     global globx
     global globy
-    Map2[globy-1:globy+2,globx-1:globx+2] = 255
+    Map2[globy-2:globy+2,globx-2:globx+2] = 255
 
 def null(a):
-    """
-    return 1 if a=0 and 0 else
-    """
     if a==0:
         return 1
     else:
         return 0
 
 def can_move_forward():
-    """
-    Discover teh cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
-    """
     global globx
     global globX
     global globy
@@ -159,39 +125,47 @@ def can_move_forward():
     global cost
     global Map2
     is_possible=True
-
-    # Check if the robot won't go outside the arena
-    if (directionY==1 and globy==h-1) or (directionY==-1 and globy==1) or (directionX==1 and globx==w-1) or (directionX==-1 and globx==1) :
+    #print("Assess")
+    #print("("+str(globy+2*directionY)+","+str(globx+2*directionX)+") : "+str(Map2[globy+2*directionY,globx+2*directionX]))
+    #print("("+str(globy+2*directionY+null(directionY))+","+str(globx+2*directionX+null(directionX))+") : "+str(Map2[globy+2*directionY+null(directionY),globx+2*directionX+null(directionX)]))
+    #print("("+str(globy+2*directionY-null(directionY))+","+str(globx+2*directionX-null(directionX))+") : "+str(Map2[globy+2*directionY-null(directionY),globx+2*directionX-null(directionX)]))
+    if (directionY==1 and globy==h-2) or (directionY==-1 and globy==1) or (directionX==1 and globx==w-2) or (directionX==-1 and globx==1) :
         is_possible = False
-
-    # The 3 following statements enable to test the 3 cells situated in front of the robot
-    if Map[globy+2*directionY-null(directionY),globx+2*directionX-null(directionX)]==1:
+    indexX = globx+2*directionX-2*null(directionX)*directionY
+    indexY = globy+2*directionY+2*null(directionY)*directionX
+    if Map[indexY,indexX]==1:
         is_possible = False 
-        Map2[globy+2*directionY-null(directionY),globx+2*directionX-null(directionX)]=128
+        Map2[indexY,indexX]=128
     else:
-        Map2[globy+2*directionY-null(directionY),globx+2*directionX-null(directionX)]=255
+        Map2[indexY,indexX]=255
 
-    if Map[globy+2*directionY,globx+2*directionX]==1:
-        is_possible = False
-        Map2[globy+2*directionY,globx+2*directionX]=128
+    indexX = globx+2*directionX-null(directionX)*directionY
+    indexY = globy+2*directionY+null(directionY)*directionX
+    if Map[indexY,indexX]==1:
+        is_possible = False 
+        Map2[indexY,indexX]=128
     else:
-        Map2[globy+2*directionY,globx+2*directionX]=255
+        Map2[indexY,indexX]=255
 
-    if Map[globy+2*directionY+null(directionY),globx+2*directionX+null(directionX)]==1:
-        is_possible = False
-        Map2[globy+2*directionY+null(directionY),globx+2*directionX+null(directionX)]=128
+    indexX = globx+2*directionX
+    indexY = globy+2*directionY
+    if Map[indexY,indexX]==1:
+        is_possible = False 
+        Map2[indexY,indexX]=128
     else:
-        Map2[globy+2*directionY+null(directionY),globx+2*directionX+null(directionX)]=255
+        Map2[indexY,indexX]=255
 
-    # assess the cost represented by the use of the function
+    indexX = globx+2*directionX+null(directionX)*directionY
+    indexY = globy+2*directionY-null(directionY)*directionX
+    if Map[indexY,indexX]==1:
+        is_possible = False 
+        Map2[indexY,indexX]=128
+    else:
+        Map2[indexY,indexX]=255
     cost = cost+2
-    
     return is_possible
 
 def disclosed(angle):
-    """
-    check if the cells linked to the direction corresponding to the angle have already been disclosed
-    """
     global globx
     global globX
     global globy
@@ -210,14 +184,22 @@ def disclosed(angle):
     else:
         dirX =-1
         dirY=0
-        
-    if Map2[globy+2*dirY,globx+2*dirX]==0 or Map2[globy+2*dirY+null(dirY),globx+2*dirX+null(dirX)]==0 or Map2[globy+2*dirY-null(dirY),globx+2*dirX-null(dirX)]==0:
+    #print("Test Disclosed")
+    #print("("+str(globy+2*dirY)+","+str(globx+2*dirX)+") : "+str(Map2[globy+2*dirY,globx+2*dirX]))
+    #print("("+str(globy+2*dirY+null(dirY))+","+str(globx+2*dirX+null(dirX))+") : "+str(Map2[globy+2*dirY+null(dirY),globx+2*dirX+null(dirX)]))
+    #print("("+str(globy+2*dirY-null(dirY))+","+str(globx+2*dirX-null(dirX))+") : "+str(Map2[globy+2*dirY-null(dirY),globx+2*dirX-null(dirX)]))
+    #print("I'm in ("+str(globy)+","+str(globx)+")")
+    #print("Look angle : "+str(angle))
+    #print("read("+str(globy+2*dirY)+","+str(globx+2*dirX)+")")
+    #print("read("+str(globy+2*dirY+2*null(dirY)*dirX)+","+str(globx+2*dirX-2*null(dirX)*dirY)+")")
+    #print("read("+str(globy+2*dirY+null(dirY)*dirX)+","+str(globx+2*dirX-null(dirX)*dirY)+")")
+    #print("read("+str(globy+2*dirY-null(dirY)*dirX)+","+str(globx+2*dirX+null(dirX)*dirY)+")")
+    if Map2[globy+2*dirY,globx+2*dirX]==0 or Map2[globy+2*dirY+2*null(dirY)*dirX,globx+2*dirX-2*null(dirX)*dirY]==0 or Map2[globy+2*dirY+null(dirY)*dirX,globx+2*dirX-null(dirX)*dirY]==0 or Map2[globy+2*dirY-null(dirY)*dirX,globx+2*dirX+null(dirX)*dirY]==0:
         return False
     else:
         return True
 
 def move_forward():
-    #print("move forward")
     global globx
     global globX
     global globy
@@ -237,7 +219,6 @@ def move_forward():
         return False
 
 def move_forward_until(max_pos):
-    #print("move forward until "+str(max_pos))
     global globx
     global globX
     global globy
@@ -257,11 +238,42 @@ def move_forward_until(max_pos):
     return i
 
 def rotate(angle):
-    #print("rotation "+str(angle))
+    global globx
+    global globX
+    global globy
+    global globY
     global TETA
     global directionX
     global directionY
     global cost
+    angle=angle%360
+    if angle==90:
+        globX=globX-5*directionX
+        globY=globY-5*directionY
+    elif angle==180:
+        if directionY==1:
+            globX=globX-5
+            globY=globY-5
+        elif directionY==-1:
+            globX=globX+5
+            globY=globY+5
+        elif directionX==1:
+            globX=globX-5
+            globY=globY+5
+        else:
+            globX=globX+5
+            globY=globY-5
+    elif angle==270:
+        if directionY==1:
+            globX=globX-5
+        elif directionY==-1:
+            globX=globX+5
+        elif directionX==1:
+            globY=globY+5
+        else:
+            globY=globY-5
+    globx=int(globX/5)
+    globy=int(globY/5)
     TETA=(TETA+angle)%360
     if TETA==0:
         directionX = 0
@@ -310,13 +322,13 @@ def algo_chenille(i):
         while not terminated:
             move_forward_until(max([h,w]))
             rotate(90)
-            nb = move_forward_until(3)
+            nb = move_forward_until(4)
             if nb == 0:
                 arg = arg+1
             rotate(90)
             move_forward_until(max([h,w]))
             rotate(-90)
-            nb = move_forward_until(3)
+            nb = move_forward_until(4)
             if nb == 0:
                 arg = arg+1
             rotate(-90)
@@ -338,7 +350,7 @@ def algo_escargot(i):
     rotate(-90)
     while cost<threshold:
         terminated = False
-        distanceShort=3
+        distanceShort=4
         while not terminated and cost<threshold:
             arg=0
             boolean = move_forward()
@@ -355,7 +367,7 @@ def algo_escargot(i):
             if not boolean:
                 arg=arg+1
             rotate(-90)
-            distanceShort=distanceShort+3
+            distanceShort=distanceShort+4
             move_forward_until(distanceShort)
             rotate(-90)
             move_forward_until(distanceShort*2)
@@ -365,7 +377,7 @@ def algo_escargot(i):
             if arg>=1:
                 terminated = True
             arg = 0
-            distanceShort=distanceShort+3
+            distanceShort=distanceShort+4
         rotate(-90)
         chenilleNb = chenilleNb+1
         costList.append(cost)
@@ -533,7 +545,6 @@ def nearest_undisclosed_free(angle):
     global globy
     global globY
     global Map2
-    angle=angle%360
     if angle==0:
         dirX = 0
         dirY = 1
@@ -554,17 +565,30 @@ def nearest_undisclosed_free(angle):
     case1=128
     case2=128
     case3=128
-    if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
+    case4=128
+    """
+    indexX = globx+2*directionX-2*null(directionX)*directionY
+    indexY = globy+2*directionY+2*null(directionY)*directionX
+    indexX = globx+2*directionX-null(directionX)*directionY
+    indexY = globy+2*directionY+null(directionY)*directionX
+    indexX = globx+2*directionX
+    indexY = globy+2*directionY
+    indexX = globx+2*directionX+null(directionX)*directionY
+    indexY = globy+2*directionY-null(directionY)*directionX
+    """
+    if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-2*null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-2*null(dirX)>0:
         case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
-        case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
-        case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
-    while case1!=128 and case2!=128 and case3!=128 and globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
-        if case1!=0 and case2!=0 and case3!=0:
+        case2 = Map2[globy+(2+i)*dirY-null(dirY)*dirX,globx+(2+i)*dirX+null(dirX)*dirY]
+        case3 = Map2[globy+(2+i)*dirY+null(dirY)*dirX,globx+(2+i)*dirX-null(dirX)*dirY]
+        case4 = Map2[globy+(2+i)*dirY+2*null(dirY)*dirX,globx+(2+i)*dirX-2*null(dirX)*dirY]
+    while case1!=128 and case2!=128 and case3!=128 and case4!=128 and globy+(2+i)*dirY<h and globy+(2+i)*dirY>0 and globx+(2+i)*dirX<w and globx+(2+i)*dirX>0:
+        if case1!=0 and case2!=0 and case3!=0 and case4!=0:
             i=i+1
-            if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
+            if globy+(2+i)*dirY<h and globy+(2+i)*dirY>0 and globx+(2+i)*dirX<w and globx+(2+i)*dirX>0:
                 case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
-                case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
-                case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
+                case2 = Map2[globy+(2+i)*dirY-null(dirY)*dirX,globx+(2+i)*dirX+null(dirX)*dirY]
+                case3 = Map2[globy+(2+i)*dirY+null(dirY)*dirX,globx+(2+i)*dirX-null(dirX)*dirY]
+                case4 = Map2[globy+(2+i)*dirY+2*null(dirY)*dirX,globx+(2+i)*dirX-2*null(dirX)*dirY]
         else:
             return i+1
     return 1000
@@ -597,47 +621,41 @@ def algo_recursive_b(i):
     while cost<threshold:
         #print("("+str(globx)+","+str(globy)+","+str(TETA)+")")
         #print("(Ici)")
+        #print("check 0")
         if not disclosed(TETA+0):
-            #print("not discovered in front")
             move_forward()
             #print("this")
         else:
-            #d=input()
+            """
+            TO CORRECT
+            """
+            #print("check "+str(TETA+90)+" or "+str(TETA-90))
             if not disclosed(TETA+90):
-                #print("not discovered on the left")
                 rotate(90)
                 move_forward()
             elif not disclosed(TETA-90):
-                #print("not discovered on the right")
                 rotate(-90)
                 move_forward()
             else:
+                #print("check for nearest undisclosed point")
                 indexAngle,minimum = nearest_undisclosed_point()
                 #print("in this case")
                 #print("indexAngle : "+str(indexAngle))
                 #print("minimum : "+str(minimum))
                 if minimum==1000:
-                    #print("not find optimal solution")
                     #print("nothing possible")
                     if can_move_forward():
                         move_forward()
                     else:
-                        if np.random.binomial(1,0.5)==1:
-                            rotate(90)
-                        else:
-                            rotate(-90)
+                        rotate(90)
                 else:
-                    #print("find optimal solution")
                     #print("i can do stg")
                     rotate(indexAngle)
                     move_forward_until(minimum)
         i=i+1
-        #if i%10==0:
-        #    value = Map2[globy,globx]
-        #    Map2[globy,globx]=200
-        #    show_table_final("recursiveB",i)
-        #    Map2[globy,globx]=value
-        if i%100==0:
+        if i%10==0:
+            show_table_final("recursiveB",i)
+        if i%1000==0:
             costList.append(cost)
             undiscoveredList.append(count_undiscovered(Map2))
     costList.append(cost)
@@ -646,7 +664,7 @@ def algo_recursive_b(i):
 H = 400 # height in cm
 W = 200 # width in cm
 p1 = 0.01
-p1bis = 0.01
+p1bis = 0.005
 p2 = 0.3
 
 cost = 0
@@ -683,7 +701,7 @@ for i in range(20):
     if not os.path.exists("test"+str(i)):
         os.makedirs("test"+str(i))
     show_table_1(i)
-
+    
     # Chenille
     print("Algo chenille")
     colour_start_space()
@@ -746,9 +764,10 @@ for i in range(20):
     undiscovered = count_undiscovered(Map2)
     print("Not discovered : "+str(undiscovered))
     
+
     cost=0
     globX=40
-    globY=5
+    globY=10
     globx=int(globX/5)
     globy=int(globY/5)
     TETA = 0
@@ -758,7 +777,7 @@ for i in range(20):
     undiscoveredList=[1]
     Map2 = np.array([[0 for i in range(w)] for j in range(h)])  # code : 0 = not known ; 255 = free ; 128 = wall
     colour_start_space()
-    
+
     # Recursive B
     print("Algo recursive B")
     colour_start_space()

@@ -85,6 +85,33 @@ def build_map_blocs_wall():
 
 #################################################
     
+# FUNCTION TO DO STATISTICS ABOUT EFFICIENCY OF ALGOS #
+
+def count_undiscovered(matrix):
+    """count undiscovered pixels in the map"""
+    count = 0
+    for i in range(h):
+        for j in range(w):
+            if matrix[i][j]==0:
+                count= count+1
+    return count/(h*w)
+
+def plot_undiscovered(name,i):
+    """Plot undiscovered pixels rate with cost in axis-x"""
+    global costList
+    global undiscoveredList
+    #print(costList)
+    #print(undiscoveredList)
+    plt.title('Not discovered = f(Cost)')
+    plt.xlabel('cost')
+    plt.ylabel('% not discovered')
+    plt.plot(costList,undiscoveredList)
+    #plt.show()
+    plt.savefig("test"+str(i)+"/plot_"+str(name)+".png")
+    plt.close()
+
+#################################################
+    
 # FUNCTION TO SHOW AND SAVE THE MAPS #
 
 def show_table_1(i):
@@ -128,6 +155,10 @@ def show_table_final(name,i):
     plt.imsave("test"+str(i)+"/final_map_"+str(name)+".png",img)
     plt.close()
 
+#################################################
+    
+# SOME USEFUL FUNCTIONS #
+
 def colour_start_space():
     """
     The function is used to colour the start space in the map known by the robot
@@ -144,6 +175,10 @@ def null(a):
         return 1
     else:
         return 0
+
+#################################################
+    
+# BASICS MOVING FUNCTIONS #
 
 def can_move_forward():
     """
@@ -217,7 +252,10 @@ def disclosed(angle):
         return True
 
 def move_forward():
-    #print("move forward")
+    """
+    The function enables to move the robot 5cm forward if it is possible.
+    It returns True if the movement has been possible.
+    """
     global globx
     global globX
     global globy
@@ -237,7 +275,10 @@ def move_forward():
         return False
 
 def move_forward_until(max_pos):
-    #print("move forward until "+str(max_pos))
+    """
+    The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
+    It returns the number of cells the robot has been able to do.
+    """
     global globx
     global globX
     global globy
@@ -257,7 +298,9 @@ def move_forward_until(max_pos):
     return i
 
 def rotate(angle):
-    #print("rotation "+str(angle))
+    """
+    The function enables to rotate the robot of a certain angle.
+    """
     global TETA
     global directionX
     global directionY
@@ -277,26 +320,80 @@ def rotate(angle):
         directionY=0
     cost = cost+1
 
-def count_undiscovered(matrix):
-    count = 0
-    for i in range(h):
-        for j in range(w):
-            if matrix[i][j]==0:
-                count= count+1
-    return count/(h*w)
+#################################################
+    
+# ADVANCED MOVING FUNCTIONS #
 
-def plot_undiscovered(name,i):
-    global costList
-    global undiscoveredList
-    #print(costList)
-    #print(undiscoveredList)
-    plt.title('Not discovered = f(Cost)')
-    plt.xlabel('cost')
-    plt.ylabel('% not discovered')
-    plt.plot(costList,undiscoveredList)
-    #plt.show()
-    plt.savefig("test"+str(i)+"/plot_"+str(name)+".png")
-    plt.close()
+def nearest_undisclosed_free(angle):
+    """
+    The function returns the biggest number of 5cm-cell with the angle "angle" that the robot can do.
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global Map2
+    angle=angle%360
+    if angle==0:
+        dirX = 0
+        dirY = 1
+    elif angle==90:
+        dirX  = 1
+        dirY = 0
+    elif angle==180:
+        dirX =0
+        dirY=-1
+    else:
+        dirX =-1
+        dirY=0
+    #print("Test Disclosed")
+    #print("("+str(globy+2*dirY)+","+str(globx+2*dirX)+") : "+str(Map2[globy+2*dirY,globx+2*dirX]))
+    #print("("+str(globy+2*dirY+null(dirY))+","+str(globx+2*dirX+null(dirX))+") : "+str(Map2[globy+2*dirY+null(dirY),globx+2*dirX+null(dirX)]))
+    #print("("+str(globy+2*dirY-null(dirY))+","+str(globx+2*dirX-null(dirX))+") : "+str(Map2[globy+2*dirY-null(dirY),globx+2*dirX-null(dirX)]))
+    i=0
+    case1=128
+    case2=128
+    case3=128
+    
+    # we check that the cells assessed are inisde the arena
+    if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
+        case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
+        case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
+        case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
+
+    # we loop until a wall has been found and an undisclosed place has not been found
+    while case1!=128 and case2!=128 and case3!=128 and globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
+        if case1!=0 and case2!=0 and case3!=0:
+            i=i+1
+            if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
+                case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
+                case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
+                case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
+        else:
+            return i+1
+    return 1000
+
+def nearest_undisclosed_point():
+    """return the angle the robot should take to go to the nearest undisclosed point in one of the four direction without obstacle between, 1000 if not exists"""
+    global TETA
+    global globx
+    global globX
+    global globy
+    global globY
+    angle=0
+    minimum = nearest_undisclosed_free(TETA+angle)
+    indexAngle = angle
+    while angle<270:
+        angle=angle+90
+        dist = nearest_undisclosed_free(TETA+angle)
+        if dist<minimum:
+            minimum=dist
+            indexAngle=angle
+    return indexAngle,minimum
+
+#################################################
+    
+# ALGORITHMS CHENILLE #
 
 def algo_chenille(i):
     global cost
@@ -328,6 +425,10 @@ def algo_chenille(i):
         costList.append(cost)
         undiscoveredList.append(count_undiscovered(Map2))
     print("Number of moves : "+str(chenilleNb))
+
+#################################################
+    
+# ALGORITHMS ESCARGOT #
 
 def algo_escargot(i):
     global cost
@@ -372,131 +473,9 @@ def algo_escargot(i):
         undiscoveredList.append(count_undiscovered(Map2))
     print("Number of moves : "+str(chenilleNb))
 
-def will_be_in(xmin,ymin,xmax,ymax):
-    global directionX
-    global directionY
-    global globx
-    global globy
-    if globx+directionX>=xmin and globx+directionX<=xmax and globy+directionY>=ymin and globy+directionY<=ymax:
-        return True
-    else:
-        return False
+#################################################
     
-def move_forward_into_square_limited(imax,xmin,ymin,xmax,ymax):
-    global globx
-    global globX
-    global globy
-    global globY
-    global TETA
-    global directionX
-    global directionY
-    global cost
-    i=0
-    boolean = can_move_forward()
-    boolean2 = will_be_in(xmin,ymin,xmax,ymax) 
-    while boolean2 and boolean and i<imax:
-        globX=globX+5*directionX
-        globY=globY+5*directionY
-        globx=int(globX/5)
-        globy=int(globY/5)
-        cost = cost+1
-        boolean = can_move_forward()
-        boolean2 = will_be_in(xmin,ymin,xmax,ymax)
-        i=i+1
-    # if not boolean2 and boolean: add a door
-    if not boolean2:
-        return True # we managed to go as far as we could
-    else:
-        return False
-
-def move_forward_into_square_until(xmin,ymin,xmax,ymax):
-    global globx
-    global globX
-    global globy
-    global globY
-    global TETA
-    global directionX
-    global directionY
-    global cost
-    boolean = can_move_forward()
-    boolean2 = will_be_in(xmin,ymin,xmax,ymax) 
-    while boolean2 and boolean:
-        globX=globX+5*directionX
-        globY=globY+5*directionY
-        globx=int(globX/5)
-        globy=int(globY/5)
-        cost = cost+1
-        boolean = can_move_forward()
-        boolean2 = will_be_in(xmin,ymin,xmax,ymax)
-    # if not boolean2 and boolean: add a door
-    if not boolean2:
-        return True # we managed to go as far as we could
-    else:
-        return False
-
-#def addDoor(Door,x,y):
- #   if [x,y] not in 
-
-def discover_cell_chenille(factor,xmin,ymin,xmax,ymax):
-    rotate(90)
-    move_forward_into_square_until(xmin,ymin,xmax,ymax)
-    rotate(-90)
-    iteration = int(factor/4)
-    i=0
-    while i<iteration:
-        move_forward_into_square_until(xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_limited(2,xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_until(xmin,ymin,xmax,ymax)
-        rotate(90)
-        move_forward_into_square_limited(2,xmin,ymin,xmax,ymax)
-        rotate(90)
-        i=i+1
-    rotate(-90)
-    i=0
-    while i<iteration:
-        move_forward_into_square_until(xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_limited(2,xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_until(xmin,ymin,xmax,ymax)
-        rotate(90)
-        move_forward_into_square_limited(2,xmin,ymin,xmax,ymax)
-        rotate(90)
-        i=i+1
-
-def discover_cell_spirale(factor,xmin,ymin,xmax,ymax):
-    rotate(90)
-    move_forward_into_square_until(xmin,ymin,xmax,ymax)
-    rotate(-90)
-    minusLength = int(factor/4)
-    length=factor
-    while length>=minusLength:
-        move_forward_into_square_limited(length,xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_limited(length,xmin,ymin,xmax,ymax)
-        rotate(-90)
-        move_forward_into_square_limited(length,xmin,ymin,xmax,ymax)
-        rotate(-90)
-        length=length-minusLength
-        move_forward_into_square_limited(length,xmin,ymin,xmax,ymax)
-
-def algo_grid(i):
-    global cost
-    global threshold
-    global costList
-    global undiscoveredList
-    factor=12
-    Cells = [[0 for i in range(int(w/factor))] for j in range(int(h/factor))]
-    rotate(-90)
-    move_forward_until(w)
-    rotate(90)
-    move_forward_until(h)
-    rotate(90)
-    discover_cell_spirale(factor,int(globx/factor)*factor,int(globy/factor)*factor,int(globx/factor)*factor+factor-1,int(globy/factor)*factor+factor-1)
-    costList.append(cost)
-    undiscoveredList.append(count_undiscovered(Map2))
+# ALGORITHMS RECURSIVE #
 
 def algo_recursive(i):
     global cost
@@ -527,66 +506,9 @@ def algo_recursive(i):
             costList.append(cost)
             undiscoveredList.append(count_undiscovered(Map2))
 
-def nearest_undisclosed_free(angle):
-    global globx
-    global globX
-    global globy
-    global globY
-    global Map2
-    angle=angle%360
-    if angle==0:
-        dirX = 0
-        dirY = 1
-    elif angle==90:
-        dirX  = 1
-        dirY = 0
-    elif angle==180:
-        dirX =0
-        dirY=-1
-    else:
-        dirX =-1
-        dirY=0
-    #print("Test Disclosed")
-    #print("("+str(globy+2*dirY)+","+str(globx+2*dirX)+") : "+str(Map2[globy+2*dirY,globx+2*dirX]))
-    #print("("+str(globy+2*dirY+null(dirY))+","+str(globx+2*dirX+null(dirX))+") : "+str(Map2[globy+2*dirY+null(dirY),globx+2*dirX+null(dirX)]))
-    #print("("+str(globy+2*dirY-null(dirY))+","+str(globx+2*dirX-null(dirX))+") : "+str(Map2[globy+2*dirY-null(dirY),globx+2*dirX-null(dirX)]))
-    i=0
-    case1=128
-    case2=128
-    case3=128
-    if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
-        case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
-        case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
-        case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
-    while case1!=128 and case2!=128 and case3!=128 and globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
-        if case1!=0 and case2!=0 and case3!=0:
-            i=i+1
-            if globy+(2+i)*dirY+null(dirY)<h and globy+(2+i)*dirY-null(dirY)>0 and globx+(2+i)*dirX+null(dirX)<w and globx+(2+i)*dirX-null(dirX)>0:
-                case1 = Map2[globy+(2+i)*dirY,globx+(2+i)*dirX]
-                case2 = Map2[globy+(2+i)*dirY+null(dirY),globx+(2+i)*dirX+null(dirX)]
-                case3 = Map2[globy+(2+i)*dirY-null(dirY),globx+(2+i)*dirX-null(dirX)]
-        else:
-            return i+1
-    return 1000
-
-def nearest_undisclosed_point():
-    """return the angle the robot should take to go to the nearest undisclosed point in one of the four direction without obstacle between, 1000 if not exists"""
-    global TETA
-    global globx
-    global globX
-    global globy
-    global globY
-    angle=0
-    minimum = nearest_undisclosed_free(TETA+angle)
-    indexAngle = angle
-    while angle<270:
-        angle=angle+90
-        dist = nearest_undisclosed_free(TETA+angle)
-        if dist<minimum:
-            minimum=dist
-            indexAngle=angle
-    return indexAngle,minimum
+#################################################
     
+# ALGORITHMS RECURSIVE B #
 
 def algo_recursive_b(i):
     global cost
