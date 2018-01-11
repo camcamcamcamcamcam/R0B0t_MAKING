@@ -1,6 +1,6 @@
 #include "map_construction.h"
 #include <stdio.h>
-#include "robotclient.h"
+//#include "robotclient.h"
 
 #define map_x 80
 #define map_y 80
@@ -12,10 +12,6 @@
  *   100 if there is a moving obstacle
  *   200 if the value is unknown
  */
-
-
-static unsigned char map[map_x][map_y] = { [0 ... map_x-1][0 ... map_y-1] = 200};
-
 
 void sendMapDone(){
     for (int i=0; i < map_x; i++){
@@ -38,6 +34,8 @@ void sendMapDone(){
 void setMapData(char x, char y, unsigned char typeObject){
     map[x][y] = typeObject;
 }
+
+
 /*
 int main(void){
 
