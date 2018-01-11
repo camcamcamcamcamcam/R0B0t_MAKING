@@ -19,6 +19,11 @@
 
     <!-- Custom Theme CSS -->
     <link href="css/grayscale.css" rel="stylesheet">
+	
+	<!-- Code presentation -->
+	<link rel="stylesheet" href="highlight/styles/rainbow.css">
+	<script src="highlight/highlight.pack.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
 
 </head>
 
@@ -69,7 +74,7 @@
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
                         <h1 class="brand-heading">Algorithms</h1>
-                        <p class="intro-text">Here you can find the algorithms dealing with space discovery and cartography.</p>
+                        <p class="intro-text">The algorithms we used to explore an area</p>
 						<a href="#section1" class="btn btn-circle js-scroll-trigger">
 							<i class="fa fa-angle-double-down animated"></i>
 						</a>
@@ -79,39 +84,255 @@
         </div>
     </section>
 	
-	<section id="section1" class="content-section design2 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section1" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-            <h2>Exemple de Paragraphe</h2>
-            <p>Je suis un exemple de paragraphe sans image associée.<br>
-			Je suis la suite avec ce point <span class="interest">particulièrement intéressant</span></p>
+            <h2>Simulation design</h2>
+            <p>In order to explore an area, our first goal has been to simulate some algorithms with python. Here is our method to implement an efficient algorithm.</p>
           </div>
         </div>
       </div>
 	</section>
 	
-	<section id="section1bis" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section2" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
-          <div class="col-lg-12 mx-auto">
-            <h2>Exemple de Paragraphe 2</h2>
-            <p>Je suis un exemple de paragraphe sans image associée.<br>
-			Je suis la suite avec ce point <span class="interest">particulièrement intéressant</span></p>
+          <div class="col-lg-6 mx-auto">
+            <h2>Representing an area</h2>
+            <p>
+			The obstacles supposed to be present in the arena have a minimum size of 5cm*5cm.
+			The maximum size of the arena is 4m*4m.
+			For the simulation, the arena will be represented by a set of cells of dimension 5cm*5cm.
+			We randomly generate blocks in the map representing walls. The density of obstacles is set with a probability p of presence of obstacles.<br>
+			In the example below, the y-axis is inverted and the robot is supposed to begin from the top of the arena.
+			</p>
+			<div class="col-lg-6 mx-auto">
+				<img src="img/map_0.png" style="width: 60%">
+			</div>
+			<div class="col-lg-6 mx-auto">
+				<img src="img/map_1.png" style="width: 60%">
+			</div>
+          </div>
+		  <div class="col-lg-6 mx-auto">
+            <pre><code class="python">
+Map = np.array([[0 for i in range(w)] for j in range(h)]) # code : 0 = nothing ; 1 = wall
+
+def rectangle(w1,h1,w2,h2):
+    """
+    Colorate the rectangle from (h1,w1) to (h2,w2) as a wall.
+    """
+    Map[h1:h2,w1:w2] = 1
+	
+def build_map_blocs_wall():
+    """
+    Building a whole map with:
+    - probability p to get the place of obstacles
+    - random size of rectangular obstacle
+    """
+    # Editing the border
+    Map[:,0] = 1
+    Map[-1,:] = 1
+    Map[:,-1] = 1
+
+    # Choosing some filled pixel randomly with a probability p
+    for i in range(9,h-5):
+        for j in range(5,w-5):
+            if Map[i][j] !=1:
+                Map[i][j] = np.random.binomial(1,p)
+                if Map[i][j] ==1:
+                    rectangle(j,i,j+random.randint(1,10),i+random.randint(1,10))
+			</code></pre>
           </div>
         </div>
       </div>
 	</section>
 	
-	<section id="section2" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
-          <div class="col-lg-8 mx-auto">
-            <h2>Exemple de Paragraphe 2</h2>
-            <p>Je suis un exemple de paragraphe avec une image associée à droite.</p>
+		  <div class="col-lg-3 mx-auto">
+           <img src="img/robot_grid.png" style="width:100%">
+		   <br><br>
+		   <div class="col-lg-6 mx-auto">
+			<img src="img/config_1.png" style="width:100%">
+		   </div>
+		   <div class="col-lg-6 mx-auto">
+			<img src="img/config_2.png" style="width:100%">
+		   </div>
           </div>
-		  <div class="col-lg-4 mx-auto">
-           <img src="img/test.png" style="width:100%">
+          <div class="col-lg-9 mx-auto">
+            <h2>Representing the robot</h2>
+            <p>
+			Our robot is situated inside a 22.5cm diameter circle and we have to represent it in a grid of 5cm*5cm cells.
+			The secure mode is preferable, meaning that it will be more useful to get the obstacles in a range of 25cm in front of the robot than in a range of 20cm.
+			In the algorithm, we assume that thanks to the "circular shape" of the robot, the rotation can take place without any issues and without any checks.<br>
+			Considering these elements, the robot will take <span class="interest">5 cells in width and 5 cells in height</span>.<br><br>
+			The robot is represented by a position (describing the center of the robot) (globx,globy) (boxes in the map) or (globX,globY), global position in centimeters in the map. The global angle of the robot is TETA.
+			The angle TETA is linked with two variables (dirX or directionX and dirY (local) or directionY (global)) making easy to manipulate global positionning variable.
+			</p>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section2" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <h2>Implementing basic functions of the robot</h2>
+            <p>
+			To reduce the difficulty of designing the algorithm, we limit our functions to "move forward", "rotation to either 90, 180 or 270 degrees" and "test if the robot can move forward" 
+			</p>
+			<br>
+			<h4>Test if movement forward is possible : </h4>
+            <pre><code class="python">
+def can_move_forward():
+    """
+    Discover the cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global TETA
+    global directionX
+    global directionY
+    global cost
+    global Map2
+    is_possible=True
+
+    # Check if the robot won't go outside the arena
+    if (directionY==1 and globy==h-2) or (directionY==-1 and globy==2) or (directionX==1 and globx==w-2) or (directionX==-1 and globx==2) :
+        is_possible = False
+
+    # The 5 following statements enable to test the 5 cells situated in front of the robot
+    if Map[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]==1:
+        is_possible = False 
+        Map2[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]=128
+    else:
+        Map2[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]=255
+        
+    if Map[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]==1:
+        is_possible = False 
+        Map2[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]=128
+    else:
+        Map2[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]=255
+
+    if Map[globy+3*directionY,globx+3*directionX]==1:
+        is_possible = False
+        Map2[globy+3*directionY,globx+3*directionX]=128
+    else:
+        Map2[globy+3*directionY,globx+3*directionX]=255
+
+    if Map[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]==1:
+        is_possible = False
+        Map2[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]=128
+    else:
+        Map2[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]=255
+
+    if Map[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]==1:
+        is_possible = False
+        Map2[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]=128
+    else:
+        Map2[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]=255
+
+    # assess the cost represented by the use of the function
+    increase_cost(2)
+    
+    return is_possible
+			</code></pre>
+			<br>
+			<h4>Move forward and rotate : </h4>
+			<pre><code class="python">
+
+def move_forward():
+    """
+    The function enables to move the robot 5cm forward if it is possible.
+    It returns True if the movement has been possible.
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global TETA
+    global directionX
+    global directionY
+    global cost
+    if can_move_forward():
+        globX=globX+5*directionX
+        globY=globY+5*directionY
+        globx=int(globX/5)
+        globy=int(globY/5)
+        increase_cost(1)
+        return True
+    else:
+        return False
+
+def move_forward_until(max_pos):
+    """
+    The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
+    It returns the number of cells the robot has been able to do.
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global TETA
+    global directionX
+    global directionY
+    global cost
+    i = 0
+    while i < max_pos and can_move_forward():
+        globX=globX+5*directionX
+        globY=globY+5*directionY
+        globx=int(globX/5)
+        globy=int(globY/5)
+        increase_cost(1)
+        i=i+1
+    return i
+
+def rotate(angle):
+    """
+    The function enables to rotate the robot of a certain angle.
+    """
+    global TETA
+    global directionX
+    global directionY
+    global cost
+    TETA=(TETA+angle)%360
+    if TETA==0:
+        directionX = 0
+        directionY = 1
+    elif TETA==90:
+        directionX = 1
+        directionY = 0
+    elif TETA ==180:
+        directionX=0
+        directionY=-1
+    else:
+        directionX=-1
+        directionY=0
+    increase_cost(1)
+			</code></pre>
+          </div>
+        </div>
+      </div>
+	</section>
+
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <h2>Assess the efficiency of an algorithm</h2>
+            <p>
+			To assess the efficiency of our algorithms, we have to take into account 2 parameters : a variable cost, representing the cost in time (estimation) for each action and the pourcentage of cell that are still not discovered.
+			The metric used for the cost is the following one :
+			</p>
+			<li><p>A rotation has a cost of 1</p></li>
+			<li><p>A scan in front of the robot has a cost of 2</p></li>
+			<li><p>A movement forward of one cell has a cost of one</p></li>
+			</p>
           </div>
         </div>
       </div>
@@ -120,17 +341,296 @@
 	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
-		  <div class="col-lg-4 mx-auto">
-           <img src="img/test.png" style="width:100%">
-          </div>
-          <div class="col-lg-8 mx-auto">
-            <h2>Exemple de Paragraphe 3</h2>
-            <p>Je suis un exemple de paragraphe avec une image associée à droite.</p>
+          <div class="col-lg-12 mx-auto">
+            <h2>First basic Algorithm</h2>
+            <p>
+			The first algorithm we tested is a simple one. Here is the principle :
+			</p>
+			<br>
+			<h4>"Caterpillar" algorithm</h4>
+			<div class="col-lg-4 mx-auto">
+				<img src="img/test_chenille.png" style="width:100%">
+			</div>
+			<div class="col-lg-8 mx-auto">
+				<pre><code class="python">
+# CATERPILLAR ALGORITHM #
+
+def algo_chenille(i):
+    global cost
+    global threshold
+    global costList
+    global undiscoveredList
+    while cost <= threshold:
+        terminated = False
+        arg = 0
+        while not terminated:
+            move_forward_until(max([h,w]))
+            rotate(90)
+            nb = move_forward_until(5)
+            if nb == 0:
+                arg = arg+1
+            rotate(90)
+            move_forward_until(max([h,w]))
+            rotate(-90)
+            nb = move_forward_until(5)
+            if nb == 0:
+                arg = arg+1
+            rotate(-90)
+            if arg==2:
+                terminated = True
+            arg = 0
+        rotate(-90)
+			</code></pre>
+			</div>
           </div>
         </div>
       </div>
 	</section>
+	
+	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+			<h4>Performance for this test</h4>
+			<div class="col-lg-3 mx-auto">
+				<p>Our Algorithm</p>
+				<img src="img/final_map_chenille.png" style="width:100%">
+			</div>
+			<div class="col-lg-3 mx-auto">
+				<p>Theory</p>
+				<img src="img/map.png" style="width:100%">
+			</div>
+			<div class="col-lg-6 mx-auto">
+				<img src="img/plot_chenille.png" style="width:100%">
+			</div>
+		  </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <h2>Simple "Recursive" Algorithm</h2>
+            <p>
+			This time we use a little knowledge of the map. The robot will prefer to go left or right if the area in front of it is unreachable or already disclosed.
+			</p>
+			<br>
+			<h4>"Recursive" algorithm</h4>
+			<div class="col-lg-12 mx-auto">
+				<pre><code class="python">
+# ALGORITHMS RECURSIVE #
 
+def algo_recursive(i):
+    global cost
+    global threshold
+    global costList
+    global undiscoveredList
+    while cost<=threshold:
+        if not disclosed(TETA+0):
+            move_forward()
+        else:
+            if not disclosed(TETA+90):
+                rotate(90)
+                move_forward()
+            elif not disclosed(TETA-90):
+                rotate(-90)
+                move_forward()
+            else:
+                if can_move_forward():
+                    move_forward()
+                else:
+                    if np.random.binomial(1,0.5)==1:
+                            rotate(90)
+                        else:
+                            rotate(-90)
+			</code></pre>
+			</div>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+			<h4>Performance for this test</h4>
+			<div class="col-lg-3 mx-auto">
+				<p>Our Algorithm</p>
+				<img src="img/final_map_recursive.png" style="width:100%">
+			</div>
+			<div class="col-lg-3 mx-auto">
+				<p>Theory</p>
+				<img src="img/map.png" style="width:100%">
+			</div>
+			<div class="col-lg-6 mx-auto">
+				<img src="img/plot_recursive.png" style="width:100%">
+			</div>
+		  </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+            <h2>Advanced "Recursive" Algorithm</h2>
+            <p>
+			This time we use a little knowledge of the map. 
+			The robot will prefer to go left or right if the area in front of it is unreachable or already disclosed.
+			To that extent, when the area in front of it is disclosed or unreachable, the robot analyzes his map, chooses the nearest position where the map has been undisclosed (without crossing obastcles) and go there.
+			</p>
+			<br>
+			<h4>"Recursive V2" algorithm</h4>
+			<div class="col-lg-12 mx-auto">
+				<pre><code class="python">
+#################################################
+    
+# ADVANCED MOVING FUNCTIONS #
+
+def nearest_undisclosed_free(angle):
+    """
+    The function returns the biggest number of 5cm-cell with the angle "angle" that the robot can do.
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global Map2
+    angle=angle%360
+    if angle==0:
+        dirX = 0
+        dirY = 1
+    elif angle==90:
+        dirX  = 1
+        dirY = 0
+    elif angle==180:
+        dirX =0
+        dirY=-1
+    else:
+        dirX =-1
+        dirY=0
+        
+    i=0
+    case1=128
+    case2=128
+    case3=128
+    case4=128
+    case5=128
+    
+    # we check that the cells assessed are inisde the arena
+    if globy+(3+i)*dirY+2*null(dirY)<h and globy+(3+i)*dirY-2*null(dirY)>0 and globx+(3+i)*dirX+2*null(dirX)<w and globx+(3+i)*dirX-2*null(dirX)>0:
+        case1 = Map2[globy+(3+i)*dirY-2*null(dirY),globx+(3+i)*dirX-2*null(dirX)]
+        case2 = Map2[globy+(3+i)*dirY-null(dirY),globx+(3+i)*dirX-null(dirX)]
+        case3 = Map2[globy+(3+i)*dirY,globx+(3+i)*dirX]
+        case4 = Map2[globy+(3+i)*dirY+null(dirY),globx+(3+i)*dirX+null(dirX)]
+        case5 = Map2[globy+(3+i)*dirY+2*null(dirY),globx+(3+i)*dirX+2*null(dirX)]
+
+    # we loop until a wall has been found and an undisclosed place has not been found
+    while case1!=128 and case2!=128 and case3!=128 and case4!=128 and case5!=128 and globy+(3+i)*dirY+2*null(dirY)<h and globy+(3+i)*dirY-2*null(dirY)>0 and globx+(3+i)*dirX+2*null(dirX)<w and globx+(3+i)*dirX-2*null(dirX)>0:
+        if case1!=0 and case2!=0 and case3!=0 and case4!=0 and case5!=0:
+            i=i+1
+            if globy+(3+i)*dirY+2*null(dirY)<h and globy+(3+i)*dirY-2*null(dirY)>0 and globx+(3+i)*dirX+2*null(dirX)<w and globx+(3+i)*dirX-2*null(dirX)>0:
+                case1 = Map2[globy+(3+i)*dirY-2*null(dirY),globx+(3+i)*dirX-2*null(dirX)]
+                case2 = Map2[globy+(3+i)*dirY-null(dirY),globx+(3+i)*dirX-null(dirX)]
+                case3 = Map2[globy+(3+i)*dirY,globx+(3+i)*dirX]
+                case4 = Map2[globy+(3+i)*dirY+null(dirY),globx+(3+i)*dirX+null(dirX)]
+                case5 = Map2[globy+(3+i)*dirY+2*null(dirY),globx+(3+i)*dirX+2*null(dirX)]
+        else:
+            return i+1
+    return 1000
+
+def nearest_undisclosed_point():
+    """return the angle the robot should take to go to the nearest undisclosed point in one of the four direction without obstacle between, 1000 if not exists"""
+    global TETA
+    global globx
+    global globX
+    global globy
+    global globY
+    angle=0
+    minimum = nearest_undisclosed_free(TETA+angle)
+    indexAngle = angle
+    while angle < 270:
+        angle=angle+90
+        dist = nearest_undisclosed_free(TETA+angle)
+        if dist < minimum:
+            minimum=dist
+            indexAngle=angle
+    return indexAngle,minimum				
+
+# ALGORITHMS RECURSIVE B #
+
+def algo_recursive_b(i):
+    global cost
+    global threshold
+    global costList
+    global undiscoveredList
+    while cost<=threshold:
+        if not disclosed(TETA+0):
+            move_forward()
+        else:
+            if not disclosed(TETA+90):
+                rotate(90)
+                move_forward()
+            elif not disclosed(TETA-90):
+                rotate(-90)
+                move_forward()
+            else:
+                indexAngle,minimum = nearest_undisclosed_point()
+                if minimum==1000:
+                    if can_move_forward():
+                        move_forward()
+                    else:
+                        if np.random.binomial(1,0.5)==1:
+                            rotate(90)
+                        else:
+                            rotate(-90)
+                else:
+                    rotate(indexAngle)
+                    move_forward_until(minimum)
+			</code></pre>
+			</div>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 mx-auto">
+			<h4>Performance for this test</h4>
+			<div class="col-lg-3 mx-auto">
+				<p>Our Algorithm</p>
+				<img src="img/final_map_recursive B.png" style="width:100%">
+			</div>
+			<div class="col-lg-3 mx-auto">
+				<p>Theory</p>
+				<img src="img/map.png" style="width:100%">
+			</div>
+			<div class="col-lg-6 mx-auto">
+				<img src="img/plot_recursive B.png" style="width:100%">
+			</div>
+		  </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-offset-2 col-lg-8 mx-auto">
+			<h2>Overall test on all the algorithms</h4>
+			<p>The algorithms have been tested in 100 different maps.We get the following results.</p>
+			<img src="img/summary.png" style="width:100%">
+		  </div>
+        </div>
+      </div>
+	</section>
+	
     <!-- Contact Section -->
     <section id="contact" class="content-section text-center">
       <div class="container">
