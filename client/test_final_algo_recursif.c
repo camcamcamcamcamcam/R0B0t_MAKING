@@ -13,7 +13,7 @@
 extern int X; //in mm
 extern int Y; //in mm
 
-#define THRESHOLD 50000
+#define THRESHOLD 5000
 #ifndef MAX_SPEED
 #define MAX_SPEED 1050
 #endif
@@ -65,6 +65,15 @@ void client_position(){
           count = 0;
         }
         count++;
+        int i;
+        int j;
+        for (i = 0; i < 5; i++){
+          for (j = 0; j < 5; j++){
+            if ((x-2+i >= 0) && (x-2+i < MAP_WIDTH) && (y-2+j >= 0) && (y-2+j < MAP_HEIGHT)) { //so no seg fault
+              map[x-2+i][y-2+j] = 0; // it means there is nothing there
+            }
+          }
+        }
         Sleep(50);
 
     }
@@ -165,7 +174,7 @@ char move_forward(){
     globx = X / 50;
     globy = Y / 50;
     go_to_distance_sweep_regular_braking_new(MAX_SPEED / 6, 10000, 100, 60);
-    increase_cost(1);
+    increase_cost(5);
     return 1;
   }
   return 0;
@@ -286,9 +295,8 @@ void algo_recursive_b() {
       move_forward();
     } else {
       if (!disclosed(TETA + 90)){
-        //TODO are this the good names ?
         rotate(90);
-        move_forward(); //with 5 cm ??
+        move_forward();
       } else if (!disclosed(TETA - 90)) {
         rotate(-90);
         move_forward();
