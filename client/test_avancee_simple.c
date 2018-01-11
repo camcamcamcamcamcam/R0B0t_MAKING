@@ -7,6 +7,19 @@
 /*#include "mvt_rotate.h"
 #include "servo_sonar.h" */
 
+// WIN32 /////////////////////////////////////////
+#ifdef __WIN32__
+
+#include <windows.h>
+
+// UNIX //////////////////////////////////////////
+#else
+
+#include <unistd.h>
+#define Sleep( msec ) usleep(( msec ) * 1000 )
+
+//////////////////////////////////////////////////
+#endif
 
 int main (void) {
 /*
@@ -24,16 +37,9 @@ int main (void) {
 	int distanceLng = 100000;
 	int securityDistance = 100;
 	int amplitudeSweep = 45;
-	
-	absolute_servo_sonar(amplitudeSweep);
-	sleep(10);
-	absolute_servo_sonar(-amplitudeSweep);
-	sleep(10);
-	absolute_servo_sonar(amplitudeSweep);
-	sleep(10);
-	absolute_servo_sonar(-amplitudeSweep);
 
 	//go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
 	go_to_distance_sweep_regular_braking_new_v2(speed, distanceLng, securityDistance, amplitudeSweep);
+	absolute_servo_sonar(0);
     return 1;
 }

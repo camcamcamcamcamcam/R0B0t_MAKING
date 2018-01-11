@@ -19,6 +19,12 @@
 //////////////////////////////////////////////////
 #endif
 
+#include "motors_wheels.h"
+#include "motors_servo.h"
+#include "sensor_sonar.h"
+#include "mvt_forward.h"
+#include "servo_sonar.h"
+
 void go_to_distance_no_sweep(int speed, int distance, int securityDistance);
 
 void go_to_distance_sweep(int speed, int distance, int securityDistance,int amplitudeSweep);

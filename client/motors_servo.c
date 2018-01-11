@@ -35,7 +35,7 @@
 #endif
 
 // Reduction ratio between the gears for the servo using the sonar
-#define R 0.857142 
+#define R 1 
 
 // Global variables
 uint8_t sn_servo[2];
@@ -44,6 +44,7 @@ int polarity_servo;
 pthread_t tid_sweep;
 pthread_attr_t attr_sweep;
 int sweep_state;
+int thread_is_alive;
 
 void initMotorServo(){
 	/*
@@ -95,6 +96,7 @@ void initMotorServo(){
 		printf("\n");
 		absolute_servo_sonar(0);
 	}
+	thread_is_alive = 0;
 	//End Initialization of the servo_sonar of the robot
 }
 
@@ -124,7 +126,7 @@ void servo_arm_up(){
 	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
 	*/
 	
-    go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_UP); // launchs the motor
+    go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_UP); // launches the motor
 	
 	while(servo_arm_is_running()){ // waiting until the speed of the motor has reached 0.
 		Sleep(10);
@@ -184,10 +186,11 @@ void servo_sonar(int angle){
 	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
 	*/
 	
-    go_to_angle(sn_servo[1],MAX_SPEED / 5, angle);
-	int timer = 0;
-	while(servo_sonar_is_running() && timer++ < 50){ // waiting until the speed of the motor has reached 0 or 500 ms.
-		Sleep(10);
+    go_to_angle(sn_servo[1],MAX_SPEED / 10, angle);
+	//int timer = 0;
+	Sleep(100);
+	while(servo_sonar_is_running() /*&& timer++ < 50*/){ // waiting until the speed of the motor has reached 0 or 500 ms.
+		Sleep(20);
 	}
 	//printf("Rotation finished\n");
 	
@@ -212,15 +215,24 @@ int get_absolute_angle_servo(){
 	return (int) R*angle;
 }
 
-void thread_sweep(){	
+void thread_sweep(){
+	/*
+	The function is called by a function go_to_distance.
+	It creates a sweeping thread if needed, or just restarts it if the thread already exists.
+	*/
 	char a;
-	sweep_state = 1;
-    pthread_attr_init(&attr_sweep);
-    pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
-	
+	start_sweep();
+	if(thread_is_alive == 0){
+		pthread_attr_init(&attr_sweep);
+		pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
+		thread_is_alive = 1;
+	}	
 }
 
 void start_sweep(){
+	/*
+	The function restarts the sweep of the head.
+	*/
 	sweep_state = 1;
 }
 
@@ -228,7 +240,7 @@ void continuous_sweep(){
 	int amplitudeAngle = 45;
 	while(1){
 		if(sweep_state==1){
-			printf("*****Beginning of the sweep*****\n");
+			printf("Beginning of the sweep\n");
 			absolute_servo_sonar(-amplitudeAngle);
 			absolute_servo_sonar(amplitudeAngle);
 		} else {
@@ -240,10 +252,17 @@ void continuous_sweep(){
 }
 
 void stop_sweep(){
+	/*
+	The function pauses the sweep of the head, but the thread is still alive.
+	*/
 	sweep_state = 0;
 }
 
 void end_thread_sweep(){
+	/*
+	The function puts an end to the thread.
+	*/
+	
 	sweep_state = 2;
 	pthread_exit(&tid_sweep);
 	printf("Thread exit\n");

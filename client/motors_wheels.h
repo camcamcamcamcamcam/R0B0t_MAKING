@@ -5,6 +5,7 @@
 #include "ev3_tacho.h"
 #include "ev3_sensor.h"
 #include "sensor_gyro.h"
+#include <math.h>
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 

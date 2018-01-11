@@ -225,7 +225,7 @@ void go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 		//printf("Distance sonar : %d \n",distance_sonar);
 		minBuffer = getMinBufferSonar();
 	}
-	end_thread_sweep();
+	stop_sweep();
 	stopMotors();
 	clearBuffer();
 	distance_sonar = getDistance_weighted(0);

@@ -2,6 +2,7 @@
 #include <signal.h>
 #include "servo_sonar.h"
 #include "motors_wheels.h"
+#include "motors_servo.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
 
@@ -24,13 +25,18 @@ char main (void) {
 	int securityDistance = 100;
 	int amplitudeSweep = 45;
 	
+	//absolute_servo_sonar(-45);
+	//absolute_servo_sonar(45);
+	//absolute_servo_sonar(0);
+	
 	while(1){
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
-		go_to_distance_sweep_regular_braking_new(speed, distanceLng, securityDistance, amplitudeSweep);
+		go_to_distance_sweep_regular_braking_new_v2(speed, distanceLng, securityDistance, amplitudeSweep);
 		printf("X=%d\n",X);
 		printf("Y=%d\n",Y);
 		rotate_to_angle(speed, -angle);
 	}
+	end_thread_sweep();
     return 1;
 }
