@@ -1,7 +1,11 @@
+#include <pthread.h>
+#include <signal.h>
 #include <time.h>
 #include <stdlib.h>
+#include "servo_sonar.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
+#include "robotclient.h"
 #include "motors_wheels.h"
 #define MAP_HEIGHT 80
 #define MAP_WIDTH 80
@@ -41,6 +45,30 @@ char disclosed(int angle);
 char can_move_forward();
 void increase_cost(int value);
 char null(char a);
+
+
+void client_position(){
+  /*
+  send the postition to the server every 2 seconds
+  update the local map every 50 ms to say there is no obstacle
+  */
+  char count = 0;
+    while(1){
+
+        int x = (int) (X/50);
+        int y = (int) (Y/50);
+        //x and y must be between 0 and 80 (ie inside the map)
+        x = (x < (MAP_WIDTH-1)) ? ((x >= 0) ? x : 0) : (MAP_WIDTH-1);
+        y = (y < (MAP_HEIGHT-1)) ? ((y >= 0) ? y : 0 ) : (MAP_HEIGHT-1);
+        if (count == 40) {
+          sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
+          count = 0;
+        }
+        count++;
+        Sleep(50);
+
+    }
+}
 
 char null(char a){
     /*
@@ -283,4 +311,27 @@ void algo_recursive_b() {
       }
     }
   }
+}
+
+
+
+char main (void) {
+  /*
+  * The robot is doing the algorithm".
+  */
+  //starting position in arena 1
+  initMotorServo();
+  initSensorSonar();
+  initMotorWheels();
+  servo_arm_up();
+  //while the server did not send the START_MESSAGE, the robot will wait in init_client()
+  initClient(); // will STOP the program if the server is not launched !
+
+  pthread_t tid_client_position;
+  pthread_attr_t attr_client_position;
+  pthread_attr_init(&attr_client_position);
+  char a;
+  pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
+
+  algo_recursive_b();
 }
