@@ -32,7 +32,7 @@
 #endif
 
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define DIAMETRE_ROBOT 175 // width of the robot in mm
+#define ECART_ROUES 175 // distance between the wheels, in mm
 
 // Global variables
 uint8_t sn_wheels[2];
@@ -233,7 +233,7 @@ void rotation(int speed, int angle){
 		rotationPolarity = 1;
 	}
 
-    int distance_roue = (angle * PI * DIAMETRE_ROBOT) / (360);
+    int distance_roue = (angle * PI * ECART_ROUES) / (360);
     int angle_roue = distance_to_angle(distance_roue);
     goStraightForAngle(sn_wheels[0], speed, -angle_roue);
     goStraightForAngle(sn_wheels[1], speed, angle_roue);

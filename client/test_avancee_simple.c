@@ -1,12 +1,27 @@
 #include <pthread.h>
 #include <signal.h>
-#include "servo_sonar.h"
+#include "sensor_sonar.h"
 #include "motors_wheels.h"
+#include "motors_servo.h"
 #include "mvt_forward.h"
-#include "mvt_rotate.h"
+/*#include "mvt_rotate.h"
+#include "servo_sonar.h" */
 
+// WIN32 /////////////////////////////////////////
+#ifdef __WIN32__
 
-char main (void) {
+#include <windows.h>
+
+// UNIX //////////////////////////////////////////
+#else
+
+#include <unistd.h>
+#define Sleep( msec ) usleep(( msec ) * 1000 )
+
+//////////////////////////////////////////////////
+#endif
+
+int main (void) {
 /*
  * The robot is doing a simple algorithm "snail".
  */
@@ -19,10 +34,12 @@ char main (void) {
 
 	int speed = getTachoMaxSpeed()/5;
 	int angle = 90;
-	int distanceLng = 1000;
+	int distanceLng = 100000;
 	int securityDistance = 100;
-	int amplitudeSweep = 50;
-	
-	go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+	int amplitudeSweep = 45;
+
+	//go_to_distance_sweep_regular_braking(speed, distanceLng, securityDistance, amplitudeSweep);
+	go_to_distance_sweep_regular_braking_new_v2(speed, distanceLng, securityDistance, amplitudeSweep);
+	absolute_servo_sonar(0);
     return 1;
 }

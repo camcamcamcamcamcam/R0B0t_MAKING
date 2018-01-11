@@ -24,7 +24,7 @@
 #endif
 
 #ifndef DIAMETRE_ROBOT
-#define DIAMETRE_ROBOT 175
+#define DIAMETRE_ROBOT 233
 #endif
 
 #include "motors_servo.h"
