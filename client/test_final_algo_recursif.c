@@ -94,7 +94,7 @@ void increase_cost(int value){
 
 char can_move_forward() {
   /*
-  Discover teh cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
+  Discover the cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
   */
 
   // Check if the robot won't go outside the arena
@@ -174,10 +174,22 @@ char move_forward(){
     globx = X / 50;
     globy = Y / 50;
     go_to_distance_sweep_regular_braking_new(MAX_SPEED / 6, 10000, 100, 60);
-    increase_cost(5);
+    increase_cost(1);
     return 1;
   }
   return 0;
+}
+
+void manage_obstacles(){
+  /*
+  A compléter avec la fonction de Camille
+  */
+  map[globx+3*directionX-2*null(directionX),globy+3*directionY-2*null(directionY)]=1
+  map[globx+3*directionX-null(directionX),globy+3*directionY-null(directionY)]=1
+  map[globx+3*directionX,globy+3*directionY]=1
+  map[globx+3*directionX+null(directionX),globy+3*directionY+null(directionY)]=1
+  map[globx+3*directionX+2*null(directionX),globy+3*directionY+2*null(directionY)]=1
+  return;
 }
 
 int move_forward_until(int max_pos){
@@ -186,12 +198,16 @@ int move_forward_until(int max_pos){
   It returns the number of cells the robot has been able to do.
   """*/
   int i = 0;
+  globx = X / 50;
+  globy = Y / 50;
   while ((i<max_pos) && can_move_forward()){
-    globx = X / 50;
-    globy = Y / 50;
     go_to_distance_sweep_regular_braking_new(MAX_SPEED / 6, 50, 60, 40);
     increase_cost(1);
-    i++;
+	if(X/50 > globx or Y/50 > globy){
+		globx = X / 50;
+		globy = Y / 50;
+		i++;
+	}
   }
   return i;
 }
@@ -217,6 +233,44 @@ void rotate(int angle){
     directionY = 0;
   }
   increase_cost(1);
+}
+
+int longest_undisclosed_position(){
+  /*
+  The function enables to estimate the longest path the robot can do without bumping into already discovered obstacles or already discovered area
+  */
+  angle = TETA
+  int i=0;
+  unsigned char case1 = 0;
+  unsigned char case2 = 0;
+  unsigned char case3 = 0;
+  unsigned char case4 = 0;
+  unsigned char case5 = 0;
+
+  // we check that the cells assessed are inisde the arena
+  if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
+    case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
+    case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
+    case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
+    case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
+    case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+  }
+  // we loop until a wall has been found and an undisclosed place has not been found
+  while (((case1==200) || (case2==200) || (case3==200) || (case4==200) || (case5==200)) && (globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
+    if ((case1!=1) && (case2!=1) && (case3!=1) && (case4!=1) && (case5!=1)){
+      i++;
+      if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
+        case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
+        case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
+        case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
+        case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
+        case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+      }
+    } else {
+        return (i+1);
+      }
+    }
+  return 1000;
 }
 
 int nearest_undisclosed_free(int angle){
@@ -292,14 +346,18 @@ void algo_recursive_b() {
   srand(time(NULL));   // should only be called once
   while (cost<=THRESHOLD){
     if (!disclosed(TETA + 0)){
-      move_forward();
+      move_forward_until(longest_undisclosed_position());
+	  if(!can_move_forward){
+		  //procédure gestion obstacles
+		  manage_obstacles();
+	  }
     } else {
       if (!disclosed(TETA + 90)){
         rotate(90);
-        move_forward();
+        //move_forward();
       } else if (!disclosed(TETA - 90)) {
         rotate(-90);
-        move_forward();
+        //move_forward();
       } else {
         int result[2];
         nearest_undisclosed_point(result);
@@ -315,6 +373,10 @@ void algo_recursive_b() {
         } else {
           rotate(indexAngle);
           move_forward_until(minimum);
+		  if(!can_move_forward){
+			  //procédure gestion obstacles
+			  manage_obstacles();
+		  }
         }
       }
     }
