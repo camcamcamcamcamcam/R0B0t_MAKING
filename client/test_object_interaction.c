@@ -21,6 +21,8 @@
 #include "mvt_forward.h"
 #include "robotclient.h"
 #include "map_construction.h"
+#include "object_interaction.h"
+#include "sensor_sonar.h"
 
 #ifndef PI
 #define PI 3.14159265
@@ -39,8 +41,10 @@
 //////////////////////////////////////////////////
 #endif
 
-int isMovableObstacle();
-void dropObject();
-void takeObject();
-void checkForward();
-int direction();
+int main(){
+  initMotorWheels();
+	initMotorServo();
+  initSensorSonar();
+	servo_arm_up();
+  checkForward();
+}

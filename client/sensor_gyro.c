@@ -29,13 +29,14 @@
 #endif
 
 uint8_t sn_gyro;
+int init_gyro;
 
 int getGyroAngle(){
         int val;
         if ( !get_sensor_value( 0, sn_gyro, &val ) ) {
-            val = 0;
+            val = init_gyro;
         }
-        return (val);
+        return (((val-init_gyro)%360+360)%360);
 }
 
 int getGyroRotationnalSpeed(){
@@ -47,16 +48,14 @@ int getGyroRotationnalSpeed(){
 }
 
 void initGyro(){
-        int test_init;
-	      ev3_sensor_init();
+        ev3_sensor_init();
         if ( ev3_search_sensor( LEGO_EV3_GYRO, &sn_gyro, 0 )) {
                 printf( "GYRO sensor is found\n" );
-                set_sensor_mode( sn_gyro, "GYRO-ANG" );
                 set_sensor_mode( sn_gyro, "GYRO-G&A" );
-                Sleep(100);
-                get_sensor_value(0,sn_gyro,&test_init);
-                Sleep(100);
-                printf("test_init %d \n",test_init);
+                Sleep(10);
+                get_sensor_value(0,sn_gyro,&init_gyro);
+                Sleep(10);
+                printf("init_gyro %d \n",init_gyro);
         } else {
                 printf( "GYRO sensor is NOT found\n" );
         }

@@ -31,6 +31,12 @@ sensor_gyro.o: sensor_gyro.c sensor_gyro.h
 sensor_gyro: sensor_gyro.o
 	gcc sensor_gyro.o -Wall -lm -lev3dev-c -o sensor_gyro
 
+test_gyro.o: test_gyro.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_gyro.c -o test_gyro.o
+
+test_gyro: sensor_gyro.o test_gyro.o
+	gcc sensor_gyro.o test_gyro.o -Wall -lm -lev3dev-c -o test_gyro
+
 sensor_sonar.o: sensor_sonar.c sensor_sonar.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_sonar.c -o sensor_sonar.o
 
@@ -93,6 +99,7 @@ servo_sonar.o: servo_sonar.c servo_sonar.h
 servo_sonar: motors_servo.o sensor_sonar.o
 	gcc servo_sonar.o motors_servo.o sensor_sonar.o -Wall -lm -lev3dev-c -o servo_sonar
 	./servo_sonar
+
 
 test_1.o: test_1.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_1.c -o test_1.o
@@ -226,6 +233,12 @@ map_construction: robotclient.o map_construction.o
 test_final_algo_recursif: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_algo_recursif.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_algo_recursif.o -Wall -lm -lev3dev-c -o test_final_algo_recursif
 	./test_final_algo_recursif
+
+test_object_interaction.o: test_object_interaction.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_object_interaction.c -o test_object_interaction.o
+
+test_object_interaction: color_sensor.o sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o object_interaction.o test_object_interaction.o
+	gcc -pthread color_sensor.o sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o object_interaction.o test_object_interaction.o -Wall -lm -lev3dev-c -o test_object_interaction
 
 run:
 	./tester

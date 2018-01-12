@@ -267,17 +267,17 @@ void preciseRotation(int speed, int angle){
 	It is a blocking function : the thread including this function won't continue before the robot has reached the desired position.
 	*/
 
-    int angle_gyro;
-    int difference;
+  int angle_gyro_start;
+  int angle_gyro_end;
+  int difference;
 	initPosition();
 	//printf("commencer angle : %d \n",angle);
-	initGyro();
-	angle_gyro = getGyroAngle();
+	angle_gyro_start = getGyroAngle();
 	//printf("angle gyro avant : %d \n",(int) getAngleGyro());
-    rotation(speed, angle);
+  rotation(speed, angle);
 	//printf("angle gyro apres : %d \n",(int) getAngleGyro());
-	angle_gyro = getGyroAngle();
-    difference = angle - angle_gyro;
+	angle_gyro_end = getGyroAngle();
+  difference = angle - (angle_gyro_end - angle_gyro_start);
 	//printf("angle restant : %d \n",difference);
 	if(difference!=0){
 		rotation(speed, difference);
