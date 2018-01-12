@@ -222,6 +222,10 @@ map_construction.o: map_construction.c map_construction.h
 
 map_construction: robotclient.o map_construction.o
 	gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
+	
+test_final_algo_recursif: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_algo_recursif.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_algo_recursif.o -Wall -lm -lev3dev-c -o test_final_algo_recursif
+	./test_final_algo_recursif
 
 run:
 	./tester
