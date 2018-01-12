@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ev3.h"
+#include "sensor_sonar.h"
+#include "sensor_gyro.h"
 #include "ev3_port.h"
 #include "ev3_servo.h"
 #include "ev3_sensor.h"
@@ -69,92 +71,149 @@ void takeObject(){
 int isMovableObstacle(){
 /*Fonction pour savoir si l'object devant est un obstacle mobile ou non
  A faire : enregistrer la position de l'objet si ce n'est pas un objet mobile*/
-	int a;
-	rotate_to_angle(MAX_SPEED/8,-15);
-	Sleep(100);
-	a=red_obstacle();
-	Sleep(100);
-	rotate_to_angle(MAX_SPEED/8, 15);
+	int a=red_obstacle();
 	return(a);
 }
 
 int direction(){
-	return (floor(TETA+45)/90)%4);
+	int var = (TETA+45)/90;
+	return var%4;
 }
-int checkForward(){
+void checkForward(){
+	initGyro();
+	int X_start = X;
+	int Y_start = Y;
+	int delta_angle=25;
 	int gauche=0;
 	int face=0;
 	int droite=0;
-	int x;
-	int y;
-	int delta_x;
-	int delta_y;
-	char type = -1;
+	int gauche_plus=0;
+	int droite_plus=0;
+	int x=X+(200*sin(TETA*PI/180))/50;
+	int y=Y+(200*cos(TETA*PI/180))/50;
+	int delta_x=0;
+	int delta_y=0;
+	int type = -1;
 	//stop_sweep(); //sweep_thread
+
 	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8, 50, 40, 30);
-	sleep(50);
+	Sleep(1000);
 	int dir = direction();
 	switch(dir)
   {
-   case 0: delta_x=1;
+   case 0: delta_x=1; printf("													dir is nord\n");
 	 	break;
-   case 1: delta_y=-1;
+   case 1: delta_y=-1;printf("													dir is est\n");
 	 	break;
-   case 2: delta_x=-1;
+   case 2: delta_x=-1;printf("													dir is sud\n");
 	 	break;
-   case 3: delta_y=1;
+   case 3: delta_y=1;printf("													dir is ouest\n");
    default: ;
   }
 	face = get_sonar_distance();
 	if (face<100){
 		if(type<0){
-			if (isMovableObstacle){
+			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			setMapData(x,y,type);
+			printf("													setMapData: %d %d %d\n",x,y,type);
+			//setMapData(x,y,type);
 		}
 	}
 	else{
-			setMapData(x,y,0);
+		  printf("													setMapData: %d %d %d\n",x,y,0);
+			//setMapData(x,y,0);
 	}
-	absolute_servo_sonar(-25);
+	absolute_servo_sonar(-delta_angle);
+	printf("													angle_servo : %d \n", -delta_angle);
+	Sleep(1000);
 	gauche = get_sonar_distance();
 	if (gauche<100){
 		if(type<0){
-			if (isMovableObstacle){
+			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			setMapData(x,y,type);
+			printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,type);
+			//setMapData(x-delta_x,y-delta_y,type);
 		}
 	}
 	else{
-			setMapData(x-x_delta,y-y_delta,0);
+		  printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,0);
+			//setMapData(x-delta_x,y-delta_y,0);
 	}
-	absolute_servo_sonar(50);
+	absolute_servo_sonar(-2*delta_angle);
+	printf("													angle_servo : %d \n", -2*delta_angle);
+	Sleep(1000);
+	gauche_plus = get_sonar_distance();
+	if (gauche_plus<100){
+		if(type<0){
+			if (isMovableObstacle()){
+				type = 100;
+			}
+			else{
+				type = 1;
+			}
+			printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
+			//setMapData(x-2*delta_x,y-2*delta_y,0);
+		}
+	}
+	else{
+		  printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,0);
+			//setMapData(x-2*delta_x,y-2*delta_y,0);
+	}
+	absolute_servo_sonar(delta_angle);
+
+	printf("													angle_servo : %d \n", delta_angle);
+	Sleep(1000);
 	droite = get_sonar_distance();
 	if (droite<100){
 		if(type<0){
-			if (isMovableObstacle){
+			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			setMapData(x,y,type);
+			printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,type);
+			//setMapData(x+delta_x,y+delta_y,type);
 		}
 	}
 	else{
-			setMapData(x+x_delta,y+y_delta,0);
+		  printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,0);
+			//setMapData(x+delta_x,y+delta_y,0);
 	}
-	absolute_servo_sonar(-25);
-	go_to_angle(-180);
-	int move_x = (X/50)%3;
-	int move_y = (Y/50)%3;
-	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8,max(move_x,move_y)*10,40,30);
+	absolute_servo_sonar(2*delta_angle);
+	printf("													angle_servo : %d \n", 2*delta_angle);
+	Sleep(1000);
+	droite_plus = get_sonar_distance();
+	if (droite_plus<100){
+		if(type<0){
+			if (isMovableObstacle()){
+				type = 100;
+			}
+			else{
+				type = 1;
+			}
+			printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,type);
+			//setMapData(x+2*delta_x,y+2*delta_y,type);
+		}
+	}
+	else{
+		  printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
+			//setMapData(x+2*delta_x,y+2*delta_y,0);
+	}
+	absolute_servo_sonar(0);
+	printf("													angle_servo : %d \n", 0);
+	Sleep(1000);
+	printf("													angle_gyro : %d \n", getGyroAngle());
+	rotate_to_angle(MAX_SPEED/4,-180);
+	printf("													angle_gyro : %d \n", getGyroAngle());
+	int diff = abs(Y-Y_start)+abs(X-X_start);
+	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8,diff,40,30);
 }
