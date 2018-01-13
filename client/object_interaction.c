@@ -80,7 +80,6 @@ int direction(){
 	return var%4;
 }
 void checkForward(){
-	initGyro();
 	int X_start = X;
 	int Y_start = Y;
 	int delta_angle=25;
@@ -94,7 +93,7 @@ void checkForward(){
 	char type = 2;
 	//stop_sweep(); //sweep_thread
 
-	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8, 50, 40, 30);
+	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 40, 30);
 	Sleep(100);
 	int dir = direction();
 	switch(dir)
@@ -221,5 +220,5 @@ void checkForward(){
 	rotate_to_angle(MAX_SPEED/4,-180);
 	printf("													angle_gyro : %d \n", getGyroAngle());
 	int diff = abs(Y-Y_start/50*50)+abs(X-X_start/50*50);
-	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8,diff,40,30);
+	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8,diff,40,30);
 }

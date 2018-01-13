@@ -44,6 +44,7 @@
 int main(){
   initMotorWheels();
 	initMotorServo();
+  initGyro();
   initSensorSonar();
 	servo_arm_up();
   checkForward();

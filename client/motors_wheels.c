@@ -273,12 +273,12 @@ void preciseRotation(int speed, int angle){
 	initPosition();
 	//printf("commencer angle : %d \n",angle);
 	angle_gyro_start = getGyroAngle();
-	//printf("angle gyro avant : %d \n",(int) getAngleGyro());
+	printf("angle gyro avant : %d \n",(int) getAngleGyro());
   rotation(speed, angle);
-	//printf("angle gyro apres : %d \n",(int) getAngleGyro());
+	printf("angle gyro apres : %d \n",(int) getAngleGyro());
 	angle_gyro_end = getGyroAngle();
   difference = angle - (angle_gyro_end - angle_gyro_start);
-	//printf("angle restant : %d \n",difference);
+	printf("angle restant : %d \n",difference);
 	if(difference!=0){
 		rotation(speed, difference);
 	}
