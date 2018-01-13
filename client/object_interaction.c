@@ -220,6 +220,6 @@ void checkForward(){
 	printf("													angle_gyro : %d \n", getGyroAngle());
 	rotate_to_angle(MAX_SPEED/4,-180);
 	printf("													angle_gyro : %d \n", getGyroAngle());
-	int diff = abs(Y-Y_start)+abs(X-X_start);
+	int diff = abs(Y-Y_start/50*50)+abs(X-X_start/50*50);
 	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8,diff,40,30);
 }
