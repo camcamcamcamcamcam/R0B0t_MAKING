@@ -30,14 +30,14 @@ extern int Y; //in mm
 int globx;  //coordonnate
 int globy;  //coordonnate
 extern int TETA;
-char directionX;
-char directionY;
+int directionX;
+int directionY;
 char is_possible = 1;
 char h = MAP_HEIGHT; // the height of the map
 char w = MAP_WIDTH; // the width of the map
 int cost = 0;
-char dirX;
-char dirY;
+int dirX;
+int dirY;
 
 extern unsigned char map[map_x][map_y];
 /*
@@ -60,9 +60,9 @@ void client_position();
 void manage_obstacles();
 int longest_undisclosed_position();
 void initMap();
-char checkBoundaries(unsigned char x_check, unsigned char y_check);
+char checkBoundaries(int x_check, int y_check);
 
-char checkBoundaries(unsigned char x_check, unsigned char y_check){
+char checkBoundaries(int x_check, int y_check){
 	if (x_check >= MAP_WIDTH || x_check < 0 || y_check >= MAP_HEIGHT || y_check < 0)
 		return 0;
 	return 1;
@@ -172,15 +172,15 @@ char disclosed(int angle){
     dirX = -1;
     dirY = 0;
   }
-  printf("Value disclosed (globx,globy)=(%d,%d) \n",globx,globy);
-  printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]);
-  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]);
-  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
-  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
-  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
 	if (!checkBoundaries(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)) && !checkBoundaries(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))){
 		return 1;
 	}
+	printf("Value disclosed (globx,globy)=(%d,%d) \n",globx,globy);
+	printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]);
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]);
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
   if ((map[globx+3*dirX][globy+3*dirY]==200) || (map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]==200) || (map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]==200) || (map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]==200)) {
       return 0;
   }else{
