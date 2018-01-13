@@ -194,6 +194,7 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	int brakingDistance = 300;
 	
 	char distanceMaxDone = 1;
+	char distanceMaxDoneLocal = 1;
 	distance_sonar = getMinDistance(45,15);
 	printf("Distance sonar : %d\n", distance_sonar);
 	//printf("Distance security : %d\n", securityDistance);
@@ -208,8 +209,10 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	while(minBuffer>securityDistance && robot_is_moving()){
 		if(minBuffer<brakingDistance){
 			// linear braking from speed to speed/5. The speed begins to decrease when reaching 40cm distance from the obstacle.
-			manage_speed(speed,minBuffer-securityDistance,securityDistance,brakingDistance, speedDivider);
-			distanceMaxDone=0;
+			distanceMaxDoneLocal = manage_speed(speed,minBuffer-securityDistance,securityDistance,brakingDistance, speedDivider);
+			if(distanceMaxDone==1){
+				distanceMaxDone = distanceMaxDoneLocal;
+			}
 		}
 		refreshGlobalPosition();
 		distance_sonar = getDistance_current_weighted();
