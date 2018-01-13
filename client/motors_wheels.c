@@ -53,6 +53,7 @@ int TETA1; // angle absolu du robot en degré
 int leftStartPosition = 0;
 int rightStartPosition = 0;
 int rotationPolarity = 0;
+int turnBack = 0;
 
 // define some variables used to manage the evolution of absolute variables X, Y, TETA
 int leftFinalPosition = 0;
@@ -145,8 +146,10 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
 		angle = -angle;
+		turnback = 1;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
+		turnback = 0;
     }
 	set_tacho_position(sn_wheels[1],position_left);
 	set_tacho_position(sn_wheels[0],position_right);
@@ -304,6 +307,7 @@ void initPosition(){
 	rotationPolarity = 0;
 	X1 = X;
 	Y1 = Y;
+	turnBack = 0;
 }
 
 void refreshPosition(){
@@ -320,8 +324,14 @@ void refreshPosition(){
 		//printf("Right motor pos=%d\n", (int) get_left_motor_position());
 		meanAngle = (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
-		X1 = X1 + difference*sin(TETA*PI/180);
-		Y1 = Y1 + difference*cos(TETA*PI/180);
+		if(turnBack==0){
+			X1 = X1 + difference*sin(TETA*PI/180);
+			Y1 = Y1 + difference*cos(TETA*PI/180);
+		}
+		else{
+			X1 = X1 - difference*sin(TETA*PI/180);
+			Y1 = Y1 - difference*cos(TETA*PI/180);
+		}
 		X=X1;
 		Y=Y1;
 		initPosition();
@@ -346,9 +356,14 @@ void refreshGlobalPosition(){
 		//printf("meanAngle=%d\n", meanAngle);
 		difference = angle_to_distance(meanAngle);
 		//printf("Difference Distance=%d\n",difference);
-		X = X1 + difference*sin(TETA*PI/180);
-		Y = Y1 + difference*cos(TETA*PI/180);
-
+		if(turnBack==0){
+			X = X1 + difference*sin(TETA*PI/180);
+			Y = Y1 + difference*cos(TETA*PI/180);
+		}
+		else{
+			X = X1 - difference*sin(TETA*PI/180);
+			Y = Y1 - difference*cos(TETA*PI/180);
+		}
 	}
 
 }
