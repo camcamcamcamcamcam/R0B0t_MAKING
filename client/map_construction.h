@@ -1,7 +1,10 @@
 #ifndef R0B0T_MAKING_MAP_CONSTRUCTION_H
 #define R0B0T_MAKING_MAP_CONSTRUCTION_H
 
-static unsigned char map[map_x][map_y] = { [0 ... map_x-1][0 ... map_y-1] = 200};
+#define map_x 80
+#define map_y 80
+
+extern unsigned char map[map_x][map_y];
 
 void sendMapDone();
 // send all the pixels that are obstacles(both moveable and non-moveable)

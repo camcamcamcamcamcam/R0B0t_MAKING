@@ -1,9 +1,10 @@
 #include "map_construction.h"
 #include <stdio.h>
-//#include "robotclient.h"
+#include "robotclient.h"
 
-#define map_x 80
-#define map_y 80
+
+
+unsigned char map[map_x][map_y] = { [0 ... map_x-1][0 ... map_y-1] = 200};
 
 /*
  * the map is made of :
@@ -14,20 +15,24 @@
  */
 
 void sendMapDone(){
+  int obstable = 0;
     for (int i=0; i < map_x; i++){
         for (int j=0; j < map_y; j++){
             switch (map[i][j]) {
                 case NON_MOVING_OBSTACLE :
-                    sendMessage(MSG_MAPDATA, i, j, 255, 255, 255, 0);
+                    sendMessage(MSG_MAPDATA, i, j, 0, 0, 0, 0);
+                    obstable++;
                     break;
                 case MOVING_OBSTACLE :
                     sendMessage(MSG_MAPDATA, i, j, 255, 0, 0, 0);
+                    obstable++;
                     break;
                 default:    //nothing there
                     break;
             }
         }
     }
+    printf("There were %d obstacle\n", obstable);
     sendMessage(MSG_MAPDONE, 0, 0, 0, 0, 0, 0);
 }
 

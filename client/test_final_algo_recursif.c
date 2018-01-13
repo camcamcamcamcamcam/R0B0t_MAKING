@@ -1,12 +1,16 @@
 #include <pthread.h>
 #include <signal.h>
 #include <time.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "servo_sonar.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
-//#include "robotclient.h"
+#include "robotclient.h"
 #include "motors_wheels.h"
+#include "map_construction.h"
+#include "sensor_sonar.h"
+#include "motors_servo.h"
 #define MAP_HEIGHT 80
 #define MAP_WIDTH 80
 
@@ -33,7 +37,9 @@ char w = MAP_WIDTH; // the width of the map
 int cost = 0;
 char dirX;
 char dirY;
-unsigned char map[MAP_WIDTH][MAP_HEIGHT] = { [0 ... MAP_WIDTH-1][0 ... MAP_HEIGHT-1] = 200};
+char allDistanceDone = 1;
+
+extern unsigned char map[map_x][map_y];
 /*
  * the map is made of :
  *   0 if there is nothing
@@ -72,24 +78,27 @@ void client_position(){
   send the postition to the server every 2 seconds
   update the local map every 50 ms to say there is no obstacle
   */
-  char count = 0;
+  int count = 0;
     while(1){
 
         int x = (int) (X/50);
         int y = (int) (Y/50);
 		globx = x;
 		globy = y;
-		printf("X=%d\n",X);
-		printf("Y=%d\n",Y);
-		printf("globx=%d\n",globx);
-		printf("globy=%d\n",globy);
+		//printf("X=%d\n",X);
+		//printf("Y=%d\n",Y);
+		//printf("globx=%d\n",globx);
+		//printf("globy=%d\n",globy);
         //x and y must be between 0 and 80 (ie inside the map)
         x = (x < (MAP_WIDTH-1)) ? ((x >= 0) ? x : 0) : (MAP_WIDTH-1);
         y = (y < (MAP_HEIGHT-1)) ? ((y >= 0) ? y : 0 ) : (MAP_HEIGHT-1);
-        if (count == 40) {
-          //to uncomment sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
-          count = 0;
+        if (count%40 == 0) {
+          sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
         }
+				if (count == 400) {
+					sendMapDone();
+					count = 0;
+				}
         count++;
         int i;
         int j;
@@ -122,7 +131,7 @@ char can_move_forward() {
   /*
   Discover the cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
   */
-  
+
   // assess the cost represented by the use of the function
   increase_cost(2);
   // Check if the robot won't go outside the arena
@@ -135,7 +144,7 @@ char can_move_forward() {
 		  return 1;
 	  }
 	  else{
-		  return 0;
+		return 0;
 	  }
   }
 
@@ -210,7 +219,7 @@ char move_forward(){
   The function enables to move the robot 5cm forward if it is possible.
   It returns True if the movement has been possible.
   */
-  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 100, 60);
+  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 50, 60);
   increase_cost(1);
   return 0;
 }
@@ -237,7 +246,7 @@ int move_forward_until(int max_pos){
   The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
   It returns the number of cells the robot has been able to do.
   """*/
-  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 100, 40);
+  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 50, 40);
   printf("Mvt forward Finished\n");
   increase_cost(2);
   return 0;
@@ -397,11 +406,12 @@ void algo_recursive_b() {
 	  printf("Move forward until %d \n",dist);
       move_forward_until(dist);
 	  // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
-	  int is_possible = can_move_forward();
+	  //int is_possible = can_move_forward();  uncomment with function of Camille
 	  printf("can move forward ? %d \n",is_possible);
-	  if(!is_possible){
+	  //if(!is_possible){  uncomment with function of Camille
+		if(!allDistanceDone){
 		  //procédure gestion obstacles
-		  manage_obstacles();
+		  manage_obstacles();  uncomment with function of Camille
 	  }
     } else {
 		printf("Try to see in the sides \n");
@@ -420,8 +430,9 @@ void algo_recursive_b() {
         int indexAngle = result[0];
         int minimum = result[1];
         if (minimum == 1000){
-          if (can_move_forward()){
-            move_forward();
+          //if (can_move_forward()){
+					if (!allDistanceDone){
+					  move_forward();
           } else {
             if (rand()*2 < RAND_MAX) rotate(90);
             else rotate(-90);
@@ -429,12 +440,13 @@ void algo_recursive_b() {
         } else {
           rotate(indexAngle);
           move_forward_until(minimum);
-		  if(!can_move_forward()){
+		  //if(!can_move_forward()){
+			if(!allDistanceDone){  //to comment with function of Camille
 			  //procédure gestion obstacles
 			  manage_obstacles();
 		  }
         }
-      }
+      }  uncomment with function of Camille
     }
   }
 }
@@ -453,7 +465,7 @@ void main (void) {
   servo_arm_up();
   //initMap();
   //while the server did not send the START_MESSAGE, the robot will wait in init_client()
-  //initClient(); // will STOP the program if the server is not launched !
+  initClient(); // will STOP the program if the server is not launched !
 
   pthread_t tid_client_position;
   pthread_attr_t attr_client_position;
@@ -462,4 +474,5 @@ void main (void) {
   pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
 
   algo_recursive_b();
+	return 1;
 }
