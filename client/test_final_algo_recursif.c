@@ -410,7 +410,7 @@ void algo_recursive_b() {
 	          		int minimum = result[1];
 	          		if (minimum == 1000){
 	            			//if (can_move_forward()){
-		  							if (!can_move_forward()){
+		  							if (can_move_forward()){
 											  printf("     & can move forward\n");
 			  			  				move_forward();
 	            			} else {
