@@ -80,6 +80,7 @@ int direction(){
 	return var%4;
 }
 void checkForward(){
+	printf("***  BEGINNING CHECKFORWARD  ***\n");
 	int X_start = X;
 	int Y_start = Y;
 	int delta_angle=25;
@@ -88,12 +89,12 @@ void checkForward(){
 	int droite=0;
 	int gauche_plus=0;
 	int droite_plus=0;
-	char delta_x=0;
-	char delta_y=0;
+	int delta_x=0;
+	int delta_y=0;
 	char type = 2;
 	//stop_sweep(); //sweep_thread
 
-	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 40, 30);
+	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 50, 30);
 	Sleep(100);
 	int dir = direction();
 	switch(dir)
@@ -120,17 +121,17 @@ void checkForward(){
 				type = 1;
 			}
 		}
-		printf("													setMapData: %d %d %d\n",x,y,type);
-			//setMapData(x,y,type);
+		printf("setMapData: %d %d %d\n",x,y,type);
+			setMapData(x,y,type);
 
 	}
 	else{
-		  printf("													setMapData: %d %d %d\n",x,y,0);
-			//setMapData(x,y,0);
+		  printf("setMapData: %d %d %d\n",x,y,0);
+			setMapData(x,y,0);
 	}
 	absolute_servo_sonar(delta_angle+10);
-	printf("													angle_servo : %d \n", -delta_angle);
-	Sleep(1000);
+	printf("angle_servo : %d \n", -delta_angle);
+	Sleep(100);
 	gauche = get_sonar_distance();
 	if (gauche<100){
 		if(type==2){
@@ -141,17 +142,17 @@ void checkForward(){
 				type = 1;
 			}
 		}
-		printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,type);
-			//setMapData(x-delta_x,y-delta_y,type);
+		printf("setMapData: %d %d %d\n",x-delta_x,y-delta_y,type);
+			setMapData(x-delta_x,y-delta_y,type);
 
 	}
 	else{
-		  printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,0);
-			//setMapData(x-delta_x,y-delta_y,0);
+		  printf("setMapData: %d %d %d\n",x-delta_x,y-delta_y,0);
+			setMapData(x-delta_x,y-delta_y,0);
 	}
 	absolute_servo_sonar(2*delta_angle+20);
-	printf("													angle_servo : %d \n", -2*delta_angle);
-	Sleep(1000);
+	printf("angle_servo : %d \n", -2*delta_angle);
+	Sleep(100);
 	gauche_plus = get_sonar_distance();
 	if (gauche_plus<100){
 		if(type==2){
@@ -162,18 +163,18 @@ void checkForward(){
 				type = 1;
 			}
 		}
-		printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
-		//setMapData(x-2*delta_x,y-2*delta_y,0);
+		printf("setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
+		setMapData(x-2*delta_x,y-2*delta_y,0);
 
 	}
 	else{
-		  printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,0);
-			//setMapData(x-2*delta_x,y-2*delta_y,0);
+		  printf("setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,0);
+			setMapData(x-2*delta_x,y-2*delta_y,0);
 	}
 	absolute_servo_sonar(-delta_angle);
 
-	printf("													angle_servo : %d \n", delta_angle);
-	Sleep(1000);
+	printf("angle_servo : %d \n", delta_angle);
+	Sleep(100);
 	droite = get_sonar_distance();
 	if (droite<100){
 		if(type==2){
@@ -184,17 +185,17 @@ void checkForward(){
 				type = 1;
 			}
 		}
-		printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,type);
-			//setMapData(x+delta_x,y+delta_y,type);
+		printf("setMapData: %d %d %d\n",x+delta_x,y+delta_y,type);
+			setMapData(x+delta_x,y+delta_y,type);
 
 	}
 	else{
-		  printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,0);
-			//setMapData(x+delta_x,y+delta_y,0);
+		  printf("setMapData: %d %d %d\n",x+delta_x,y+delta_y,0);
+			setMapData(x+delta_x,y+delta_y,0);
 	}
 	absolute_servo_sonar(-2*delta_angle);
-	printf("													angle_servo : %d \n", 2*delta_angle);
-	Sleep(1000);
+	printf("angle_servo : %d \n", 2*delta_angle);
+	Sleep(100);
 	droite_plus = get_sonar_distance();
 	if (droite_plus<100){
 		if(type==2){
@@ -205,20 +206,23 @@ void checkForward(){
 				type = 1;
 			}
 		}
-		printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,type);
-		//setMapData(x+2*delta_x,y+2*delta_y,type);
+		printf("setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,type);
+		setMapData(x+2*delta_x,y+2*delta_y,type);
 
 	}
 	else{
-		  printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
-			//setMapData(x+2*delta_x,y+2*delta_y,0);
+		  printf("setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
+			setMapData(x+2*delta_x,y+2*delta_y,0);
 	}
 	absolute_servo_sonar(0);
-	printf("													angle_servo : %d \n", 0);
-	Sleep(1000);
-	printf("													angle_gyro : %d \n", getGyroAngle());
-	rotate_to_angle(MAX_SPEED/4,-180);
-	printf("													angle_gyro : %d \n", getGyroAngle());
+	printf("angle_servo : %d \n", 0);
+	Sleep(100);
+	printf("angle_gyro : %d \n", getGyroAngle());
+	//rotate_to_angle(MAX_SPEED/4,-180);
+	printf("angle_gyro : %d \n", getGyroAngle());
 	int diff = abs(Y-(Y_start/50)*50)+abs(X-(X_start/50)*50);
-	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8,diff,40,30);
+	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8,-diff,0,30);
+	//rotate_to_angle(MAX_SPEED/4,180);
+	printf("***  ENDING CHECKFORWARD  ***\n");
+
 }

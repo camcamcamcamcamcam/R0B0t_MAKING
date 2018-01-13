@@ -203,7 +203,7 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 		deltaAngle = distance_to_angle(distance);
 		leftFinalPosition = get_left_motor_position() + deltaAngle;
 		rightFinalPosition = get_right_motor_position() + deltaAngle;
-		distanceMaxDone = 0
+		distanceMaxDone = 0;
 	}
 	int newSpeed = max_speed - (((speedDivider-1)*max_speed/speedDivider)*(brakingDistance-distance))/(brakingDistance-securityDistance);
 	multi_set_tacho_speed_sp(sn_wheels, newSpeed);
@@ -241,7 +241,7 @@ void rotation(int speed, int angle){
     int angle_roue = distance_to_angle(distance_roue);
     goStraightForAngle(sn_wheels[0], speed, -angle_roue);
     goStraightForAngle(sn_wheels[1], speed, angle_roue);
-	Sleep(10);
+	Sleep(50);
 	while(robot_is_moving()){ // waiting until the speed of the two motors has reached 0.
 		Sleep(10);
 	}
@@ -277,9 +277,9 @@ void preciseRotation(int speed, int angle){
 	initPosition();
 	//printf("commencer angle : %d \n",angle);
 	angle_gyro_start = getGyroAngle();
-	printf("angle gyro avant : %d \n",(int) getAngleGyro());
+	printf("angle gyro avant : %d \n",(int) getGyroAngle());
   rotation(speed, angle);
-	printf("angle gyro apres : %d \n",(int) getAngleGyro());
+	printf("angle gyro apres : %d \n",(int) getGyroAngle());
 	angle_gyro_end = getGyroAngle();
   	difference = angle - (angle_gyro_end - angle_gyro_start);
 	printf("angle restant : %d \n",difference);

@@ -97,12 +97,12 @@ void go_to_distance_sweep_regular_braking(int speed, int distance, int securityD
 
 	initPosition();
 	int distance_sonar = 0;
-	
+
 	// variable used for linear braking
 	int newSpeed;
 	int speedDivider = 5;
 	int brakingDistance = 500;
-	
+
 	distance_sonar = getMinDistance(45,15);
 	printf("Distance sonar : %d\n", distance_sonar);
 	//printf("Distance security : %d\n", securityDistance);
@@ -142,11 +142,11 @@ void go_to_distance_sweep_regular_braking_new(int speed, int distance, int secur
 
 	initPosition();
 	int distance_sonar = 0;
-	
+
 	// variable used for linear braking
 	int speedDivider = 2;
 	int brakingDistance = 300;
-	
+
 	distance_sonar = getMinDistance(45,15);
 	printf("Distance sonar : %d\n", distance_sonar);
 	//printf("Distance security : %d\n", securityDistance);
@@ -188,14 +188,14 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 
 	initPosition();
 	int distance_sonar = 0;
-	
+
 	// variable used for linear braking
 	int speedDivider = 2;
 	int brakingDistance = 300;
-	
+
 	char distanceMaxDone = 1;
 	char distanceMaxDoneLocal = 1;
-	distance_sonar = getMinDistance(45,15);
+	distance_sonar = getMinDistance(60,15);
 	printf("Distance sonar : %d\n", distance_sonar);
 	//printf("Distance security : %d\n", securityDistance);
 	if(distance_sonar>securityDistance){

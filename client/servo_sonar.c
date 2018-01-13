@@ -35,7 +35,7 @@ int bufferSonar[10] = {1000,1000,1000,1000,1000,1000,1000,1000,1000,1000}; // co
 int indexSonar; // index of the next element to write in the buffer
 
 int getDistance(int angle){
-	
+
 	int distance = 0;
 
 	if(angle>60 || angle<-60){
@@ -47,9 +47,9 @@ int getDistance(int angle){
 		bufferSonar[indexSonar] = (int) distance;
 		indexSonar = (indexSonar+1)%bufferSonarSize;
 	}
-	
+
 	return distance;
-	
+
 }
 
 int getDistance_weighted(int angle){
@@ -57,7 +57,7 @@ int getDistance_weighted(int angle){
 	// if the distance detected will not disturb the robot (when it moves forward), the distance that is detected is 1000.
 	int distance = 0;
 	int horiz_distance;
-	
+
 	if(angle>60 || angle<-60){
 		printf("Angle not adapted to the configuration : should be between -50° and 50°\n");
 	}
@@ -65,7 +65,7 @@ int getDistance_weighted(int angle){
 		absolute_servo_sonar(angle);
 		distance = get_sonar_distance();
 		horiz_distance = distance*sin(angle*PI/180);
-		if(horiz_distance>DIAMETRE_ROBOT/2){
+		if(horiz_distance> (DIAMETRE_ROBOT/2 + 10)){
 			distance = 1000;
 		}
 		else{
@@ -74,7 +74,7 @@ int getDistance_weighted(int angle){
 		bufferSonar[indexSonar] = (int) distance;
 		indexSonar = (indexSonar+1)%bufferSonarSize;
 	}
-	
+
 	return distance;
 }
 
@@ -83,7 +83,7 @@ int getDistance_current_weighted(){
 	// if the distance detected will not disturb the robot (when it moves forward), the distance that is detected is 1000.
 	int distance = 0;
 	int horiz_distance;
-	
+
 	int angle = get_absolute_angle_servo();
 	distance = get_sonar_distance();
 	horiz_distance = distance*sin(angle*PI/180);
@@ -95,7 +95,7 @@ int getDistance_current_weighted(){
 	}
 	bufferSonar[indexSonar] = (int) distance;
 	indexSonar = (indexSonar+1)%bufferSonarSize;
-	
+
 	return distance;
 }
 
@@ -120,7 +120,7 @@ void clearBuffer(){
 }
 
 int getMinDistance(int amplitudeAngle, int precisionAngle){
-	// get the minimum distance detected by the robot from -amplitudeAngle to amplitudeAngle with precisionAngle as step. 
+	// get the minimum distance detected by the robot from -amplitudeAngle to amplitudeAngle with precisionAngle as step.
 	int angle = -amplitudeAngle;
 	int minDistance;
 	//int minAngle;
@@ -145,18 +145,18 @@ int main( void ){
 	int distance;
 	int i;
 	char answer;
-	
+
     initMotorServo();
     initSensorSonar();
-	
+
 	servo_arm_up();
-	
+
 	printf("Initializing..");
-	
+
 	answer='y';
-	
+
 	while(answer!='n'){
-		
+
 		i=-30;
 		while (i>=-30 && i<=30){
 			printf("In loop \n");
@@ -167,9 +167,9 @@ int main( void ){
 		printf("Continue the test ? (y/n)\n");
 		Sleep(100);
 		scanf(" %c",&answer);
-		
+
 	}
-	
+
 	servo_sonar(0);
 
 }

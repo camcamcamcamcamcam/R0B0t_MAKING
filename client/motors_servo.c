@@ -35,7 +35,7 @@
 #endif
 
 // Reduction ratio between the gears for the servo using the sonar
-#define R 1 
+#define R 1
 
 // Global variables
 uint8_t sn_servo[2];
@@ -57,7 +57,7 @@ void initMotorServo(){
     while ( ev3_tacho_init() < 1 ) Sleep( 1000 );//do not remove this line, or the LEGO_EV3_M_MOTOR 1 will NOT be found
     ev3_search_tacho_plugged_in(67, 0, &sn_servo[0], 0);
     ev3_search_tacho_plugged_in(65, 0, &sn_servo[1], 0);
-	
+
 	/*
 	Initialization of the absolute position "0" of the servo_arm
 	We ask the user the position of the servo_arm until this one moves to 0.
@@ -68,7 +68,7 @@ void initMotorServo(){
 	int initialValue;
 	initialValue=1;
 	servo_arm_down();
-	
+
 	while(initialValue!=0){
 		printf("Current angle of the servo_arm : \n");
 		scanf("%d",&initialValue);
@@ -80,7 +80,7 @@ void initMotorServo(){
 	printf("/// End of initialization. /// \n");
 	Sleep(1000);
 	//End Initialization of the servo_arm of the robot
-	
+
 	/*
 	Initialization of the absolute position "0" of the servo_sonar
 	We ask the user the position of the servo_sonar until this one moves to 0.
@@ -88,7 +88,7 @@ void initMotorServo(){
 	*/
 	printf("/// Initializing the servo_sonar of the robot. /// \n");
 	absolute_servo_sonar(0);
-	
+
 	while(initialValue!=0){
 		printf("Current angle of the servo_sonar : \n");
 		scanf("%d",&initialValue);
@@ -125,13 +125,13 @@ void servo_arm_up(){
 	The function enables to put the servo using the arm at the angle ANGLE_UP (usually 90°).
 	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
 	*/
-	
+
     go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_UP); // launches the motor
-	
+
 	while(servo_arm_is_running()){ // waiting until the speed of the motor has reached 0.
 		Sleep(10);
 	}
-	
+
 }
 
 void servo_arm_down(){
@@ -139,20 +139,20 @@ void servo_arm_down(){
 	The function enables to put the servo using the arm at the angle ANGLE_DOWN (usually 0°).
 	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
 	*/
-	
+
     go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_ZERO);
-	
+
 	while(servo_arm_is_running()){ // waiting until the speed of the motor has reached 0.
 		Sleep(10);
 	}
-	
+
 }
 
 int servo_arm_is_running(){
 	/*
 	The function returns 0 if the servo_arm is not running and 1 else.
 	*/
-	
+
 	int speed;
 	get_tacho_speed( sn_servo[0], &speed);
 	if(speed==0){
@@ -161,14 +161,14 @@ int servo_arm_is_running(){
 	else{
 		return 1;
 	}
-	
+
 }
 
 int servo_sonar_is_running(){
 	/*
 	The function returns 0 if the servo_arm is not running and 1 else.
 	*/
-	
+
 	int speed;
 	get_tacho_speed( sn_servo[1], &speed);
 	if(speed==0){
@@ -177,7 +177,7 @@ int servo_sonar_is_running(){
 	else{
 		return 1;
 	}
-	
+
 }
 
 void servo_sonar(int angle){
@@ -185,7 +185,7 @@ void servo_sonar(int angle){
 	The function enables to move the servo using the sonar to the specified angle "angle".
 	It is a blocking function : the thread including this function won't continue before the servo has reached the desired position.
 	*/
-	
+
     go_to_angle(sn_servo[1],MAX_SPEED / 10, angle);
 	//int timer = 0;
 	Sleep(100);
@@ -193,7 +193,7 @@ void servo_sonar(int angle){
 		Sleep(20);
 	}
 	//printf("Rotation finished\n");
-	
+
 }
 
 void absolute_servo_sonar(int angle){
@@ -202,11 +202,11 @@ void absolute_servo_sonar(int angle){
 	We have to take the reduction ratio in account.
 	The function enables to move the sonar to the specified angle "angle".
 	*/
-	
+
 	int motor_angle;
 	motor_angle = angle;
 	servo_sonar(motor_angle);
-	
+
 }
 
 int get_absolute_angle_servo(){
@@ -226,7 +226,7 @@ void thread_sweep(){
 		pthread_attr_init(&attr_sweep);
 		pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
 		thread_is_alive = 1;
-	}	
+	}
 }
 
 void start_sweep(){
@@ -239,12 +239,12 @@ void start_sweep(){
 void continuous_sweep(){
 	int amplitudeAngle = 60;
 	while(1){
-		printf("Sweep_state: %d\n",sweep_state);
+		//printf("Sweep_state: %d\n",sweep_state);
 		if(sweep_state==1){
 			printf("Beginning of the sweep\n");
 			absolute_servo_sonar(-amplitudeAngle);
 			absolute_servo_sonar(amplitudeAngle);
-		} 
+		}
 		else {
 			Sleep(100);
 			if(sweep_state == 2){
@@ -265,7 +265,7 @@ void end_thread_sweep(){
 	/*
 	The function puts an end to the thread.
 	*/
-	
+
 	sweep_state = 2;
 	pthread_exit(&tid_sweep);
 	printf("Thread exit\n");
@@ -275,7 +275,7 @@ void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {
 	/*
 	The function moves the specified servo to a certain angle
 	*/
-	
+
 	// taking the sign of the angle into account
     if (angle >= 0){
         set_tacho_polarity_inx(sn_servo_local,TACHO_NORMAL);
@@ -285,7 +285,7 @@ void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {
         angle = -angle;
 		polarity_servo = -1;
     }
-	
+
     set_tacho_speed_sp(sn_servo_local, speed); // defining the speed of the motor
 	set_tacho_position_sp(sn_servo_local, angle); // defining the desired position.
 	set_tacho_stop_action_inx(sn_servo_local, TACHO_HOLD);

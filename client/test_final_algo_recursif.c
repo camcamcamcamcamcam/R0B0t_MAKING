@@ -11,6 +11,7 @@
 #include "map_construction.h"
 #include "sensor_sonar.h"
 #include "motors_servo.h"
+#include "object_interaction.h"
 #define MAP_HEIGHT 80
 #define MAP_WIDTH 80
 
@@ -37,7 +38,6 @@ char w = MAP_WIDTH; // the width of the map
 int cost = 0;
 char dirX;
 char dirY;
-char allDistanceDone = 1;
 
 extern unsigned char map[map_x][map_y];
 /*
@@ -60,7 +60,13 @@ void client_position();
 void manage_obstacles();
 int longest_undisclosed_position();
 void initMap();
+char checkBoundaries(unsigned char x_check, unsigned char y_check);
 
+char checkBoundaries(unsigned char x_check, unsigned char y_check){
+	if (x_check >= MAP_WIDTH || x_check < 0 || y_check >= MAP_HEIGHT || y_check < 0)
+		return 0;
+	return 1;
+}
 void initMap(){
 	int i=0;
 	int j=0;
@@ -137,50 +143,13 @@ char can_move_forward() {
   // Check if the robot won't go outside the arena
   if (((directionY==1) && (globy == (h-2))) || ((directionY==-1) && (globy==2)) || ((directionX==1) && (globx==(w-2))) || ((directionX==-1) && (globx==2))) {
     return 0;
-  }
-  else{
-	  int minBuffer = getMinBufferSonar();
-	  if(minBuffer>150){
-		  return 1;
-	  }
-	  else{
-		return 0;
-	  }
-  }
-
-  //The 5 following statements enable to test the 5 cells situated in front of the robot
-  /* //TODO:replace with the function of Camille
-  if Map[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]==1:
-      is_possible = False
-      map[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]=128
-  else:
-      map[globy+3*directionY-2*null(directionY),globx+3*directionX-2*null(directionX)]=255
-
-  if Map[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]==1:
-      is_possible = False
-      map[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]=128
-  else:
-      map[globy+3*directionY-null(directionY),globx+3*directionX-null(directionX)]=255
-
-  if Map[globy+3*directionY,globx+3*directionX]==1:
-      is_possible = False
-      map[globy+3*directionY,globx+3*directionX]=128
-  else:
-      map[globy+3*directionY,globx+3*directionX]=255
-
-  if Map[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]==1:
-      is_possible = False
-      map[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]=128
-  else:
-      map[globy+3*directionY+null(directionY),globx+3*directionX+null(directionX)]=255
-
-  if Map[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]==1:
-      is_possible = False
-      map[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]=128
-  else:
-      map[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]=255
-  */
-
+	}
+	else{
+		int distance_sonar = getMinDistance(60,15);
+		if (distance_sonar < 100)
+			return 0;
+	}
+	return 1;
 }
 
 char disclosed(int angle){
@@ -207,6 +176,9 @@ char disclosed(int angle){
   printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
   printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
   printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
+	if (!checkBoundaries(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)) && !checkBoundaries(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))){
+		return 1;
+	}
   if ((map[globx+3*dirX][globy+3*dirY]==200) || (map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]==200) || (map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]==200) || (map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]==200)) {
       return 0;
   }else{
@@ -219,15 +191,17 @@ char move_forward(){
   The function enables to move the robot 5cm forward if it is possible.
   It returns True if the movement has been possible.
   */
-  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 50, 60);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 50, 60);
   increase_cost(1);
-  return 0;
+  return allDistanceDone;
 }
 
 void manage_obstacles(){
   /*
   A compléter avec la fonction de Camille
   */
+	checkForward();
+	/*
   map[globx+3*directionX-2*null(directionX)][globy+3*directionY-2*null(directionY)]=1;
   map[globx+3*directionX-null(directionX)][globy+3*directionY-null(directionY)]=1;
   map[globx+3*directionX][globy+3*directionY]=1;
@@ -237,7 +211,7 @@ void manage_obstacles(){
   printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX-null(directionX),globy+3*directionY-null(directionY));
   printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX,globy+3*directionY);
   printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX+null(directionX),globy+3*directionY+null(directionY));
-  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX+2*null(directionX),globy+3*directionY+2*null(directionY));
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX+2*null(directionX),globy+3*directionY+2*null(directionY));*/
   return;
 }
 
@@ -246,10 +220,10 @@ int move_forward_until(int max_pos){
   The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
   It returns the number of cells the robot has been able to do.
   """*/
-  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 50, 40);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 50, 40);
   printf("Mvt forward Finished\n");
   increase_cost(2);
-  return 0;
+  return allDistanceDone;
 }
 
 void rotate(int angle){
@@ -399,19 +373,20 @@ void algo_recursive_b() {
   //srand(time(NULL));   // should only be called once
   directionX = 0;
   directionY = 1;
+	char allDistanceDone = 1;
   while (cost<=THRESHOLD){
 	printf("disclosed in front : %d \n",disclosed(TETA + 0));
     if (!disclosed(TETA + 0)){
 	  int dist =  longest_undisclosed_position();
 	  printf("Move forward until %d \n",dist);
-      move_forward_until(dist);
+      allDistanceDone = move_forward_until(dist);
 	  // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
-	  //int is_possible = can_move_forward();  uncomment with function of Camille
-	  printf("can move forward ? %d \n",is_possible);
+	  //char is_possible = can_move_forward();  // uncomment with function of Camille
+	  //printf("can move forward ? %d \n",is_possible);
 	  //if(!is_possible){  uncomment with function of Camille
-		if(!allDistanceDone){
+		if(!allDistanceDone && !can_move_forward()){
 		  //procédure gestion obstacles
-		  manage_obstacles();  uncomment with function of Camille
+		  manage_obstacles();
 	  }
     } else {
 		printf("Try to see in the sides \n");
@@ -431,7 +406,8 @@ void algo_recursive_b() {
         int minimum = result[1];
         if (minimum == 1000){
           //if (can_move_forward()){
-					if (!allDistanceDone){
+
+					if (!can_move_forward()){
 					  move_forward();
           } else {
             if (rand()*2 < RAND_MAX) rotate(90);
@@ -446,7 +422,7 @@ void algo_recursive_b() {
 			  manage_obstacles();
 		  }
         }
-      }  uncomment with function of Camille
+      }  //uncomment with function of Camille
     }
   }
 }
