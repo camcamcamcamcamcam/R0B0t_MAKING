@@ -36,7 +36,7 @@ int getGyroAngle(){
         if ( !get_sensor_value( 0, sn_gyro, &val ) ) {
             val = init_gyro;
         }
-        return (((val-init_gyro)%360+360)%360);
+        return (val);
 }
 
 int getGyroRotationnalSpeed(){
