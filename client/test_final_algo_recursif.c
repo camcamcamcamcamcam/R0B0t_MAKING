@@ -147,7 +147,7 @@ char can_move_forward() {
 	}
 	else{
 		int distance_sonar = getMinDistance(60,15);
-		printf("*# can_move_forward distance_sonar%d\n", distance_sonar);
+		printf("*# can_move_forward distance_sonar : %d mm\n", distance_sonar);
 		if (distance_sonar < 100)
 			return 0;
 	}
@@ -311,7 +311,7 @@ int longest_undisclosed_position(){
 	else{
 		return globx-2;
 	}
-	
+
   return 1000;
 }
 
