@@ -183,10 +183,11 @@ void slow_down(int speed){
 }
 
 
-void manage_speed(int max_speed, int maxDistance,int securityDistance,int brakingDistance, int speedDivider){
+char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakingDistance, int speedDivider){
 	int distance;
 	int angle;
 	int deltaAngle = fabs(leftFinalPosition-leftStartPosition)-fabs(get_left_motor_position()-leftStartPosition);
+	char distanceMaxDone = 1;
 	if(deltaAngle<0){
 		distance=0;
 		deltaAngle=0;
@@ -201,11 +202,13 @@ void manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 		deltaAngle = distance_to_angle(distance);
 		leftFinalPosition = get_left_motor_position() + deltaAngle;
 		rightFinalPosition = get_right_motor_position() + deltaAngle;
+		distanceMaxDone = 0
 	}
 	int newSpeed = max_speed - (((speedDivider-1)*max_speed/speedDivider)*(brakingDistance-distance))/(brakingDistance-securityDistance);
 	multi_set_tacho_speed_sp(sn_wheels, newSpeed);
 	multi_set_tacho_position_sp(sn_wheels, deltaAngle);
     multi_set_tacho_command_inx(sn_wheels, TACHO_HOLD); // Has to be replace !!
+	return distanceMaxDone;
 }
 
 void goStraight_NonBlocking(int speed, int distance){
