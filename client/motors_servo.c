@@ -204,7 +204,7 @@ void absolute_servo_sonar(int angle){
 	*/
 	
 	int motor_angle;
-	motor_angle = angle *(1/R);
+	motor_angle = angle;
 	servo_sonar(motor_angle);
 	
 }
@@ -212,7 +212,7 @@ void absolute_servo_sonar(int angle){
 int get_absolute_angle_servo(){
 	int angle;
 	get_tacho_position(sn_servo[1],&angle);
-	return (int) R*angle;
+	return (int) angle;
 }
 
 void thread_sweep(){
@@ -237,13 +237,16 @@ void start_sweep(){
 }
 
 void continuous_sweep(){
-	int amplitudeAngle = 45;
+	int amplitudeAngle = 60;
 	while(1){
+		printf("Sweep_state: %d\n",sweep_state);
 		if(sweep_state==1){
 			printf("Beginning of the sweep\n");
 			absolute_servo_sonar(-amplitudeAngle);
 			absolute_servo_sonar(amplitudeAngle);
-		} else {
+		} 
+		else {
+			Sleep(100);
 			if(sweep_state == 2){
 				return;
 			}

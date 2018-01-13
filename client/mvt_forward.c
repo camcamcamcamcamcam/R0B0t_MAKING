@@ -77,9 +77,6 @@ void go_to_distance_sweep(int speed, int distance, int securityDistance,int ampl
 		if(distance_sonar<300){
 			slow_down(speed/2);
 		}
-		printf("X : %d \n",X);
-		printf("Y : %d \n",Y);
-		printf("TETA : %d \n",TETA);
 		refreshGlobalPosition();
 		if(i>amplitudeSweep){
 			order = -1;
@@ -124,9 +121,6 @@ void go_to_distance_sweep_regular_braking(int speed, int distance, int securityD
 			newSpeed = speed - (((speedDivider-1)*speed/speedDivider)*(brakingDistance-minBuffer))/(brakingDistance-securityDistance);
 			slow_down(newSpeed);
 		}
-		printf("X : %d \n",X);
-		printf("Y : %d \n",Y);
-		printf("TETA : %d \n",TETA);
 		refreshGlobalPosition();
 		if(i>amplitudeSweep){
 			order = -1;
@@ -207,8 +201,6 @@ void go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	}
 	Sleep(50);
 	//printf("Before the loop \n");
-	int i = -amplitudeSweep;
-	int order = 1;
 	distance_sonar = getDistance_weighted(0);
 	int minBuffer = getMinBufferSonar();
 	thread_sweep();
@@ -217,13 +209,11 @@ void go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 			// linear braking from speed to speed/5. The speed begins to decrease when reaching 40cm distance from the obstacle.
 			manage_speed(speed,minBuffer-securityDistance,securityDistance,brakingDistance, speedDivider);
 		}
-		printf("X : %d \n",X);
-		printf("Y : %d \n",Y);
-		printf("TETA : %d \n",TETA);
 		refreshGlobalPosition();
 		distance_sonar = getDistance_current_weighted();
 		//printf("Distance sonar : %d \n",distance_sonar);
 		minBuffer = getMinBufferSonar();
+		Sleep(50);
 	}
 	stop_sweep();
 	stopMotors();

@@ -5,10 +5,15 @@
 #include "servo_sonar.h"
 #include "mvt_forward.h"
 #include "mvt_rotate.h"
-#include "robotclient.h"
+//#include "robotclient.h"
 #include "motors_wheels.h"
 #define MAP_HEIGHT 80
 #define MAP_WIDTH 80
+
+// Max speed of the tacho motor of the ev3 dev
+#ifndef MAX_SPEED
+#define MAX_SPEED 1050
+#endif
 
 extern int X; //in mm
 extern int Y; //in mm
@@ -28,7 +33,7 @@ char w = MAP_WIDTH; // the width of the map
 int cost = 0;
 char dirX;
 char dirY;
-extern unsigned char map[MAP_WIDTH][MAP_HEIGHT];
+unsigned char map[MAP_WIDTH][MAP_HEIGHT] = { [0 ... MAP_WIDTH-1][0 ... MAP_HEIGHT-1] = 200};
 /*
  * the map is made of :
  *   0 if there is nothing
@@ -45,7 +50,22 @@ char disclosed(int angle);
 char can_move_forward();
 void increase_cost(int value);
 char null(char a);
+void client_position();
+void manage_obstacles();
+int longest_undisclosed_position();
+void initMap();
 
+void initMap(){
+	int i=0;
+	int j=0;
+	while(i<w){
+		while(j<h){
+			map[i][j]=200;
+			j=j+1;
+		}
+		i=i+1;
+	}
+}
 
 void client_position(){
   /*
@@ -57,11 +77,17 @@ void client_position(){
 
         int x = (int) (X/50);
         int y = (int) (Y/50);
+		globx = x;
+		globy = y;
+		printf("X=%d\n",X);
+		printf("Y=%d\n",Y);
+		printf("globx=%d\n",globx);
+		printf("globy=%d\n",globy);
         //x and y must be between 0 and 80 (ie inside the map)
         x = (x < (MAP_WIDTH-1)) ? ((x >= 0) ? x : 0) : (MAP_WIDTH-1);
         y = (y < (MAP_HEIGHT-1)) ? ((y >= 0) ? y : 0 ) : (MAP_HEIGHT-1);
         if (count == 40) {
-          sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
+          //to uncomment sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
           count = 0;
         }
         count++;
@@ -96,10 +122,21 @@ char can_move_forward() {
   /*
   Discover the cells situated just in front of the robot and returns a boolean : True if the robot can move forward..
   */
-
+  
+  // assess the cost represented by the use of the function
+  increase_cost(2);
   // Check if the robot won't go outside the arena
   if (((directionY==1) && (globy == (h-2))) || ((directionY==-1) && (globy==2)) || ((directionX==1) && (globx==(w-2))) || ((directionX==-1) && (globx==2))) {
-    is_possible = 0;
+    return 0;
+  }
+  else{
+	  int minBuffer = getMinBufferSonar();
+	  if(minBuffer>150){
+		  return 1;
+	  }
+	  else{
+		  return 0;
+	  }
   }
 
   //The 5 following statements enable to test the 5 cells situated in front of the robot
@@ -135,9 +172,6 @@ char can_move_forward() {
       map[globy+3*directionY+2*null(directionY),globx+3*directionX+2*null(directionX)]=255
   */
 
-  // assess the cost represented by the use of the function
-  increase_cost(2);
-  return(is_possible);
 }
 
 char disclosed(int angle){
@@ -158,7 +192,13 @@ char disclosed(int angle){
     dirX = -1;
     dirY = 0;
   }
-  if ((map[globx+3*dirX][globy+3*dirY]==200) || (map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX+2*null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]==200) || (map[globx+3*dirX-2*null(dirX)][globy+3*dirY-null(dirY)]==200)) {
+  printf("Value disclosed (globx,globy)=(%d,%d) \n",globx,globy);
+  printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]);
+  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]);
+  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
+  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
+  printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
+  if ((map[globx+3*dirX][globy+3*dirY]==200) || (map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]==200) || (map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]==200) || (map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]==200)) {
       return 0;
   }else{
       return 1;
@@ -170,13 +210,8 @@ char move_forward(){
   The function enables to move the robot 5cm forward if it is possible.
   It returns True if the movement has been possible.
   */
-  if (can_move_forward()){
-    globx = X / 50;
-    globy = Y / 50;
-    go_to_distance_sweep_regular_braking_new(MAX_SPEED / 6, 10000, 100, 60);
-    increase_cost(1);
-    return 1;
-  }
+  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 100, 60);
+  increase_cost(1);
   return 0;
 }
 
@@ -184,11 +219,16 @@ void manage_obstacles(){
   /*
   A compléter avec la fonction de Camille
   */
-  map[globx+3*directionX-2*null(directionX),globy+3*directionY-2*null(directionY)]=1
-  map[globx+3*directionX-null(directionX),globy+3*directionY-null(directionY)]=1
-  map[globx+3*directionX,globy+3*directionY]=1
-  map[globx+3*directionX+null(directionX),globy+3*directionY+null(directionY)]=1
-  map[globx+3*directionX+2*null(directionX),globy+3*directionY+2*null(directionY)]=1
+  map[globx+3*directionX-2*null(directionX)][globy+3*directionY-2*null(directionY)]=1;
+  map[globx+3*directionX-null(directionX)][globy+3*directionY-null(directionY)]=1;
+  map[globx+3*directionX][globy+3*directionY]=1;
+  map[globx+3*directionX+null(directionX)][globy+3*directionY+null(directionY)]=1;
+  map[globx+3*directionX+2*null(directionX)][globy+3*directionY+2*null(directionY)]=1;
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX-2*null(directionX),globy+3*directionY-2*null(directionY));
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX-null(directionX),globy+3*directionY-null(directionY));
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX,globy+3*directionY);
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX+null(directionX),globy+3*directionY+null(directionY));
+  printf("Noticed (%d,%d) as obstacle\n",globx+3*directionX+2*null(directionX),globy+3*directionY+2*null(directionY));
   return;
 }
 
@@ -197,19 +237,10 @@ int move_forward_until(int max_pos){
   The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
   It returns the number of cells the robot has been able to do.
   """*/
-  int i = 0;
-  globx = X / 50;
-  globy = Y / 50;
-  while ((i<max_pos) && can_move_forward()){
-    go_to_distance_sweep_regular_braking_new(MAX_SPEED / 6, 50, 60, 40);
-    increase_cost(1);
-	if(X/50 > globx or Y/50 > globy){
-		globx = X / 50;
-		globy = Y / 50;
-		i++;
-	}
-  }
-  return i;
+  go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 100, 40);
+  printf("Mvt forward Finished\n");
+  increase_cost(2);
+  return 0;
 }
 
 void rotate(int angle){
@@ -239,7 +270,20 @@ int longest_undisclosed_position(){
   /*
   The function enables to estimate the longest path the robot can do without bumping into already discovered obstacles or already discovered area
   */
-  angle = TETA
+  int angle = TETA;
+  if (angle==0){
+    dirX = 0;
+    dirY = 1;
+  } else if (angle==90){
+    dirX = 1;
+    dirY = 0;
+  } else if (angle==180){
+    dirX = 0;
+    dirY = -1;
+  } else {
+    dirX = -1;
+    dirY = 0;
+  }
   int i=0;
   unsigned char case1 = 0;
   unsigned char case2 = 0;
@@ -298,7 +342,7 @@ int nearest_undisclosed_free(int angle){
   unsigned char case4 = 1;
   unsigned char case5 = 1;
 
-  // we check that the cells assessed are inisde the arena
+  // we check that the cells assessed are inside the arena
   if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
     case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
     case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
@@ -343,22 +387,34 @@ void nearest_undisclosed_point(int * result){
 }
 
 void algo_recursive_b() {
-  srand(time(NULL));   // should only be called once
+  //srand(time(NULL));   // should only be called once
+  directionX = 0;
+  directionY = 1;
   while (cost<=THRESHOLD){
+	printf("disclosed in front : %d \n",disclosed(TETA + 0));
     if (!disclosed(TETA + 0)){
-      move_forward_until(longest_undisclosed_position());
-	  if(!can_move_forward){
+	  int dist =  longest_undisclosed_position();
+	  printf("Move forward until %d \n",dist);
+      move_forward_until(dist);
+	  // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
+	  int is_possible = can_move_forward();
+	  printf("can move forward ? %d \n",is_possible);
+	  if(!is_possible){
 		  //procédure gestion obstacles
 		  manage_obstacles();
 	  }
     } else {
+		printf("Try to see in the sides \n");
       if (!disclosed(TETA + 90)){
-        rotate(90);
+		  printf("i go to +90 \n");
+		  rotate(90);
         //move_forward();
       } else if (!disclosed(TETA - 90)) {
+		  printf("i go to -90 \n");
         rotate(-90);
         //move_forward();
       } else {
+		  printf("i have to analyze \n");
         int result[2];
         nearest_undisclosed_point(result);
         int indexAngle = result[0];
@@ -373,7 +429,7 @@ void algo_recursive_b() {
         } else {
           rotate(indexAngle);
           move_forward_until(minimum);
-		  if(!can_move_forward){
+		  if(!can_move_forward()){
 			  //procédure gestion obstacles
 			  manage_obstacles();
 		  }
@@ -385,7 +441,7 @@ void algo_recursive_b() {
 
 
 
-char main (void) {
+void main (void) {
   /*
   * The robot is doing the algorithm".
   */
@@ -393,9 +449,11 @@ char main (void) {
   initMotorServo();
   initSensorSonar();
   initMotorWheels();
+  initGyro();
   servo_arm_up();
+  //initMap();
   //while the server did not send the START_MESSAGE, the robot will wait in init_client()
-  initClient(); // will STOP the program if the server is not launched !
+  //initClient(); // will STOP the program if the server is not launched !
 
   pthread_t tid_client_position;
   pthread_attr_t attr_client_position;

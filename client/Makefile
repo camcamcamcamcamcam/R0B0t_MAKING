@@ -229,10 +229,20 @@ map_construction.o: map_construction.c map_construction.h
 
 map_construction: robotclient.o map_construction.o
 	gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
+
+test_final_algo_recursif.o: test_final_algo_recursif.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_algo_recursif.c -o test_final_algo_recursif.o
 	
 test_final_algo_recursif: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_algo_recursif.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_algo_recursif.o -Wall -lm -lev3dev-c -o test_final_algo_recursif
 	./test_final_algo_recursif
+
+test_simple_rotation.o: test_simple_rotation.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_simple_rotation.c -o test_simple_rotation.o
+	
+test_simple_rotation: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_simple_rotation.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_simple_rotation.o -Wall -lm -lev3dev-c -o test_simple_rotation
+	./test_simple_rotation
 
 test_object_interaction.o: test_object_interaction.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_object_interaction.c -o test_object_interaction.o

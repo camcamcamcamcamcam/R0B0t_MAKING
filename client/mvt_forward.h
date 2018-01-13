@@ -20,7 +20,6 @@
 #endif
 
 void go_to_distance_no_sweep(int speed, int distance, int securityDistance);
-<<<<<<< HEAD
 
 void go_to_distance_sweep(int speed, int distance, int securityDistance,int amplitudeSweep);
 

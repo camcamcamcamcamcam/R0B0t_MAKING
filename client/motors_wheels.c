@@ -277,7 +277,7 @@ void preciseRotation(int speed, int angle){
   rotation(speed, angle);
 	//printf("angle gyro apres : %d \n",(int) getAngleGyro());
 	angle_gyro_end = getGyroAngle();
-  difference = angle - (angle_gyro_end - angle_gyro_start);
+	difference = angle - (angle_gyro_end - angle_gyro_start);
 	//printf("angle restant : %d \n",difference);
 	if(difference!=0){
 		rotation(speed, difference);
