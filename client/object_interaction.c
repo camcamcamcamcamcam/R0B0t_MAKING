@@ -51,7 +51,7 @@ void dropObject(){
 	servo_arm_up();
 	int x=(X-150*sin(TETA*PI/180))/50;
 	int y=(Y-150*cos(TETA*PI/180))/50;
-	//send("MSG_OBSTACLE",x,y,0,0,0,0); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	//send(MSG_OBSTACLE,x,y,0,0,0,0); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
 	printf("dropObject sent MSG_OBSTACLE at x=%d y=%d",x,y);
 }
 
@@ -63,7 +63,7 @@ void takeObject(){
 	servo_arm_down();
 	int y=(Y+200*cos(TETA*PI/180))/50;
 	int x=(X+200*sin(TETA*PI/180))/50;
-	//send("MSG_OBSTACLE",x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	//send(MSG_OBSTACLE,x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
 	printf("takeObjet sent MSG_OBSTACLE at x=%d y=%d",x,y);
 	rotate_to_angle(MAX_SPEED/6,-180);
 }
@@ -89,15 +89,13 @@ void checkForward(){
 	int droite=0;
 	int gauche_plus=0;
 	int droite_plus=0;
-	int x=X+(200*sin(TETA*PI/180))/50;
-	int y=Y+(200*cos(TETA*PI/180))/50;
-	int delta_x=0;
-	int delta_y=0;
-	int type = -1;
+	char delta_x=0;
+	char delta_y=0;
+	char type = 2;
 	//stop_sweep(); //sweep_thread
 
 	go_to_distance_sweep_regular_braking_new(MAX_SPEED/8, 50, 40, 30);
-	Sleep(1000);
+	Sleep(100);
 	int dir = direction();
 	switch(dir)
   {
@@ -108,101 +106,109 @@ void checkForward(){
    case 2: delta_x=-1;printf("													dir is sud\n");
 	 	break;
    case 3: delta_y=1;printf("													dir is ouest\n");
+	  break;
    default: ;
   }
+	int x=X/50-3*delta_y;
+	int y=Y/50+3*delta_x;
 	face = get_sonar_distance();
 	if (face<100){
-		if(type<0){
+		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			printf("													setMapData: %d %d %d\n",x,y,type);
-			//setMapData(x,y,type);
 		}
+		printf("													setMapData: %d %d %d\n",x,y,type);
+			//setMapData(x,y,type);
+
 	}
 	else{
 		  printf("													setMapData: %d %d %d\n",x,y,0);
 			//setMapData(x,y,0);
 	}
-	absolute_servo_sonar(-delta_angle);
+	absolute_servo_sonar(delta_angle+10);
 	printf("													angle_servo : %d \n", -delta_angle);
 	Sleep(1000);
 	gauche = get_sonar_distance();
 	if (gauche<100){
-		if(type<0){
+		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,type);
-			//setMapData(x-delta_x,y-delta_y,type);
 		}
+		printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,type);
+			//setMapData(x-delta_x,y-delta_y,type);
+
 	}
 	else{
 		  printf("													setMapData: %d %d %d\n",x-delta_x,y-delta_y,0);
 			//setMapData(x-delta_x,y-delta_y,0);
 	}
-	absolute_servo_sonar(-2*delta_angle);
+	absolute_servo_sonar(2*delta_angle+20);
 	printf("													angle_servo : %d \n", -2*delta_angle);
 	Sleep(1000);
 	gauche_plus = get_sonar_distance();
 	if (gauche_plus<100){
-		if(type<0){
+		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
-			//setMapData(x-2*delta_x,y-2*delta_y,0);
 		}
+		printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
+		//setMapData(x-2*delta_x,y-2*delta_y,0);
+
 	}
 	else{
 		  printf("													setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,0);
 			//setMapData(x-2*delta_x,y-2*delta_y,0);
 	}
-	absolute_servo_sonar(delta_angle);
+	absolute_servo_sonar(-delta_angle);
 
 	printf("													angle_servo : %d \n", delta_angle);
 	Sleep(1000);
 	droite = get_sonar_distance();
 	if (droite<100){
-		if(type<0){
+		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,type);
-			//setMapData(x+delta_x,y+delta_y,type);
 		}
+		printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,type);
+			//setMapData(x+delta_x,y+delta_y,type);
+
 	}
 	else{
 		  printf("													setMapData: %d %d %d\n",x+delta_x,y+delta_y,0);
 			//setMapData(x+delta_x,y+delta_y,0);
 	}
-	absolute_servo_sonar(2*delta_angle);
+	absolute_servo_sonar(-2*delta_angle);
 	printf("													angle_servo : %d \n", 2*delta_angle);
 	Sleep(1000);
 	droite_plus = get_sonar_distance();
 	if (droite_plus<100){
-		if(type<0){
+		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
 			}
 			else{
 				type = 1;
 			}
-			printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,type);
-			//setMapData(x+2*delta_x,y+2*delta_y,type);
 		}
+		printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,type);
+		//setMapData(x+2*delta_x,y+2*delta_y,type);
+
 	}
 	else{
 		  printf("													setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
