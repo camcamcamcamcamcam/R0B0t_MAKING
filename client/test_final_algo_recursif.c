@@ -299,6 +299,19 @@ int longest_undisclosed_position(){
         return (i+1);
       }
     }
+	if(angle==0){
+		return h-3-globy;
+	}
+	else if(angle==90){
+		return w-3-globx;
+	}
+	else if(angle==180){
+		return globy-2;
+	}
+	else{
+		return globx-2;
+	}
+	
   return 1000;
 }
 
