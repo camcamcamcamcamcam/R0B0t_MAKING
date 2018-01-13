@@ -142,10 +142,12 @@ char can_move_forward() {
   increase_cost(2);
   // Check if the robot won't go outside the arena
   if (((directionY==1) && (globy == (h-2))) || ((directionY==-1) && (globy==2)) || ((directionX==1) && (globx==(w-2))) || ((directionX==-1) && (globx==2))) {
-    return 0;
+		printf("*# can_move_forward it was not IN the 80x80 grid\n");
+		return 0;
 	}
 	else{
 		int distance_sonar = getMinDistance(60,15);
+		printf("*# can_move_forward distance_sonar%d\n", distance_sonar);
 		if (distance_sonar < 100)
 			return 0;
 	}
@@ -221,7 +223,7 @@ int move_forward_until(int max_pos){
   It returns the number of cells the robot has been able to do.
   """*/
   char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 50, 40);
-  printf("Mvt forward Finished\n");
+  printf("Mvt forward Finished, char allDistanceDone is %d\n", allDistanceDone);
   increase_cost(2);
   return allDistanceDone;
 }
@@ -371,60 +373,65 @@ void nearest_undisclosed_point(int * result){
 
 void algo_recursive_b() {
   //srand(time(NULL));   // should only be called once
-  directionX = 0;
-  directionY = 1;
-	char allDistanceDone = 1;
-  while (cost<=THRESHOLD){
-	printf("disclosed in front : %d \n",disclosed(TETA + 0));
-    if (!disclosed(TETA + 0)){
-	  int dist =  longest_undisclosed_position();
-	  printf("Move forward until %d \n",dist);
-      allDistanceDone = move_forward_until(dist);
-	  // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
-	  //char is_possible = can_move_forward();  // uncomment with function of Camille
-	  //printf("can move forward ? %d \n",is_possible);
-	  //if(!is_possible){  uncomment with function of Camille
-		if(!allDistanceDone && !can_move_forward()){
-		  //procédure gestion obstacles
-		  manage_obstacles();
-	  }
-    } else {
-		printf("Try to see in the sides \n");
-      if (!disclosed(TETA + 90)){
-		  printf("i go to +90 \n");
-		  rotate(90);
-        //move_forward();
-      } else if (!disclosed(TETA - 90)) {
-		  printf("i go to -90 \n");
-        rotate(-90);
-        //move_forward();
-      } else {
-		  printf("i have to analyze \n");
-        int result[2];
-        nearest_undisclosed_point(result);
-        int indexAngle = result[0];
-        int minimum = result[1];
-        if (minimum == 1000){
-          //if (can_move_forward()){
+    directionX = 0;
+    directionY = 1;
+	  char allDistanceDone = 1;
+    while (cost<=THRESHOLD){
+	  printf("# disclosed in front : %d \n",disclosed(TETA + 0));
+        if (!disclosed(TETA + 0)){
+	      		int dist =  longest_undisclosed_position();
+	      		printf(" ## Move forward until %d \n",dist);
+            allDistanceDone = move_forward_until(dist);
+	      // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
+  	      //char is_possible = can_move_forward();  // uncomment with function of Camille
+    	    //printf("can move forward ? %d \n",is_possible);
+  	      //if(!is_possible){  uncomment with function of Camille
 
-					if (!can_move_forward()){
-					  move_forward();
-          } else {
-            if (rand()*2 < RAND_MAX) rotate(90);
-            else rotate(-90);
-          }
-        } else {
-          rotate(indexAngle);
-          move_forward_until(minimum);
-		  //if(!can_move_forward()){
-			if(!allDistanceDone){  //to comment with function of Camille
-			  //procédure gestion obstacles
-			  manage_obstacles();
-		  }
-        }
-      }  //uncomment with function of Camille
+	  	     if(!allDistanceDone && !can_move_forward()){
+		      //procédure gestion obstacles
+							 printf("  ### first manage_obstacles\n");
+  		         manage_obstacles();
+	         }
+       } else {
+  		      printf("   $ Try to see in the sides \n");
+            if (!disclosed(TETA + 90)){
+  	  	        printf("   $$ i go to +90 \n");
+	  	      		rotate(90);
+            		//move_forward();
+        		} else if (!disclosed(TETA - 90)) {
+		    				printf("   $$$ i go to -90 \n");
+          			rotate(-90);
+          			//move_forward();
+        	  } else {
+		  	  			printf("    $$$$ i have to analyze \n");
+	          		int result[2];
+	          		nearest_undisclosed_point(result);
+	          		int indexAngle = result[0];
+	          		int minimum = result[1];
+	          		if (minimum == 1000){
+	            			//if (can_move_forward()){
+		  							if (!can_move_forward()){
+											  printf("     & can move forward\n");
+			  			  				move_forward();
+	            			} else {
+											  printf("     && cannot move forward\n");
+	              				if (rand()*2 < RAND_MAX) rotate(90);
+	              				else rotate(-90);
+	            			}
+	          		} else {
+	            			rotate(indexAngle);
+	            			move_forward_until(minimum);
+			    					//if(!can_move_forward()){
+				  				  if(!allDistanceDone){
+			  	    			//procédure gestion obstacles
+	  		  	  					manage_obstacles();
+					  						printf("     &&& second manage_obstacles\n");
+		  	  		  		}
+										printf("      &&&& end \n");
+	           		}
+	       		}  //uncomment with function of Camille
+      	}
     }
-  }
 }
 
 

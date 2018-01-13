@@ -215,13 +215,13 @@ void checkForward(){
 			setMapData(x+2*delta_x,y+2*delta_y,0);
 	}
 	absolute_servo_sonar(0);
-	printf("angle_servo : %d \n", 0);
+	//printf("angle_servo : %d \n", 0);
 	Sleep(100);
-	printf("angle_gyro : %d \n", getGyroAngle());
+	//printf("angle_gyro : %d \n", getGyroAngle());
 	//rotate_to_angle(MAX_SPEED/4,-180);
-	printf("angle_gyro : %d \n", getGyroAngle());
-	int diff = abs(Y-(Y_start/50)*50)+abs(X-(X_start/50)*50);
-	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8,-diff,0,30);
+	//printf("angle_gyro : %d \n", getGyroAngle());
+	//int diff = abs(Y-Y_start)+abs(X-X_start);
+	//go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8,-diff,0,30);
 	//rotate_to_angle(MAX_SPEED/4,180);
 	printf("***  ENDING CHECKFORWARD  ***\n");
 

@@ -206,6 +206,9 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	distance_sonar = getDistance_weighted(0);
 	int minBuffer = getMinBufferSonar();
 	thread_sweep();
+	if (minBuffer <= securityDistance) {
+		distanceMaxDone = 0;
+	}
 	while(minBuffer>securityDistance && robot_is_moving()){
 		if(minBuffer<brakingDistance){
 			// linear braking from speed to speed/5. The speed begins to decrease when reaching 40cm distance from the obstacle.
