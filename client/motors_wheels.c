@@ -370,6 +370,37 @@ void preciseRotation(int speed, int angle){
 
 /*
 @desc :
+	* the function just asks the robot to do a rotation of a certain angle at a certain speed.
+	* this function is a BLOCKING function -> this will block the current thread until the robot has reached the desired position.
+	* this function uses the gyroscope
+	* the function does not refresh global positionning variable
+@param :
+	* int speed : speed of the motor during the movement
+	* int angle : relative absolute angle the robot has to do.
+@author : Camille Morin
+@return : void
+*/
+void preciseRotation_without_refresh(int speed, int angle){
+
+	int angle_gyro_start;
+	int angle_gyro_end;
+	int difference;
+	angle_gyro_start = getGyroAngle();
+	//printf("angle gyro avant : %d \n",(int) getGyroAngle());
+	rotation(speed, angle);
+	//printf("angle gyro apres : %d \n",(int) getGyroAngle());
+	angle_gyro_end = getGyroAngle();
+
+  	difference = angle - (angle_gyro_end - angle_gyro_start);
+	//printf("angle restant : %d \n",difference);
+	if(difference!=0){
+		rotation(speed, difference);
+	}
+
+}
+
+/*
+@desc :
 	* the function enables to establish a save of certain variables before executing a movement.
 @param : /
 @author : Samuel Pierre

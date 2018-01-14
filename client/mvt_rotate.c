@@ -48,6 +48,21 @@ void rotate_to_angle(int speed, int angle){
 }
 
 /*
+@desc : the function enables the robot to do a rotation of a certain angle at a certain speed without refreshing global position
+@param : 
+	* int speed : speed of the tacho used for the rotation
+	* int angle : angle of the rotation
+@author : Samuel Pierre 
+@return : void
+*/
+void rotate_to_angle_without_refresh(int speed, int angle){
+
+	preciseRotation_without_refresh(speed, angle);
+	clearBuffer();
+
+}
+
+/*
 @desc : the function enables the robot detect the closest obstacle over an amplitudeAngle specified and to rotate in direction of it
 @param : 
 	* int speed : speed of the tacho used for the rotation

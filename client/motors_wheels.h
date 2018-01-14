@@ -63,3 +63,4 @@ void preciseRotation(int angle, int speed);
 /*MAke sure the rotation is precise with the gyro*/
 void smallRotation(int angle, int speed);
 int getTachoMaxSpeed();
+preciseRotation_without_refresh(int speed, int angle);
