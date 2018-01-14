@@ -194,8 +194,9 @@ void continuous_sweep(){
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-            <h2>Algo de Camille</h2>
-            <p>Bla bla<p>
+            <h2>Check the case forward for obstacles</h2>
+            <p>When an obstacle is detected in front of the robot, the algorithm calls this function. It makes the robot look in where the obstacle is in the 5 squares forward.<br>
+            The head moves so that the sonar gets a distance for each of the different squares. If there is a distance that is inferior to 10cm, the color sensor determines if the object is red or not. If it is, it's a movable object, else it's a non-movable object. The map is then updated accordingly.<p>
             <video src="movie/cases.mp4" class="col-lg-8 col-lg-offset-2 text-center mx-auto" controls>
 			<br>
 			</video>
