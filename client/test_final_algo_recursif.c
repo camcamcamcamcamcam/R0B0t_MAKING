@@ -89,8 +89,11 @@ void client_position(){
         if (count%40 == 0) {
           sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
         }
-				if (count == 400) {
+				if (count == 400) { // 224000
 					sendMapDone();
+				}
+				else if (count == 224000){
+					printf("END OF TIME\n");
 					count = 0;
 				}
         count++;
@@ -137,7 +140,7 @@ char can_move_forward() {
 	else{
 		int distance_sonar = getMinDistance(60,15);
 		printf("*# can_move_forward distance_sonar : %d mm\n", distance_sonar);
-		if (distance_sonar < 100)
+		if (distance_sonar < 150)
 			return 0;
 	}
 	return 1;
@@ -182,7 +185,7 @@ char move_forward(){
   The function enables to move the robot 5cm forward if it is possible.
   It returns True if the movement has been possible.
   */
-  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50, 50, 60);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 3, 50, 50, 60);
   increase_cost(1);
   return allDistanceDone;
 }
@@ -211,7 +214,7 @@ int move_forward_until(int max_pos){
   The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
   It returns the number of cells the robot has been able to do.
   """*/
-  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 6, 50*max_pos, 50, 40);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 3, 50*max_pos, 50, 40);
   printf("Mvt forward Finished, char allDistanceDone is %d\n", allDistanceDone);
   increase_cost(2);
   return allDistanceDone;
