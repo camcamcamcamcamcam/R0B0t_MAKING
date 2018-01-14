@@ -141,18 +141,34 @@ void goStraight(int speed, int distance){
 	<section id="section1ter" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
-          <div class="col-lg-12 mx-auto">
+          <div class="col-lg-6 mx-auto">
             <h2>Sweeping</h2>
             <p>In order to notice every obstacle, Robbie moves its head and hence sweeps the space thanks to an actuator.<br>
 			The sweep is managed by a specific thread, which modifies the state of the actuator : running, sleeping or finished.</p>
-            <video src="movie/sweep.mp4" class="col-lg-6 col-lg-offset-0.5 text-center mx-auto" controls>
+            <video src="movie/sweep.mp4" class="col-lg-5 col-lg-offset-0.5 text-center mx-auto" controls>
 			</video>
-			<div class="col-lg-6 mx-auto">
-			  <pre><code class="C#">
-continuous_sweep(){
+		  </div>
+		  <div class="col-lg-6 mx-auto">
+			<pre><code class="C#">
+void continuous_sweep(){
+	int amplitudeAngle = 60;
+	while(1){
+		//sweep_state=1 when running state
+		if(sweep_state==1){
+			//Sweep
+			absolute_servo_sonar(-amplitudeAngle);
+			absolute_servo_sonar(amplitudeAngle);
+		}
+		else {
+			Sleep(100);
+			//sweep_state=2 when finished
+			if(sweep_state == 2){
+				return;
+			}
+		}
+	}
 }
-			  </code></pre>
-			</div>
+			</code></pre>
           </div>
         </div>
       </div>
