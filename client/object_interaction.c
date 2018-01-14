@@ -1,4 +1,4 @@
-/*
+﻿/*
      ____    __   ___   ___  _____  ____
     | |__) //\ \ | |_) | |_)  | |  | |_
     |_| \  \\_\/ |_|_) |_|_) _|_|_ |_|__
@@ -154,7 +154,7 @@ void checkForward(){
 	printf("angle_servo : %d \n", -2*delta_angle);
 	Sleep(100);
 	gauche_plus = get_sonar_distance();
-	if (gauche_plus<100){
+	if (gauche_plus<150){
 		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
@@ -197,7 +197,7 @@ void checkForward(){
 	printf("angle_servo : %d \n", 2*delta_angle);
 	Sleep(100);
 	droite_plus = get_sonar_distance();
-	if (droite_plus<100){
+	if (droite_plus<150){
 		if(type==2){
 			if (isMovableObstacle()){
 				type = 100;
@@ -213,6 +213,11 @@ void checkForward(){
 	else{
 		  printf("setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
 			setMapData(x+2*delta_x,y+2*delta_y,0);
+	}
+	if (type==2){
+		for (int i=-2; i<=2; i++){
+			setMapData(x+i*delta_x,y+i*delta_y,200);
+		}
 	}
 	absolute_servo_sonar(0);
 	//printf("angle_servo : %d \n", 0);
