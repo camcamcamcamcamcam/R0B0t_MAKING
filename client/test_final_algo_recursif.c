@@ -222,7 +222,7 @@ void rotate(int angle){
   The function enables to rotate the robot of a certain angle.
   """*/
   //TETA = (TETA + angle) % 360; Done by the other function now ?
-  rotate_to_angle(MAX_SPEED / 6, angle);
+  rotate_to_angle(MAX_SPEED / 10, angle);
 
   if (TETA == 0) {
     directionX = 0;

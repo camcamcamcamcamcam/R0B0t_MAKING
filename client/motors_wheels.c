@@ -31,7 +31,7 @@
 #endif
 
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define ECART_ROUES 175 // distance between the wheels, in mm
+#define ECART_ROUES 160 // distance between the wheels, in mm
 #define DIAMETRE_ROBOT 232 // width of the robot in mm
 
 // Global variables
