@@ -73,16 +73,16 @@ void client_position(){
   update the local map every 50 ms to say there is no obstacle
   */
   int count = 0;
-    while(1){
+    while(!server_said_stop){
 
         int x = (int) (X/50);
         int y = (int) (Y/50);
-		globx = x;
-		globy = y;
-		//printf("X=%d\n",X);
-		//printf("Y=%d\n",Y);
-		//printf("globx=%d\n",globx);
-		//printf("globy=%d\n",globy);
+				globx = x;
+				globy = y;
+				//printf("X=%d\n",X);
+				//printf("Y=%d\n",Y);
+				//printf("globx=%d\n",globx);
+				//printf("globy=%d\n",globy);
         //x and y must be between 0 and 80 (ie inside the map)
         x = (x < (MAP_WIDTH-1)) ? ((x >= 0) ? x : 0) : (MAP_WIDTH-1);
         y = (y < (MAP_HEIGHT-1)) ? ((y >= 0) ? y : 0 ) : (MAP_HEIGHT-1);
@@ -378,7 +378,7 @@ void algo_recursive_b() {
     directionX = 0;
     directionY = 1;
 	  char allDistanceDone = 1;
-    while (cost<=THRESHOLD){
+    while (cost<=THRESHOLD && !server_said_stop){
 	  printf("# disclosed in front : %d \n",disclosed(TETA + 0));
         if (!disclosed(TETA + 0)){
 	      		int dist =  longest_undisclosed_position();
@@ -438,7 +438,7 @@ void algo_recursive_b() {
 
 
 
-void main (void) {
+char main (void) {
   /*
   * The robot is doing the algorithm".
   */
@@ -456,7 +456,13 @@ void main (void) {
   pthread_attr_t attr_client_position;
   pthread_attr_init(&attr_client_position);
   char a;
-  pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
+	pthread_create(&tid_client_position, &attr_client_position, (void *) client_position, (void *)&a);
+
+	pthread_t tid_receive_message;
+	pthread_attr_t attr_receive_message;
+	pthread_attr_init(&attr_receive_message);
+	char b;
+  pthread_create(&tid_receive_message, &attr_receive_message, (void *) receiveMessageServer, (void *)&b);
 
   algo_recursive_b();
 	return 1;

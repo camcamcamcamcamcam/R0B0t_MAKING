@@ -25,6 +25,8 @@
 #define TAG "CLIENT : "
 #define DEBUG 1
 
+char server_said_stop = 0;
+
 int read_from_server (int sock, char *buffer, size_t maxSize);
 
 void debug (const char *fmt, ...) {
@@ -152,6 +154,32 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act) {
         return (1);
     }
     return (0);
+}
+
+void receiveMessageServer(){
+  if( status == 0 ) {
+      //printf("wait for STOP or KICK message\n");
+      char string[58];
+      char type;
+      string[4] = MSG_START; //to be sure it is not initialized to STOP
+      //wait for the stop or kick message
+      while(1){
+          //Wait for stop message
+          read_from_server (s, string, 58);
+          type = string[4];
+          if (type == MSG_STOP || type ==  MSG_KICK){
+              server_said_stop = 1;
+              if (type == MSG_STOP) printf("*\n**\n***\n**** THE GAME HAS STOPED\n***\n**\n*\n");
+              else printf("*\n**\n***\n**** WE WERE KICKED OUT OF THE GAME :(\n***\n**\n*\n");
+              return;
+          }
+      }
+
+  } else {
+      fprintf (stderr, "Failed to connect to server...\n");
+      sleep (2);
+      exit (EXIT_FAILURE);
+  }
 }
 
 void robot2() {
@@ -306,6 +334,8 @@ void robot () {
         }
     }
 }
+
+
 
 
 /*

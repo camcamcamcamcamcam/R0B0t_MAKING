@@ -11,6 +11,7 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
 
 
 void initClient();
+void receiveMessageServer();
 char size_message(char msg_type);
 int read_from_server (int sock, char *buffer, size_t maxSize);
 void robot2();
@@ -25,5 +26,6 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
 #define MSG_MAPDONE 6
 #define MSG_OBSTACLE 7
 
+extern char server_said_stop;
 
 #endif //R0B0T_MAKING_ROBOTCLIENT_H
