@@ -31,6 +31,13 @@
 uint8_t sn_gyro;
 int init_gyro;
 
+/*
+@desc :
+	* the function gets the angle
+@param : /
+@author : Camille Morin
+@return : int val (value of the angle)
+*/
 int getGyroAngle(){
         int val;
         if ( !get_sensor_value( 0, sn_gyro, &val ) ) {
@@ -39,6 +46,13 @@ int getGyroAngle(){
         return val;
 }
 
+/*
+@desc :
+	* the function gets the rotationnal speed
+@param : /
+@author : Camille Morin
+@return : int val (value of the rotationnal speed)
+*/
 int getGyroRotationnalSpeed(){
         int val;
         if ( !get_sensor_value( 1, sn_gyro, &val ) ) {
@@ -47,6 +61,13 @@ int getGyroRotationnalSpeed(){
         return (val);
 }
 
+/*
+@desc :
+	* the function initializes the gyro with the mode that gives the angle and the rotational speed
+@param : /
+@author : Camille Morin
+@return : void
+*/
 void initGyro(){
         ev3_sensor_init();
         if ( ev3_search_sensor( LEGO_EV3_GYRO, &sn_gyro, 0 )) {

@@ -45,29 +45,48 @@
 #define MAX_SPEED 1050
 #endif
 
+/*
+@desc :
+	* the function makes the arm go up
+	* a message is sent to the server to tell the position of the drop
+@param : /
+@author : Camille Morin, Louis Roman
+@return : void
+*/
 void dropObject(){
-/*Fonction pour relacher un objet
- A faire : enregistrer la position de l'objet lâché sur la carte.*/
 	servo_arm_up();
 	int x=(X-150*sin(TETA*PI/180))/50;
 	int y=(Y-150*cos(TETA*PI/180))/50;
-	//send(MSG_OBSTACLE,x,y,0,0,0,0); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	setMapData(x,y,100);
+	send(MSG_OBSTACLE,x,y,0,0,0,0);
 	printf("dropObject sent MSG_OBSTACLE at x=%d y=%d",x,y);
 }
 
+/*
+@desc :
+	* the function takes an object in front of the robot
+	* a message is sent to the server to tell the position of the catch
+@param : /
+@author : Camille Morin, Louis Roman
+@return : void
+*/
 void takeObject(){
-/*Fonction pour prendre un objet mobile
- *Makes a uturn take the object make a second uturn
- *Send a message to the sever*/
 	rotate_to_angle(MAX_SPEED/6,180);
 	servo_arm_down();
 	int y=(Y+200*cos(TETA*PI/180))/50;
 	int x=(X+200*sin(TETA*PI/180))/50;
-	//send(MSG_OBSTACLE,x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
+	send(MSG_OBSTACLE,x,y,0,0,0,1); //à améliorer (en prenant en compte le sonar ou en estimant mieux la distance ?)
 	printf("takeObjet sent MSG_OBSTACLE at x=%d y=%d",x,y);
 	rotate_to_angle(MAX_SPEED/6,-180);
 }
 
+/*
+@desc :
+	* the function tells if it is a movable (red) obstacle
+@param : /
+@author : Camille Morin, Louis Roman
+@return : 1 if movable, 0 if non-movable
+*/
 int isMovableObstacle(){
 /*Fonction pour savoir si l'object devant est un obstacle mobile ou non
  A faire : enregistrer la position de l'objet si ce n'est pas un objet mobile*/
@@ -75,10 +94,26 @@ int isMovableObstacle(){
 	return(a);
 }
 
+/*
+@desc :
+	* the function tells which way the robot is going (north is initialized as the starting direction of the robot)
+@param : /
+@author : Camille Morin
+@return : int 0 if north, 1 if east, 2 if south, 3 if west
+*/
 int direction(){
 	int var = (TETA+45)/90;
 	return var%4;
 }
+
+/*
+@desc :
+	* the function detects in which squares in front of the robot the obstacle is
+	* the map is updated accordingly
+@param : /
+@author : Camille Morin
+@return : void
+*/
 void checkForward(){
 	printf("***  BEGINNING CHECKFORWARD  ***\n");
 	int X_start = X;
@@ -92,7 +127,6 @@ void checkForward(){
 	int delta_x=0;
 	int delta_y=0;
 	char type = 2;
-	//stop_sweep(); //sweep_thread
 
 	//go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 50, 30);
 	//Sleep(100);

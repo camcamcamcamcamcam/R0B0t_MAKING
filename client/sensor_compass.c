@@ -31,6 +31,13 @@
 uint8_t sn_compass;
 int init_compass;
 
+/*
+@desc :
+	* the function gets the value of the compass
+@param : /
+@author : Camille Morin
+@return : int value of the compass
+*/
 int getCompassAngle(){
         int val;
         if ( !get_sensor_value( 0, sn_compass, &val ) ) {
@@ -39,7 +46,13 @@ int getCompassAngle(){
         return ((val-init_compass)%360);
 }
 
-
+/*
+@desc :
+	* the function initializes the compass
+@param : /
+@author : Camille Morin
+@return : void
+*/
 void initCompass(){
 
 	      ev3_sensor_init();
