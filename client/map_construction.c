@@ -25,11 +25,12 @@ void sendMapDone(){
         for (int j=0; j < map_y; j++){
             switch (map[i][j]) {
                 case NON_MOVING_OBSTACLE :
-                    sendMessage(MSG_MAPDATA, i, j, 0, 0, 0, 0);
+                // DANGER : the map on the server was symetric so it is to correct this
+                    sendMessage(MSG_MAPDATA, 79 - i, j, 0, 0, 0, 0);
                     obstable++;
                     break;
                 case MOVING_OBSTACLE :
-                    sendMessage(MSG_MAPDATA, i, j, 255, 0, 0, 0);
+                    sendMessage(MSG_MAPDATA, 79 - i, j, 255, 0, 0, 0);
                     obstable++;
                     break;
                 default:    //nothing there
@@ -43,7 +44,7 @@ void sendMapDone(){
 
 /*
 @desc : set the correct type to the specified pixel (x,y) in the map variable
-@param : 
+@param :
 	* char x : x-axis index in the map (X/50), where X is in mm
 	* char y : y-axis index in the map (Y/50), where Y is in mm
 	* unsigned char typeObject : char defining the nature of the obstacle (0, 1, 100, 200)

@@ -39,7 +39,6 @@ int cost = 0;
 int dirX;
 int dirY;
 
-extern unsigned char map[map_x][map_y];
 /*
  * the map is made of :
  *   0 if there is nothing
