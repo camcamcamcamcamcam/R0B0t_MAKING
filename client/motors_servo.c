@@ -222,7 +222,7 @@ void absolute_servo_sonar(int angle){
 	int count = 0;
     go_to_angle(sn_servo[1],MAX_SPEED / 10, angle);
 	Sleep(50); // make sure that the motor has started before entering the loop
-	while(servo_arm_is_running() && count<10){ // waiting until the speed of the motor has reached 0.
+	while(servo_sonar_is_running() && count<10){ // waiting until the speed of the motor has reached 0.
 		Sleep(20);
 		count++;
 	}

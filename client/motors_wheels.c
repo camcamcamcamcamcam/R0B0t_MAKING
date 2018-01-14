@@ -179,10 +179,10 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
 		angle = -angle;
-		turnback = 1;
+		turnBack = 1;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
-		turnback = 0;
+		turnBack = 0;
     }
 	set_tacho_position(sn_wheels[1],position_left);
 	set_tacho_position(sn_wheels[0],position_right);
