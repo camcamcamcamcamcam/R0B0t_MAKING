@@ -45,6 +45,12 @@ int status;
 
 uint16_t msgId = 0;
 
+/*
+@desc : initialize the client. The function has to be called once before starting the program because it waits for the START message.
+@param : /
+@author : Benjamin Castellan and Louis Roman
+@return : void
+*/
 void initClient() {
     if (DEBUG) printf("CLIENT : initializing\n");
     struct sockaddr_rc addr = { 0 };
@@ -92,6 +98,12 @@ int read_from_server (int sock, char *buffer, size_t maxSize) {
     return bytes_read;
 }
 
+/*
+@desc : given the type of the message, it gives the size it should be (helps to write a message)
+@param : take the type of a message (as define above) 
+@author : Benjamin Castellan and Louis Roman
+@return : char
+*/
 char size_message(char msg_type) {
     switch (msg_type) {
         /*case MSG_ACK :    only sent by the server
@@ -114,6 +126,12 @@ char size_message(char msg_type) {
     return (-1);
 }
 
+/*
+@desc : send to the server the message specified
+@param : as explicated just after
+@author : Benjamin Castellan and Louis Roman
+@return : char 1 if succeeded, 0 else
+*/
 char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act) {
     /*
      * int x, int y, int R, int G, int B, char act are optional, they should be put to 0 when unnecessary
@@ -156,6 +174,12 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act) {
     return (0);
 }
 
+/*
+@desc : listen if the server wants to stop the robot(end of game or kicked out of the game)
+@param : /
+@author : Benjamin Castellan
+@return : void
+*/
 void receiveMessageServer(){
   if( status == 0 ) {
       //printf("wait for STOP or KICK message\n");
@@ -182,7 +206,12 @@ void receiveMessageServer(){
   }
 }
 
-
+/*
+@desc : test if the function sendMessage is working (and the server as well)
+@param : /
+@author : Benjamin Castellan
+@return : void
+*/
 void robot2() {
     /*
      * second test to see if function sendMessage is working
