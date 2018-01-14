@@ -101,8 +101,8 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 		minBuffer = getMinBufferSonar();
 		printf(" ** DISTANCE SONAR : %d\n", distance_sonar);
 		angle_gyro = getGyroAngle();
-		if(fabs(angle_gyro-angle_start_gyro)>=2){
-			rotate_to_angle(MAX_SPEED/10,angle_gyro-angle_start_gyro);
+		if(fabs(angle_gyro-angle_start_gyro)>=5){
+			rotate_to_angle_without_refresh(MAX_SPEED/10,angle_gyro-angle_start_gyro);
 		}
 		Sleep(50);
 	}
