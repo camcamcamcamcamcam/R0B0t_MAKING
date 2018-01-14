@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "ev3.h"
 #include "ev3_port.h"
-#include "ev3_tacho.h"
 #include "ev3_sensor.h"
 
 
@@ -29,9 +28,13 @@ int value_b;
 
 uint8_t sn_color;
 
+/*
+@desc : read the data from the color sensor and update the 3 global variables value_r, value_g, value_b (values RGB).
+@param : /
+@author : 
+@return : void
+*/
 void getColor(){
-
-
     if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
         printf( "COLOR sensor is found, reading COLOR...\n" );
         set_sensor_mode_inx(sn_color,LEGO_EV3_COLOR_RGB_RAW);
@@ -42,35 +45,16 @@ void getColor(){
     }
 }
 
+/*
+@desc : returns an integer (boolean) telling if the obstacle is red or not.
+@param : /
+@author : 
+@return : integer (1 if the obstacle is red, 0 else)
+*/
 int red_obstacle(){
     getColor();
-    if (value_r > value_g + value_b) printf("obstacle red found\n");	/*tests a modifier, mais l'idee est là*/
+    if (value_r > value_g + value_b) printf("obstacle red found\n");
     else printf("not red\n");
 	printf("returned values are %d %d %d\n",value_r,value_g,value_b);
 	return (value_r > value_g + value_b);
 }
-
-/*int main( void )
-{
-
-    if ( ev3_init() == -1 ) return ( 1 );
-
-    printf( "*** ( EV3 ) Hello! ***\n" );
-
-//Run all sensors
-    ev3_sensor_init();
-
-    while (1){
-
-        red_obstacle();
-        //getColor();
-        //printf("Value : %d %d %d \n",value[0], value[1], value[2]);
-        sleep(2);
-
-    }
-
-    ev3_uninit();
-    printf( "*** ( EV3 ) Bye! ***\n" );
-
-    return ( 0 );
-}*/

@@ -7,10 +7,10 @@
 extern unsigned char map[map_x][map_y];
 
 void sendMapDone();
-// send all the pixels that are obstacles(both moveable and non-moveable)
-// also send at the end a map-done message
+/* send all the pixels that are obstacles(both moveable and non-moveable) and also send at the end a map-done message */
+
 void setMapData(char x, char y, unsigned char typeObject);
-// set the correct type to the specified pixel
+// set the correct type to the specified pixel (x,y) in the map variable.
 
 #define NO_OBSTACLE 0
 #define NON_MOVING_OBSTACLE 1

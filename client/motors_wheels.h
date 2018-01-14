@@ -36,7 +36,6 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle);
 /* go straight using synchronized method providing by the AP../.. */
 void goStraightForAngle(uint8_t sn, int speed, int angle);
 /*only make one wheel turn with the motor on the specified port in the good direction*/
-void slow_down(int speed);
 char manage_speed(int speed, int maxDistance,int securityDistance,int brakingDistance, int speedDivider);
 void stopMotors();
 /* stop the motors */

@@ -7,12 +7,25 @@ all:
 	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c testSonar.c -o testSonar.o
 	gcc testSonar.o -Wall -lm -lev3dev-c -o testSonar
+	
+color_sensor.o: color_sensor.c color_sensor.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c color_sensor.c -o color_sensor.o
 
-i2c:
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c i2c.c -o i2c.o
-	gcc i2c.o -Wall -lm -lev3dev-c -o i2c
-	./i2c
+color_sensor: color_sensor.o
+	gcc color_sensor.o -Wall -lm -lev3dev-c -o color_sensor
 
+map_construction.o: map_construction.c map_construction.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c map_construction.c -o map_construction.o
+
+map_construction: robotclient.o map_construction.o
+	gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
+	
+motors_servo.o: motors_servo.c motors_servo.h
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_servo.c -o motors_servo.o
+
+motors_servo: motors_servo.o
+	gcc motors_servo.o -Wall -lm -lev3dev-c -o motors_servo
+	
 sensor_compass.o: sensor_compass.c sensor_compass.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_compass.c -o sensor_compass.o
 
@@ -51,13 +64,6 @@ touch_sensor: touch_sensor.o
 	gcc touch_sensor.o -Wall -lm -lev3dev-c -o touch_sensor
 	./touch_sensor
 
-color_sensor.o: color_sensor.c color_sensor.h
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c color_sensor.c -o color_sensor.o
-
-color_sensor: color_sensor.o
-	gcc color_sensor.o -Wall -lm -lev3dev-c -o color_sensor
-	./color_sensor
-
 getSonarValue.o: getSonarValue.c getSonarValue.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c getSonarValue.c -o getSonarValue.o
 
@@ -85,13 +91,6 @@ motors_wheels.o: motors_wheels.c motors_wheels.h
 motors_wheels: sensor_gyro.o motors_wheels.o
 	gcc motors_wheels.o -Wall -lm -lev3dev-c -o motors_wheels
 	./motors_wheels
-
-motors_servo.o: motors_servo.c motors_servo.h
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_servo.c -o motors_servo.o
-
-motors_servo: motors_servo.o
-	gcc motors_servo.o -Wall -lm -lev3dev-c -o motors_servo
-	./motors_servo
 
 servo_sonar.o: servo_sonar.c servo_sonar.h
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c servo_sonar.c -o servo_sonar.o
@@ -223,12 +222,6 @@ test4.o: test4.c
 
 test4: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o
 	gcc color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o -Wall -lm -lev3dev-c -o test4
-
-map_construction.o: map_construction.c map_construction.h
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c map_construction.c -o map_construction.o
-
-map_construction: robotclient.o map_construction.o
-	gcc map_construction.o robotclient.o -Wall -lm -lev3dev-c -lbluetooth -o map_construction
 
 test_final_algo_recursif.o: test_final_algo_recursif.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_algo_recursif.c -o test_final_algo_recursif.o
