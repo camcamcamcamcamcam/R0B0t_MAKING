@@ -43,9 +43,9 @@ int sweep_state;
 int thread_is_alive;
 
 /*
-@desc : 
+@desc :
 	* initialize the position of the servo motors (the one linked with the sonar and the one linked with the arm).
-	* the function has to be called before using the servo motors 
+	* the function has to be called before using the servo motors
 @param : /
 @author : Samuel Pierre
 @return : void
@@ -129,7 +129,7 @@ int angle_servo_sonar(){
 }
 
 /*
-@desc : 
+@desc :
 	* set the servo to the "up" position (perpendicular to the ground), equivalent to 90°.
 	* the variable count is there to ensure that the thread currently used won't be blocked if the servo_arm is blocked.
 	* the speed is not a parameter and is set to MAX_SPEED / 6.
@@ -150,7 +150,7 @@ void servo_arm_up(){
 }
 
 /*
-@desc : 
+@desc :
 	* set the servo to the "down" position (parallel to the ground), equivalent to 0°.
 	* the variable count is there to ensure that the thread currently used won't be blocked if the servo_arm is blocked.
 	* the speed is not a parameter and is set to MAX_SPEED / 6.
@@ -163,7 +163,7 @@ void servo_arm_down(){
 	int count = 0;
     go_to_angle(sn_servo[0],MAX_SPEED / 6, ANGLE_ZERO);
 	Sleep(50); // make sure that the motor has started before entering the loop
-	while(servo_arm_is_running() && count<10){ // waiting until the speed of the motor has reached 0.
+	while(servo_arm_is_running() && count<100){ // waiting until the speed of the motor has reached 0.
 		Sleep(20);
 		count++;
 	}
@@ -177,7 +177,7 @@ void servo_arm_down(){
 @return : returns 1 if the servo_arm is running and 0 else.
 */
 int servo_arm_is_running(){
-	
+
 	int speed;
 	get_tacho_speed( sn_servo[0], &speed);
 	if(speed==0){
@@ -210,7 +210,7 @@ int servo_sonar_is_running(){
 
 /*
 @desc : the function enables to move the servo_sonar to a certain angle.
-@param : 
+@param :
 	* int angle : absolute angle desired by the user
 	* the variable count is there to ensure that the thread currently used won't be blocked if the servo_arm is blocked.
 	* the speed is not a parameter and is set to MAX_SPEED / 10.
@@ -220,9 +220,9 @@ int servo_sonar_is_running(){
 void absolute_servo_sonar(int angle){
 
 	int count = 0;
-    go_to_angle(sn_servo[1],MAX_SPEED / 10, angle);
+    go_to_angle(sn_servo[1],MAX_SPEED / 5, angle);
 	Sleep(50); // make sure that the motor has started before entering the loop
-	while(servo_sonar_is_running() && count<10){ // waiting until the speed of the motor has reached 0.
+	while(servo_sonar_is_running() && count<100){ // waiting until the speed of the motor has reached 0.
 		Sleep(20);
 		count++;
 	}
@@ -236,16 +236,16 @@ void absolute_servo_sonar(int angle){
 @return : angle (int) in degrees of the servo_sonar
 */
 int get_absolute_angle_servo(){
-	
+
 	int angle;
 	get_tacho_position(sn_servo[1],&angle);
 	return (int) angle;
-	
+
 }
 
 /*
 @desc : the function enables to make the servo motor to go to an absolute angle with a certain speed
-@param : 
+@param :
 	* uint8_t sn_servo_local : pointer of the servo concerned by this order
 	* int speed : speed of the motor
 	* int angle : angle the motor has to do
@@ -271,7 +271,7 @@ void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {
 }
 
 /*
-@desc : 
+@desc :
 	* the thread is there to enable the servo_sonar to sweep
 	* it creates the thread if it does not exist
 	* it set sweep_state to 1 threw start_sweep() -> to launch this type of movement.
@@ -280,7 +280,7 @@ void go_to_angle(uint8_t sn_servo_local,int speed, int angle) {
 @return : void
 */
 void thread_sweep(){
-	
+
 	char a;
 	start_sweep();
 	if(thread_is_alive == 0){
@@ -288,11 +288,11 @@ void thread_sweep(){
 		pthread_create(&tid_sweep, &attr_sweep, (void *) continuous_sweep, (void *)&a);
 		thread_is_alive = 1;
 	}
-	
+
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to put sweep_state to 1 which will lead to the beginning of the sweep.
 @param : /
 @author : Louis Roman
@@ -303,7 +303,7 @@ void start_sweep(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to make the sonar sweeping or not judging from the value of sweep_state
 	* the amplitude of the sweep is set with the local varibale amplitudeAngle
 @param : /
@@ -329,7 +329,7 @@ void continuous_sweep(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to put sweep_state to 0 which will lead to the stop of the sweep.
 @param : /
 @author : Louis Roman
@@ -340,7 +340,7 @@ void stop_sweep(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to exit the thread enabling to make the sonar sweep.
 @param : /
 @author : Louis Roman

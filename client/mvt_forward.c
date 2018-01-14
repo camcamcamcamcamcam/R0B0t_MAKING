@@ -34,13 +34,13 @@
 #endif
 
 /*
-@desc : 
+@desc :
 	* the function enables the robot to move forward until the distance specified has been reached or an obstacle has been met
 	* before the movement, the robot is doing a scan around it to see if it can move forward
 	* during the movement, the sonar is sweeping the space
 	* if braking is needed, the robot adapt his speed to the environnement
 	* at the end, the function returns a char describing if the robot has done the distance specified (1) or if it was obliged to stop because of obstacles (0)
-@param : 
+@param :
 	* int speed : speed of the tacho used for the rotation
 	* int distance : maximum distance the robot should cover during the movement
 	* int securityDistance : distance of security set to avoid bumping into obstacles
@@ -58,13 +58,13 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	int brakingDistance = 300;
 	char distanceMaxDone = 1;
 	char distanceMaxDoneLocal = 1;
-	
+
 	// scanning the environnement before going forward
 	distance_sonar = getMinDistance(60,15);
 	if(distance_sonar>securityDistance){
 		// if the robot is enough far from the obstacle, it moves and adapts directly its speed
 		goStraight_NonBlocking(speed, distance);
-		if(minBuffer<brakingDistance){
+		if(distance_sonar<brakingDistance){
 			distanceMaxDoneLocal = manage_speed(speed,distance_sonar-securityDistance,securityDistance,brakingDistance, speedDivider);
 			if(distanceMaxDone==1){
 				distanceMaxDone = distanceMaxDoneLocal;
@@ -72,17 +72,17 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 		}
 	}
 	Sleep(50);
-	
+
 	// put the head of the robot in front of it
 	distance_sonar = getDistance_weighted(0);
 	int minBuffer = getMinBufferSonar();
 	// beginning of the sweep
 	thread_sweep();
 	// if the robot has not enough space, we indicate that it won't be able to achieve the movement
-	if (minBuffer <= securityDistance) { 
+	if (minBuffer <= securityDistance) {
 		distanceMaxDone = 0;
 	}
-	
+
 	while(minBuffer>securityDistance && robot_is_moving()){
 		if(minBuffer<brakingDistance){
 			// linear braking from speed to speed/speedDivider. The speed begins to decrease when reaching brakingDistance from the obstacle.
@@ -95,14 +95,15 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 		// get the distance of the sonar
 		distance_sonar = getDistance_current_weighted();
 		minBuffer = getMinBufferSonar();
+		printf(" ** DISTANCE SONAR : %d\n", distance_sonar);
 		Sleep(50);
 	}
-	
+
 	// Stop the motors and clear the buffer of the sonar
 	stop_sweep();
 	stopMotors();
 	clearBuffer();
-	
+
 	// restore the state of the head
 	distance_sonar = getDistance_weighted(0);
 	return distanceMaxDone;
