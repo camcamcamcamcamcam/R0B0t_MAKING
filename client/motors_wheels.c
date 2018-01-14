@@ -59,7 +59,7 @@ int leftFinalPosition = 0;
 int rightFinalPosition = 0;
 
 /*
-@desc : 
+@desc :
 	* the function initializes the motor linked to the wheels
 	* the global position variables  X,Y,TETA are initiliazed in this function
 @param : /
@@ -82,7 +82,7 @@ void initMotorWheels(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to get the position of the left motor
 @param : /
 @author : Samuel Pierre
@@ -93,11 +93,11 @@ int get_left_motor_position(){
     int position;
     get_tacho_position(sn_wheels[1],&position);
     return position;
-	
+
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to get the position of the right motor
 @param : /
 @author : Samuel Pierre
@@ -111,7 +111,7 @@ int get_right_motor_position(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function describes if the robot is moving or not
 @param : /
 @author : Samuel Pierre
@@ -133,7 +133,7 @@ int robot_is_moving(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to ask a motor to run to a certain angle at a certain speed.
 @param :
 	* uint8_t sn_wheels : pointer of the motor concerned by this order
@@ -161,7 +161,7 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to ask the motors to run to a certain angle with a certain speed.
 	* leftFinalPosition and rightFinalPosition are useful to know the remaining distance the robot has to cover.
 	* the function is NON-BLOCKING : the current thread will continue even if the motors have not done the specified distance.
@@ -179,10 +179,10 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
     if (angle < 0){
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_INVERSED);
 		angle = -angle;
-		turnback = 1;
+		turnBack = 1;
     } else{
         multi_set_tacho_polarity_inx(sn_wheels,TACHO_NORMAL);
-		turnback = 0;
+		turnBack = 0;
     }
 	set_tacho_position(sn_wheels[1],position_left);
 	set_tacho_position(sn_wheels[0],position_right);
@@ -194,7 +194,7 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to ask the motors to run to a certain angle with a certain speed.
 	* leftFinalPosition and rightFinalPosition are useful to know the remaining distance the robot has to cover.
 	* the function is BLOCKING : the function is risky because obstacles won't be discovered if there are.
@@ -220,7 +220,7 @@ void goStraight(int speed, int distance){
 }
 
 /*
-@desc : 
+@desc :
 	* the function is called while the robot is already moving
 	* adapt the speed to the distance the robot still has to cover or to the obstacles the robot is going to meet.
 @param :
@@ -228,7 +228,7 @@ void goStraight(int speed, int distance){
 	* int maxDistance : the distance the robot has to do should not be more than maxDistance (example : an obstacle has to be discovered at maxDistance in front of the robot)
 	* int securityDistance : the robot is supposed to stop closed to securityDistance of an obstacle (here only used to ajust the speed)
 	* int brakingDistance : the robot will begin to brake at brakingDistance
-	* int speedDivider : the max_speed will be divided by this factor along the braking period. 
+	* int speedDivider : the max_speed will be divided by this factor along the braking period.
 @author : Samuel Pierre
 @return : the return value will be 1 if the robot had to shorten his previous path or 0 else.
 */
@@ -262,7 +262,7 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 }
 
 /*
-@desc : 
+@desc :
 	* the function just asks the robot to move forward of a certain distance at a certain speed.
 	* this function is a NON-BLOCKING function
 @param :
@@ -272,14 +272,14 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 @return : void
 */
 void goStraight_NonBlocking(int speed, int distance){
-	
+
     int angle = distance_to_angle(distance);
 	synchronisedGoStraight(sn_wheels, speed, angle);
 
 }
 
 /*
-@desc : 
+@desc :
 	* the function just asks the robot to do a rotation of a certain angle at a certain speed.
 	* this function is a BLOCKING function -> this will block the current thread until the robot has reached the desired position.
 	* this function does not use the gyroscope -> see preciseRotation
@@ -311,7 +311,7 @@ void rotation(int speed, int angle){
 }
 
 /*
-@desc : 
+@desc :
 	* the function just asks the robot to do a rotation of a certain angle at a certain speed.
 	* this function is a BLOCKING function -> this will block the current thread until the robot has reached the desired position.
 	* this function does not use the gyroscope -> see preciseRotation
@@ -333,7 +333,7 @@ void smallRotation(int speed, int angle){
 }
 
 /*
-@desc : 
+@desc :
 	* the function just asks the robot to do a rotation of a certain angle at a certain speed.
 	* this function is a BLOCKING function -> this will block the current thread until the robot has reached the desired position.
 	* this function uses the gyroscope
@@ -355,13 +355,13 @@ void preciseRotation(int speed, int angle){
 	rotation(speed, angle);
 	//printf("angle gyro apres : %d \n",(int) getGyroAngle());
 	angle_gyro_end = getGyroAngle();
-	
+
   	difference = angle - (angle_gyro_end - angle_gyro_start);
 	//printf("angle restant : %d \n",difference);
 	if(difference!=0){
 		rotation(speed, difference);
 	}
-	
+
 	TETA1 = (TETA1 + angle)%360;
 	TETA = TETA1;
 	initPosition();
@@ -369,7 +369,7 @@ void preciseRotation(int speed, int angle){
 }
 
 /*
-@desc : 
+@desc :
 	* the function enables to establish a save of certain variables before executing a movement.
 @param : /
 @author : Samuel Pierre
@@ -390,7 +390,7 @@ void initPosition(){
 }
 
 /*
-@desc : 
+@desc :
 	* the function gives results over a whole movement
 @param : /
 @author : Samuel Pierre
@@ -423,7 +423,7 @@ void refreshPosition(){
 }
 
 /*
-@desc : 
+@desc :
 	* Contrary to refreshPosition, this function is designed to have an accurate estimation of the position at every moments
 @param : /
 @author : Samuel Pierre
@@ -438,7 +438,7 @@ void refreshGlobalPosition(){
 	int meanAngle;
 
 	if(rotationPolarity==0){
-		
+
 		meanAngle = (int) (fabs(get_left_motor_position()-leftStartPosition)+fabs(get_right_motor_position()-rightStartPosition))/2;
 		difference = angle_to_distance(meanAngle);
 		if(turnBack==0){
@@ -454,7 +454,7 @@ void refreshGlobalPosition(){
 }
 
 /*
-@desc : 
+@desc :
 	* This function enables to stop the motors
 @param : /
 @author : Samuel Pierre
@@ -470,9 +470,9 @@ void stopMotors(){
 }
 
 /*
-@desc : 
-	* This function enables to convert the angle done by a wheel in distance in mm 
-@param : 
+@desc :
+	* This function enables to convert the angle done by a wheel in distance in mm
+@param :
 	* angle in degree
 @author : Samuel Pierre
 @return : (int) distance in mm
@@ -482,9 +482,9 @@ int angle_to_distance(int angle){
 }
 
 /*
-@desc : 
+@desc :
 	* This function enables to convert the distance done by a wheel in angle in degree
-@param : 
+@param :
 	* distance in mm
 @author : Samuel Pierre
 @return : (int) angle in degree
@@ -494,7 +494,7 @@ int distance_to_angle(int distance){
 }
 
 /*
-@desc : 
+@desc :
 	* This function enables to get the max speed of the tacho
 @param : /
 @author : Samuel Pierre
