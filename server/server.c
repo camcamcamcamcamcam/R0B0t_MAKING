@@ -17,12 +17,12 @@
 #define CONNECT_DELAY       15
 #define SELECT_TO           200
 #define INET_PORT           8888
+#define PIXEL_MULT			5
 
 struct game game;
 
 struct observerMethods GUI;
 
-int nb_obstacle = 0;
 
 /* A coloured pixel. */
 typedef struct {
@@ -47,22 +47,22 @@ char debugLvl = 0;
 
 /* PNG code  from https://www.lemoda.net/c/write-png/ */
 
+  
 
 
 
 
+    
 
-
-
-
-/* Given "bitmap", this returns the pixel of bitmap at the point
+    
+/* Given "bitmap", this returns the pixel of bitmap at the point 
    ("x", "y"). */
 
 static pixel_t * pixel_at (bitmap_t * bitmap, int x, int y)
 {
     return bitmap->pixels + bitmap->width * y + x;
 }
-
+    
 /* Write "bitmap" to a PNG file specified by "path"; returns 0 on
    success, non-zero on error. */
 
@@ -83,7 +83,7 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
     */
     int pixel_size = 3;
     int depth = 8;
-
+    
     fp = fopen (path, "wb");
     if (! fp) {
         goto fopen_failed;
@@ -93,18 +93,18 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
     if (png_ptr == NULL) {
         goto png_create_write_struct_failed;
     }
-
+    
     info_ptr = png_create_info_struct (png_ptr);
     if (info_ptr == NULL) {
         goto png_create_info_struct_failed;
     }
-
+    
     /* Set up error handling. */
 
     if (setjmp (png_jmpbuf (png_ptr))) {
         goto png_failure;
     }
-
+    
     /* Set image attributes. */
 
     png_set_IHDR (png_ptr,
@@ -116,12 +116,12 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
                   PNG_INTERLACE_NONE,
                   PNG_COMPRESSION_TYPE_DEFAULT,
                   PNG_FILTER_TYPE_DEFAULT);
-
+    
     /* Initialize rows of PNG. */
 
     row_pointers = png_malloc (png_ptr, bitmap->height * sizeof (png_byte *));
     for (y = 0; y < bitmap->height; y++) {
-        png_byte *row =
+        png_byte *row = 
         png_malloc (png_ptr, sizeof (uint8_t) * bitmap->width * pixel_size);
         row_pointers[y] = row;
         for (x = 0; x < bitmap->width; x++) {
@@ -131,7 +131,7 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
             *row++ = pixel->blue;
         }
     }
-
+    
     /* Write the image data to "fp". */
 
     png_init_io (png_ptr, fp);
@@ -142,12 +142,12 @@ static int save_png_to_file (bitmap_t *bitmap, const char *path)
        "status" to a value which indicates success. */
 
     status = 0;
-
+    
     for (y = 0; y < bitmap->height; y++) {
         png_free (png_ptr, row_pointers[y]);
     }
     png_free (png_ptr, row_pointers);
-
+    
  	png_failure:
  	png_create_info_struct_failed:
     png_destroy_write_struct (&png_ptr, &info_ptr);
@@ -168,7 +168,6 @@ int read_from_client (struct team *t, char *buffer, int maxSize) {
         return -1;
 
     debug (1, KNRM, "[DEBUG] received %d bytes : ", nbytes);
-    /*printf("[DEBUG] received %d bytes : \n", nbytes); */
     for (i=0; i<nbytes; i++)
         debug (1, KNRM, "0x%02X ", (unsigned char) buffer[i]);
     debug (1, KNRM, "\n");
@@ -341,14 +340,14 @@ void sendKick (int teamID) {
 void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
     uint16_t id;
 
-
+    
     char teamAlinea [MAXNAMESIZE+4] = {0};
-    int i;
+    int i,j;
     int l = strlen (game.teams[sendingTeam].name);
     int consumedBytes = 5;
 
     id = *((uint16_t *) buf);
-
+	
 
     for (i=0; i<MAXNAMESIZE-l; i++)
         teamAlinea [i] = ' ';
@@ -367,9 +366,9 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
             parseMessage (sendingTeam, buf+5, nbbytes-5);
         return;
     }
-	if (id> 1000){
-		log (KRED, "TEAM %d is sending too many messages (id is already %d)***\n", sendingTeam, id);
-		/*return;*/
+	if (id> 10000){
+		log (KRED, "TEAM %d is sending too many messages ***\n", sendingTeam);
+		return;
 	}
 
 
@@ -388,7 +387,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
     switch (buf[4]) {
         case MSG_ACK:
             {
-
+    		
 
                 /* ACK */
                 uint16_t idAck;
@@ -447,11 +446,11 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
                 log (KRED, "*** Tried to STOP the game ***\n");
                 break;
             }
-
+    
 
 		case MSG_CUSTOM:
             {
-
+			    
                 /* CUSTOM */
                 int i;
 
@@ -516,7 +515,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
                     log (KRED, " ***\n");
                     break;
                 }
-
+                
 				/*log (KRED, "positiondata  ***\n %d %d", *((int16_t *) &buf[5]), *((int16_t *) &buf[7]));*/
                 x = *((int16_t *) &buf[5]);
                 y = *((int16_t *) &buf[7]);
@@ -524,7 +523,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
                 log (KNRM, "id=%d", id);
                 log (KNRM, alinea);
                 log (KNRM, "          POSITION x=%d y=%d\n", x, y);
-
+	
 				if (x >=    map[sendingTeam].width || y >= map[sendingTeam].height || x< 0 || y< 0){
 					log (KRED, "*** INVALID COORDINATE  (%d , %d) ***\n", x,y);
 				}
@@ -536,7 +535,7 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
             }
         case MSG_MAPDATA:
             {
-                /* Get MAP DATA */
+                /* Get MAP DATA */                
 			int16_t x, y;
 			pixel_t * pixel;
 
@@ -544,17 +543,15 @@ void parseMessage (int sendingTeam, const unsigned char *buf, int nbbytes) {
             x = *((int16_t *) &buf[5]);
             y = *((int16_t *) &buf[7]);
 
-pixel = pixel_at (& map[sendingTeam], x, y);
-	            pixel->red = *((int8_t *) &buf[9]);
-	            pixel->green = *((int8_t *) &buf[10]);
-	            pixel->blue = *((int8_t *) &buf[11]);
+
+
 			debug (1, KNRM, teamAlinea);
 		   	debug (1, COL(sendingTeam),"%s", game.teams[sendingTeam].name);
 		    debug (1, KNRM, "] ");
 			debug (1, KNRM, "[DEBUG] id=%d", id);
-			debug (1, KNRM, "[DEBUG] 		MAPDATA AT x=%d y=%d r=%d g=%d b=%d\n", x, y, pixel->red, pixel->green, pixel->blue);
+			debug (1, KNRM, "[DEBUG] 		MAPDATA AT x=%d y=%d r=%d g=%d b=%d\n", x, y, *((int8_t *) &buf[9]), *((int8_t *) &buf[10]), *((int8_t *) &buf[9]));		
 
-
+		
             if (nbbytes < 12) {
                     log (KRED, "*** MAPDATA message is too short (%d bytes) ***\n", nbbytes);
                     return;
@@ -562,23 +559,29 @@ pixel = pixel_at (& map[sendingTeam], x, y);
 
             consumedBytes = 12;
 
-
-			if (x >=     map[sendingTeam].width || y >= map[sendingTeam].height || x<0 || y<0){
+	
+			if (x >=     map[sendingTeam].width/PIXEL_MULT || y >= map[sendingTeam].height/PIXEL_MULT || x<0 || y<0){
 					log (KRED, "*** INVALID OBSTACLE COORDINATE  (%d , %d) ***\n", x,y);
 				}
 			else {
 
-				pixel = pixel_at (& map[sendingTeam], x, y);
+			for (i=0; i<PIXEL_MULT; i++){
+				for (j=0; j<PIXEL_MULT; j++){
+					pixel = pixel_at (& map[sendingTeam], x*PIXEL_MULT+i, y*PIXEL_MULT+j);
+		            pixel->red = *((int8_t *) &buf[9]);
+		            pixel->green = *((int8_t *) &buf[10]);
+		            pixel->blue = *((int8_t *) &buf[11]);
+				}
+			}
+			/*	pixel = pixel_at (& map[sendingTeam], x, y);
 	            pixel->red = *((int8_t *) &buf[9]);
 	            pixel->green = *((int8_t *) &buf[10]);
-	            pixel->blue = *((int8_t *) &buf[11]);
+	            pixel->blue = *((int8_t *) &buf[11]);*/
 				addObstacle (sendingTeam, x, y, pixel->red, pixel->green, pixel-> blue);
-        nb_obstacle++;
-
 			}
 
-
-
+			
+			
 /* Print map data only in debug */
 
 		/*
@@ -590,7 +593,7 @@ pixel = pixel_at (& map[sendingTeam], x, y);
 		case MSG_MAPDONE:
 			{
 
-			char filename[10];
+			char filename[20];
 		    log (KNRM, teamAlinea);
 		    log (COL(sendingTeam),"%s", game.teams[sendingTeam].name);
 		    log (KNRM, "] ");
@@ -600,10 +603,9 @@ pixel = pixel_at (& map[sendingTeam], x, y);
                 }
 			consumedBytes=5;
 			/*Entire Map received, now draw it*/
-             log (KRED, "Writing map\n");
-			sprintf(filename, "map%d.png", sendingTeam);
-      log (KNRM, "          ADDED %d\n OBSTACLES", nb_obstacle);
-
+             log (KRED, "Writing map for %d\n",sendingTeam+1);
+			sprintf(filename, "map%d.png", sendingTeam+1);
+			remove(filename);
  			save_png_to_file (& map[sendingTeam], filename);
 
 		    /*free (map[sendingTeam].pixels);*/
@@ -623,12 +625,12 @@ pixel = pixel_at (& map[sendingTeam], x, y);
 		    	log (KNRM, "] ");
                 consumedBytes = 10;
 
-
+				
                 x = *((int16_t *) &buf[6]);
                 y = *((int16_t *) &buf[8]);
 
 				if (buf[5] > 1) {
-                    log (KRED, "*** Illegal BALL action (%d) ***\n", buf[5]);
+                    log (KRED, "*** Illegal OBSTACLE action (%d) ***\n", buf[5]);
                     break;
                 }
 
@@ -637,9 +639,9 @@ pixel = pixel_at (& map[sendingTeam], x, y);
 
 					log (KNRM, "id=%d", id);
                 	log (KNRM, alinea);
-                	log (KNRM, "         PICKING UP OBSTACLE \n");
+                	log (KNRM, "         PICKING UP OBSTACLE at x=%d y=$d\n",x,y);
 				}
-				else {
+				else {				
    		            log (KNRM, "id=%d", id);
 					log (KNRM, alinea);
                 	log (KNRM, "          DROPPING OBSTACLE AT x=%d y=%d\n", x, y);
@@ -690,7 +692,7 @@ int main (int argc, char **argv) {
 
 
 
-
+	char filename[20];    
 
     char buf[MAXMSG+1] = { 0 };
 			pixel_t * pixel;
@@ -698,29 +700,6 @@ int main (int argc, char **argv) {
 
     opterr = 0;
 
-/* Create an image. */
-	for (team=0; team<15; team++){
-
-
-    map[team].width = 80;
-    map[team].height = 80;
-
-    map[team].pixels = calloc (map[team].width * map[team].height, sizeof (pixel_t));
-
-
-    	if (! map[team].pixels) {
-			return -1;
-    	}
-		for (x=0; x<map[team].width; x++){
-			for (y=0; y< map[team].height; y++){
-				pixel = pixel_at (& map[team], x, y);
-				pixel->red=254;
-				pixel->green=254;
-				pixel->blue=254;
-
-			}
-		}
-	}
     while ((c = getopt (argc, argv, "hxdvo:")) != -1)
         switch (c) {
             case 'x':
@@ -796,7 +775,7 @@ int main (int argc, char **argv) {
     loc_addr_bt.rc_family = AF_BLUETOOTH;
     loc_addr_bt.rc_bdaddr = *BDADDR_ANY;
     loc_addr_bt.rc_channel = (uint8_t) 1;
-    bind (serverSockBT, (struct sockaddr *) &loc_addr_bt, sizeof (loc_addr_bt));
+    bind (serverSockBT, (struct sockaddr *) &loc_addr_bt, sizeof (loc_addr_bt)); 
 
     /* bind INET socket */
     loc_addr_in.sin_family = AF_INET;
@@ -854,7 +833,7 @@ int main (int argc, char **argv) {
             game.teams[i].ended = 0;
         }
 
-
+       
 
         game.state = GAM_TEAM_SELECT;
         rankCmp = (*GUI.getTeamsForGame) ();
@@ -875,7 +854,7 @@ int main (int argc, char **argv) {
         log (KNRM, alinea);
         log (KRED, "Starting game with teams ");
 		/*log(KRED, "rank comp %d  ", rankCmp);*/
-
+		
 		for (i=0; i<rankCmp; i++){
 	        log (COL(game.robots[i]), "%s ", game.teams[game.robots[i]].name);
 		}
@@ -932,6 +911,28 @@ int main (int argc, char **argv) {
 
             if ((now >= startTime || everyoneConnected) && game.state == GAM_CONNECTING) {
                 char first = 1;
+
+
+/* Create an image. */
+			for (team=0; team<15; team++){
+			    map[team].width = 80*PIXEL_MULT;
+			    map[team].height = 80*PIXEL_MULT;
+
+			    map[team].pixels = calloc (map[team].width * map[team].height, sizeof (pixel_t));
+
+    			if (! map[team].pixels) {
+					return -1;
+    			}
+				for (x=0; x<map[team].width; x++){
+					for (y=0; y< map[team].height; y++){
+						pixel = pixel_at (& map[team], x, y);
+						pixel->red=254;
+						pixel->green=254;
+						pixel->blue=254;
+				
+					}
+				}
+			}
 
                 log (KNRM, alinea);
                 log (KRED, "Game starts NOW !\n");
@@ -1011,7 +1012,7 @@ int main (int argc, char **argv) {
                                     buf[2] = -1;                            /* server ID is 0xFF        */
                                     buf[3] = (char) (0xFF & (i+1));             /* receiver                 */
                                     buf[4] = MSG_START;                     /* This is a START message  */
-
+                                 
 
                                     write_to_client (&game.teams[i], buf, 8);
 
@@ -1063,7 +1064,7 @@ int main (int argc, char **argv) {
                                     buf[2] = -1;                            /* server ID is 0xFF        */
                                     buf[3] = (char) (0xFF & (i+1));             /* receiver                 */
                                     buf[4] = MSG_START;                     /* This is a START message  */
-
+  
                                     write_to_client (&game.teams[i], buf, 8);
 
                                     (*GUI.notify) ();
@@ -1131,11 +1132,20 @@ int main (int argc, char **argv) {
 
                 close (game.teams[i].sock);
                 game.teams[i].connected = 0;
+			
+				/*Send map */
+				log (KRED, "Writing map for %d\n",i+1);
+				sprintf(filename, "map%dend.png", i+1);
+				remove(filename);
+ 				save_png_to_file (& map[i], filename);
             }
 
             if (game.teams[i].active)
                 game.teams[i].active = 0;
+			
         }
+
+
     }
 
     log (KNRM, "\n");
@@ -1143,6 +1153,9 @@ int main (int argc, char **argv) {
     log (KRED, "End of the contest.\n");
 
     (*GUI.destroyUI) ();
+	for (i=0; i<15; i++){
+		free(map[i].pixels);
+	}
     if (displayPath)
         graphicsQuit ();
 
@@ -1154,3 +1167,4 @@ int main (int argc, char **argv) {
 
     return 0;
 }
+

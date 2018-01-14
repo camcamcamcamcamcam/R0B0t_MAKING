@@ -28,4 +28,5 @@ char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act);
 
 extern char server_said_stop;
 
+
 #endif //R0B0T_MAKING_ROBOTCLIENT_H

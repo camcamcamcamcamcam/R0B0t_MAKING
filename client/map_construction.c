@@ -26,11 +26,11 @@ void sendMapDone(){
             switch (map[i][j]) {
                 case NON_MOVING_OBSTACLE :
                 // DANGER : the map on the server was symetric so it is to correct this
-                    sendMessage(MSG_MAPDATA, 79 - i, j, 0, 0, 0, 0);
+                    sendMessage(MSG_MAPDATA, i, 79 - j, 0, 0, 0, 0);
                     obstable++;
                     break;
                 case MOVING_OBSTACLE :
-                    sendMessage(MSG_MAPDATA, 79 - i, j, 255, 0, 0, 0);
+                    sendMessage(MSG_MAPDATA, i, 79 - j, 255, 0, 0, 0);
                     obstable++;
                     break;
                 default:    //nothing there
