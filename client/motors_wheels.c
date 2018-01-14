@@ -139,7 +139,7 @@ int robot_is_moving(){
 	* uint8_t sn_wheels : pointer of the motor concerned by this order
 	* int speed : speed of the motor
 	* int angle : angle the motor has to do
-@author : Samuel Pierre
+@author : Benjamin Castellan and Samuel Pierre
 @return : void
 */
 void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
@@ -169,7 +169,7 @@ void goStraightForAngle(uint8_t sn_wheels, int speed, int angle) {
 	* uint8_t *sn_wheels : set of pointers of the two motors linked with the wheels
 	* int speed : speed of the motor
 	* int angle : angle the motor has to do
-@author : Samuel Pierre
+@author : Benjamin Castellan and Samuel Pierre
 @return : void
 */
 void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
@@ -201,7 +201,7 @@ void synchronisedGoStraight(uint8_t *sn_wheels, int speed, int angle) {
 @param :
 	* int speed : speed of the motor
 	* int angle : angle the motor has to do
-@author : Samuel Pierre
+@author : Benjamin Castellan and Samuel Pierre
 @return : void
 */
 void goStraight(int speed, int distance){
@@ -505,7 +505,7 @@ void stopMotors(){
 	* This function enables to convert the angle done by a wheel in distance in mm
 @param :
 	* angle in degree
-@author : Samuel Pierre
+@author : Benjamin Castellan and Samuel Pierre
 @return : (int) distance in mm
 */
 int angle_to_distance(int angle){
