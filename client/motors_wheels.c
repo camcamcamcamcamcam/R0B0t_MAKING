@@ -246,7 +246,7 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 	}
 	//printf("Distance remaining : %d \n",distance);
 	//printf("Maximum distance that the robot should do : %d \n",maxDistance);
-	if(distance>maxDistance){ // testing if the robot has detected stg forcing the robot to stop earlier than in the forecast.
+	if(distance>maxDistance && breakingDistance>maxDistance){ // testing if the robot has detected stg forcing the robot to stop earlier than in the forecast.
 		distance = maxDistance;
 		deltaAngle = distance_to_angle(distance);
 		leftFinalPosition = get_left_motor_position() + deltaAngle;
