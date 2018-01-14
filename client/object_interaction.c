@@ -83,7 +83,7 @@ void checkForward(){
 	printf("***  BEGINNING CHECKFORWARD  ***\n");
 	int X_start = X;
 	int Y_start = Y;
-	int delta_angle=25;
+	int delta_angle=35;
 	int gauche=0;
 	int face=0;
 	int droite=0;
@@ -94,8 +94,8 @@ void checkForward(){
 	char type = 2;
 	//stop_sweep(); //sweep_thread
 
-	go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 50, 30);
-	Sleep(100);
+	//go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED/8, 50, 50, 30);
+	//Sleep(100);
 	int dir = direction();
 	switch(dir)
   {
@@ -129,7 +129,7 @@ void checkForward(){
 		  printf("setMapData: %d %d %d\n",x,y,0);
 			setMapData(x,y,0);
 	}
-	absolute_servo_sonar(delta_angle+10);
+	absolute_servo_sonar(delta_angle-5);
 	printf("angle_servo : %d \n", -delta_angle);
 	Sleep(100);
 	gauche = get_sonar_distance();
@@ -150,7 +150,7 @@ void checkForward(){
 		  printf("setMapData: %d %d %d\n",x-delta_x,y-delta_y,0);
 			setMapData(x-delta_x,y-delta_y,0);
 	}
-	absolute_servo_sonar(2*delta_angle+20);
+	absolute_servo_sonar(2*delta_angle-10);
 	printf("angle_servo : %d \n", -2*delta_angle);
 	Sleep(100);
 	gauche_plus = get_sonar_distance();
