@@ -8,7 +8,9 @@
 #include "motors_wheels.h"
 #include "motors_servo.h"
 #include "sensor_sonar.h"
+#include "sensor_gyro.h"
 #include "mvt_forward.h"
+#include "mvt_rotate.h"
 #include "servo_sonar.h"
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
@@ -58,6 +60,8 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	int brakingDistance = 300;
 	char distanceMaxDone = 1;
 	char distanceMaxDoneLocal = 1;
+	int angle_start_gyro = getGyroAngle();
+	int angle_gyro;
 
 	// scanning the environnement before going forward
 	distance_sonar = getMinDistance(60,15);
@@ -96,6 +100,10 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 		distance_sonar = getDistance_current_weighted();
 		minBuffer = getMinBufferSonar();
 		printf(" ** DISTANCE SONAR : %d\n", distance_sonar);
+		angle_gyro = getGyroAngle();
+		if(fabs(angle_gyro-angle_start_gyro)>=2){
+			rotate_to_angle(MAX_SPEED/10,angle_gyro-angle_start_gyro);
+		}
 		Sleep(50);
 	}
 
