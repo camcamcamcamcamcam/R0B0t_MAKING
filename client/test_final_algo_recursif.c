@@ -58,7 +58,6 @@ char null(char a);
 void client_position();
 void manage_obstacles();
 int longest_undisclosed_position();
-void initMap();
 char checkBoundaries(int x_check, int y_check);
 
 char checkBoundaries(int x_check, int y_check){
@@ -66,17 +65,7 @@ char checkBoundaries(int x_check, int y_check){
 		return 0;
 	return 1;
 }
-void initMap(){
-	int i=0;
-	int j=0;
-	while(i<w){
-		while(j<h){
-			map[i][j]=200;
-			j=j+1;
-		}
-		i=i+1;
-	}
-}
+
 
 void client_position(){
   /*
@@ -110,7 +99,8 @@ void client_position(){
         for (i = 0; i < 5; i++){
           for (j = 0; j < 5; j++){
             if ((x-2+i >= 0) && (x-2+i < MAP_WIDTH) && (y-2+j >= 0) && (y-2+j < MAP_HEIGHT)) { //so no seg fault
-              map[x-2+i][y-2+j] = 0; // it means there is nothing there
+							setMapData(x-2+i, y-2+j, 0);// it means there is nothing there
+							//map[x-2+i][y-2+j] = 0;
             }
           }
         }
@@ -180,7 +170,7 @@ char disclosed(int angle){
 	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
 	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
 	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
-  if ((map[globx+3*dirX][globy+3*dirY]==200) || (map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]==200) || (map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]==200) || (map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]==200) || (map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]==200)) {
+  if ((getMapData(globx+3*dirX,globy+3*dirY)==200) || (getMapData(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY))==200) || (getMapData(globx+3*dirX+null(dirX),globy+3*dirY+null(dirY))==200) || (getMapData(globx+3*dirX-null(dirX),globy+3*dirY-null(dirY))==200) || (getMapData(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))==200)) {
       return 0;
   }else{
       return 1;
@@ -277,22 +267,22 @@ int longest_undisclosed_position(){
 
   // we check that the cells assessed are inisde the arena
   if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
-    case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
-    case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
-    case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
-    case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+    case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
+    case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
+    case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
+    case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
+    case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
   }
   // we loop until a wall has been found and an undisclosed place has not been found
   while (((case1==200) || (case2==200) || (case3==200) || (case4==200) || (case5==200)) && (globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
     if ((case1!=1) && (case2!=1) && (case3!=1) && (case4!=1) && (case5!=1)){
       i++;
       if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-        case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
-        case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
-        case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
-        case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
-        case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+        case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
+        case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
+        case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
+        case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
+        case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
       }
     } else {
         return (i+1);
@@ -341,22 +331,22 @@ int nearest_undisclosed_free(int angle){
 
   // we check that the cells assessed are inside the arena
   if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
-    case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
-    case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
-    case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
-    case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+    case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
+    case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
+    case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
+    case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
+    case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
   }
   // we loop until a wall has been found and an undisclosed place has not been found
   while ((case1!=1) && (case2!=1) && (case3!=1) && (case4!=1) && (case5!=1) && (globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
     if ((case1!=200) && (case2!=200) && (case3!=200) && (case4!=200) && (case5!=200)){
       i++;
       if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-        case1 = map[globx+(3+i)*dirX-2*null(dirX)][globy+(3+i)*dirY-2*null(dirY)];
-        case2 = map[globx+(3+i)*dirX-null(dirX)][globy+(3+i)*dirY-null(dirY)];
-        case3 = map[globx+(3+i)*dirX][globy+(3+i)*dirY];
-        case4 = map[globx+(3+i)*dirX+null(dirX)][globy+(3+i)*dirY+null(dirY)];
-        case5 = map[globx+(3+i)*dirX+2*null(dirX)][globy+(3+i)*dirY+2*null(dirY)];
+        case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
+        case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
+        case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
+        case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
+        case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
       }
     } else {
         return (i+1);

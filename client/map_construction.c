@@ -51,9 +51,23 @@ void sendMapDone(){
 @author : Benjamin Castellan
 @return : void
 */
-void setMapData(char x, char y, unsigned char typeObject){
+void setMapData(int x, int y, unsigned char typeObject){
     map[x][y] = typeObject;
+    //printf("SET MAP DATA did x = %d, y=%d, typeObject=%d \n", x, y, typeObject);
 }
+
+/*
+@desc : get the correct type to the specified pixel (x,y) in the map variable
+@param :
+	* char x : x-axis index in the map (X/50), where X is in mm
+	* char y : y-axis index in the map (Y/50), where Y is in mm
+@author : Benjamin Castellan
+@return : unsigned char typeObject : char defining the nature of the obstacle (0, 1, 100, 200)
+*/
+unsigned char getMapData(int x, int y){
+    return map[x][y];
+}
+
 
 
 /*
