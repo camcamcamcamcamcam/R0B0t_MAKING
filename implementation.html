@@ -127,9 +127,12 @@ void goStraight(int speed, int distance){
             <h2>Slowing down</h2>
             <p>A safety improvements consists in slowing down when the robot detects an obstacle. <br>
 			It prevents Robbie from bumping into obstacles.<br>
-			TECHNICAL EXPLANATION</p>
-            <video src="movie/slow_down.mp4" class="col-lg-8 col-lg-offset-2 text-center mx-auto" controls>
+			The decrease of speed during the slow down is a linear function of the distance to the obstacle.</p>
+            <video src="movie/slow_down.mp4" class="col-lg-6 col-lg-offset-0.5 mx-auto" controls>
 			</video>
+			<div class="col-lg-5 mx-auto">
+              <img src="img/graphe.png" style="width:100%">
+            </div>
           </div>
         </div>
       </div>
@@ -142,8 +145,14 @@ void goStraight(int speed, int distance){
             <h2>Sweeping</h2>
             <p>In order to notice every obstacle, Robbie moves its head and hence sweeps the space thanks to an actuator.<br>
 			The sweep is managed by a specific thread, which modifies the state of the actuator : running, sleeping or finished.</p>
-            <video src="movie/sweep.mp4" class="col-lg-8 col-lg-offset-2 text-center mx-auto" controls>
+            <video src="movie/sweep.mp4" class="col-lg-6 col-lg-offset-0.5 text-center mx-auto" controls>
 			</video>
+			<div class="col-lg-6 mx-auto">
+			  <pre><code class="C#">
+continuous_sweep(){
+}
+			  </code></pre>
+			</div>
           </div>
         </div>
       </div>
@@ -165,7 +174,7 @@ void goStraight(int speed, int distance){
       </div>
 	</section>
 	
-	<section id="section3" class="content-section design2 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section3" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
