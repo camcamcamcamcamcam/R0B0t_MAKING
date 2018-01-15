@@ -53,7 +53,7 @@ void sendMapDone(){
 */
 void setMapData(int x, int y, unsigned char typeObject){
     map[x][y] = typeObject;
-    //printf("SET MAP DATA did x = %d, y=%d, typeObject=%d \n", x, y, typeObject);
+    //printf("I confirm map[%d][%d]=%d \n", x, y, getMapData(x,y));
 }
 
 /*

@@ -138,7 +138,7 @@ char can_move_forward() {
 		return 0;
 	}
 	else{
-		int distance_sonar = getMinDistance(60,15);
+		int distance_sonar = getMinDistance(75,15);
 		printf("*# can_move_forward distance_sonar : %d mm\n", distance_sonar);
 		if (distance_sonar < 150)
 			return 0;
@@ -167,12 +167,12 @@ char disclosed(int angle){
 	if (!checkBoundaries(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)) && !checkBoundaries(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))){
 		return 1;
 	}
-	printf("Value disclosed (globx,globy)=(%d,%d) \n",globx,globy);
-	printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),map[globx+3*dirX-2*null(dirX)][globy+3*dirY-2*null(dirY)]);
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),map[globx+3*dirX-null(dirX)][globy+3*dirY-null(dirY)]);
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,map[globx+3*dirX][globy+3*dirY]);
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),map[globx+3*dirX+null(dirX)][globy+3*dirY+null(dirY)]);
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),map[globx+3*dirX+2*null(dirX)][globy+3*dirY+2*null(dirY)]);
+	printf("Value disclosed (globx,globy,TETA)=(%d,%d,%d) \n",globx,globy,TETA);
+	printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),getMapData(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY)));
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),getMapData(globx+3*dirX-null(dirX),globy+3*dirY-null(dirY)));
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,getMapData(globx+3*dirX,globy+3*dirY));
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),getMapData(globx+3*dirX+null(dirX),globy+3*dirY+null(dirY)));
+	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),getMapData(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)));
   if ((getMapData(globx+3*dirX,globy+3*dirY)==200) || (getMapData(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY))==200) || (getMapData(globx+3*dirX+null(dirX),globy+3*dirY+null(dirY))==200) || (getMapData(globx+3*dirX-null(dirX),globy+3*dirY-null(dirY))==200) || (getMapData(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))==200)) {
       return 0;
   }else{
@@ -185,7 +185,7 @@ char move_forward(){
   The function enables to move the robot 5cm forward if it is possible.
   It returns True if the movement has been possible.
   */
-  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 3, 50, 50, 60);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 4, 50, 50, 60);
   increase_cost(1);
   return allDistanceDone;
 }
@@ -214,7 +214,7 @@ int move_forward_until(int max_pos){
   The function enables to move the robot forward until max_pos has been reached or the robot cannot move anymore.
   It returns the number of cells the robot has been able to do.
   """*/
-  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 3, 50*max_pos, 50, 40);
+  char allDistanceDone = go_to_distance_sweep_regular_braking_new_v2(MAX_SPEED / 4, 50*max_pos, 50, 40);
   printf("Mvt forward Finished, char allDistanceDone is %d\n", allDistanceDone);
   increase_cost(2);
   return allDistanceDone;
@@ -292,16 +292,16 @@ int longest_undisclosed_position(){
       }
     }
 	if(angle==0){
-		return h-3-globy;
+		return (h-3-globy);
 	}
 	else if(angle==90){
-		return w-3-globx;
+		return (w-3-globx);
 	}
 	else if(angle==180){
-		return globy-2;
+		return (globy-2);
 	}
 	else{
-		return globx-2;
+		return (globx-2);
 	}
 
   return 1000;
@@ -384,57 +384,64 @@ void algo_recursive_b() {
     while (cost<=THRESHOLD && !server_said_stop){
 	  printf("# disclosed in front : %d \n",disclosed(TETA + 0));
         if (!disclosed(TETA + 0)){
-	      		int dist =  longest_undisclosed_position();
+			if(can_move_forward()){
+				int dist =  longest_undisclosed_position();
 	      		printf(" ## Move forward until %d \n",dist);
-            allDistanceDone = move_forward_until(dist);
-	      // Test on the five diections : need to be a really accurate test !! -> discover 5 cells in the front
-  	      //char is_possible = can_move_forward();  // uncomment with function of Camille
-    	    //printf("can move forward ? %d \n",is_possible);
-  	      //if(!is_possible){  uncomment with function of Camille
+				allDistanceDone = move_forward_until(dist);
 
-	  	     if(!allDistanceDone && !can_move_forward()){
-		      //procédure gestion obstacles
-							 printf("  ### first manage_obstacles\n");
-  		         manage_obstacles();
-	         }
-       } else {
-  		      printf("   $ Try to see in the sides \n");
+				if(!allDistanceDone && !can_move_forward()){
+				 //procédure gestion obstacles
+					printf("  ### first manage_obstacles\n");
+					manage_obstacles();
+				}
+			}
+			else{
+				manage_obstacles();
+			}
+	    } 
+		else {
+  		    printf("   $ Try to see in the sides \n");
             if (!disclosed(TETA + 90)){
   	  	        printf("   $$ i go to +90 \n");
-	  	      		rotate(90);
-            		//move_forward();
-        		} else if (!disclosed(TETA - 90)) {
-		    				printf("   $$$ i go to -90 \n");
-          			rotate(-90);
-          			//move_forward();
-        	  } else {
-		  	  			printf("    $$$$ i have to analyze \n");
-	          		int result[2];
-	          		nearest_undisclosed_point(result);
-	          		int indexAngle = result[0];
-	          		int minimum = result[1];
-	          		if (minimum == 1000){
-	            			//if (can_move_forward()){
-		  							if (can_move_forward()){
-											  printf("     & can move forward\n");
-			  			  				move_forward();
-	            			} else {
-											  printf("     && cannot move forward\n");
-	              				if (rand()*2 < RAND_MAX) rotate(90);
-	              				else rotate(-90);
-	            			}
-	          		} else {
-	            			rotate(indexAngle);
-	            			move_forward_until(minimum);
-			    					//if(!can_move_forward()){
-				  				  if(!allDistanceDone){
-			  	    			//procédure gestion obstacles
-	  		  	  					manage_obstacles();
-					  						printf("     &&& second manage_obstacles\n");
-		  	  		  		}
-										printf("      &&&& end \n");
-	           		}
-	       		}  //uncomment with function of Camille
+	  	      	rotate(90);
+            	//move_forward();
+        	} 
+			else if (!disclosed(TETA - 90)) {
+		    	printf("   $$$ i go to -90 \n");
+				rotate(-90);
+          		//move_forward();
+        	} 
+			else {
+		  	  	printf("    $$$$ i have to analyze \n");
+	          	int result[2];
+	          	nearest_undisclosed_point(result);
+	          	int indexAngle = result[0];
+	          	int minimum = result[1];
+	          	if (minimum == 1000){
+		  			if (can_move_forward()){
+						printf("     & can move forward\n");
+			  			move_forward();
+	            	} 
+					else {
+						printf("     && cannot move forward\n");
+	              		if (rand()*2 < RAND_MAX) rotate(90);
+	              			else rotate(-90);
+	            		}
+	          	}
+				else {
+	            	rotate(indexAngle);
+					if (can_move_forward()){
+						allDistanceDone = move_forward_until(minimum);
+				  		if(!allDistanceDone && !can_move_forward()){
+	  		  	  			manage_obstacles();
+					  		printf("     &&& second manage_obstacles\n");
+						}
+					}
+					else{
+						manage_obstacles();
+					}
+	           	}
+	       	}  //uncomment with function of Camille
       	}
     }
 }
@@ -454,6 +461,9 @@ char main (void) {
   //initMap();
   //while the server did not send the START_MESSAGE, the robot will wait in init_client()
   initClient(); // will STOP the program if the server is not launched !
+  
+  globx = X/50;
+  globy = Y/50;
 
   pthread_t tid_client_position;
   pthread_attr_t attr_client_position;
