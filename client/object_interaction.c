@@ -173,7 +173,7 @@ void checkForward(){
 			}
 		}
 		printf("setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
-		setMapData(x-2*delta_x,y-2*delta_y,0);
+		setMapData(x-2*delta_x,y-2*delta_y,type);
 
 	}
 	else{

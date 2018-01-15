@@ -66,13 +66,13 @@ char checkBoundaries(int x_check, int y_check){
 	return 1;
 }
 
-
+void initSmallStadium()
 void client_position(){
   /*
   send the postition to the server every 2 seconds
   update the local map every 50 ms to say there is no obstacle
   */
-  int count = 0;
+   uint32_t count = 0;
     while(!server_said_stop){
 
         int x = (int) (X/50);
@@ -89,11 +89,12 @@ void client_position(){
         if (count%40 == 0) {
           sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
         }
-				if (count == 400) { // 224000
+				//if (count == 400) { // 224000
+				//	sendMapDone();
+				//}
+				if (count == 4700){
+					printf("*\n*\n*\n*\n\tALMOST END OF TIME, MAP IS SENDING NOW !!\n*\n*\n*\n");
 					sendMapDone();
-				}
-				else if (count == 224000){
-					printf("END OF TIME\n");
 					count = 0;
 				}
         count++;
@@ -398,19 +399,25 @@ void algo_recursive_b() {
 			else{
 				manage_obstacles();
 			}
-	    } 
+	    }
 		else {
   		    printf("   $ Try to see in the sides \n");
             if (!disclosed(TETA + 90)){
   	  	        printf("   $$ i go to +90 \n");
-	  	      	rotate(90);
+		  	      	rotate(90);
+								if (!can_move_forward()) {
+									manage_obstacles();
+								}
             	//move_forward();
-        	} 
+        	}
 			else if (!disclosed(TETA - 90)) {
 		    	printf("   $$$ i go to -90 \n");
-				rotate(-90);
+					rotate(-90);
+					if (!can_move_forward()) {
+						manage_obstacles();
+					}
           		//move_forward();
-        	} 
+        	}
 			else {
 		  	  	printf("    $$$$ i have to analyze \n");
 	          	int result[2];
@@ -421,7 +428,7 @@ void algo_recursive_b() {
 		  			if (can_move_forward()){
 						printf("     & can move forward\n");
 			  			move_forward();
-	            	} 
+	            	}
 					else {
 						printf("     && cannot move forward\n");
 	              		if (rand()*2 < RAND_MAX) rotate(90);
@@ -461,7 +468,7 @@ char main (void) {
   //initMap();
   //while the server did not send the START_MESSAGE, the robot will wait in init_client()
   initClient(); // will STOP the program if the server is not launched !
-  
+
   globx = X/50;
   globy = Y/50;
 
