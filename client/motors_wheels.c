@@ -31,7 +31,7 @@
 #endif
 
 #define DIAMETRE 56  // diameter of the wheel : 56mm
-#define ECART_ROUES 160 // distance between the wheels, in mm
+#define ECART_ROUES 170 // distance between the wheels, in mm
 #define DIAMETRE_ROBOT 232 // width of the robot in mm
 
 // Global variables
@@ -377,7 +377,7 @@ void preciseRotation(int speed, int angle){
   	difference = angle - (angle_gyro_end - angle_gyro_start);
 	//printf("angle restant : %d \n",difference);
 	if(difference!=0 && difference<30){
-		rotation(speed, difference);
+		rotation(speed/2, difference);
 	}
 
 	TETA1 = (TETA1 + angle)%360;

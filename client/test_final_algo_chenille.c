@@ -146,7 +146,7 @@ char can_move_forward() {
   // assess the cost represented by the use of the function
   increase_cost(2);
   // Check if the robot won't go outside the arena
-  if (((directionY==1) && (globy == (h-2))) || ((directionY==-1) && (globy==2)) || ((directionX==1) && (globx==(w-2))) || ((directionX==-1) && (globx==2))) {
+  if (((directionY==1) && (globy >= (h-7))) || ((directionY==-1) && (globy<=7)) || ((directionX==1) && (globx>=(w-7))) || ((directionX==-1) && (globx<=7))) {
 		printf("*# can_move_forward it was not IN the 80x80 grid\n");
 		return 0;
 	}
@@ -393,79 +393,89 @@ void algo_recursive_b() {
     srand(time(NULL));   // should only be called once
     directionX = 0;
     directionY = 1;
+		int distance;
+		char nb = 0;
 	  char allDistanceDone = 1;
+		char terminated = 0;
     while (cost<=THRESHOLD && !server_said_stop){
-	  printf("# disclosed in front : %d \n",disclosed(TETA + 0));
-        if (!disclosed(TETA + 0)){
-			if(can_move_forward()){
-				int dist =  longest_undisclosed_position();
-	      		printf(" ## Move forward until %d \n",dist);
-				allDistanceDone = move_forward_until(dist);
-
-				if(!allDistanceDone && !can_move_forward()){
-				 //procédure gestion obstacles
-					printf("  ### first manage_obstacles\n");
-					manage_obstacles();
-				}
-			}
-			else{
-				manage_obstacles();
-			}
-	    }
-		else {
-  		    printf("   $ Try to see in the sides \n");
-					int angleToDo;
-					if (rand()*2 < RAND_MAX) angleToDo = 90;
-					else angleToDo = -90;
-          if (!disclosed(TETA + angleToDo)){
-  	  	        printf("   $$ i go to + angleToDo \n");
-		  	      	rotate(angleToDo);
+				nb = 0;
+				terminated = 0;
+				while (!terminated && !server_said_stop) {
+			  		while(can_move_forward()){
+								if(TETA==0){
+									distance = 79-(Y/50) -2;
+								}
+								else if (TETA == 90){
+									distance = 79 - (X/50)-2;
+								}
+								else if (TETA == 180){
+									distance = Y / 50-2;
+								}
+								else {
+									distance = X / 50-2;
+								}
+								move_forward_until(distance);
 								if (!can_move_forward()) {
 									manage_obstacles();
 								}
-            	//move_forward();
-        	}
-			else if (!disclosed(TETA - angleToDo)) {
-		    	printf("   $$$ i go to -angleToDo \n");
-					rotate(-angleToDo);
-					if (!can_move_forward()) {
-						manage_obstacles();
-					}
-          		//move_forward();
-        	}
-			else {
-		  	  	printf("    $$$$ i have to analyze \n");
-	          	int result[2];
-	          	nearest_undisclosed_point(result);
-	          	int indexAngle = result[0];
-	          	int minimum = result[1];
-	          	if (minimum == 1000){
-		  			if (can_move_forward()){
-						printf("     & can move forward\n");
-			  			move_forward();
-	            	}
-					else {
-						printf("     && cannot move forward\n");
-	              		if (rand()*2 < RAND_MAX) rotate(90);
-	              			else rotate(-90);
-	            		}
-	          	}
-				else {
-	            	rotate(indexAngle);
-					if (can_move_forward()){
-						allDistanceDone = move_forward_until(minimum);
-				  		if(!allDistanceDone && !can_move_forward()){
-	  		  	  			manage_obstacles();
-					  		printf("     &&& second manage_obstacles\n");
 						}
-					}
-					else{
-						manage_obstacles();
-					}
-	           	}
-	       	}  //uncomment with function of Camille
-      	}
+						rotate(90);
+						if (can_move_forward()) {
+								allDistanceDone = move_forward_until(5);
+								if (!allDistanceDone){
+										nb++;
+								}
+								if (!allDistanceDone && !can_move_forward()) {
+										manage_obstacles();
+								}
+						}
+						else {
+							manage_obstacles();
+							nb++;
+						}
+						rotate(90);
+
+						while(can_move_forward()){
+								if(TETA==0){
+									distance = 79-(Y/50)-2;
+								}
+								else if (TETA == 90){
+									distance = 79 - (X/50)-2;
+								}
+								else if (TETA == 180){
+									distance = Y / 50 -2;
+								}
+								else {
+									distance = X / 50 -2;
+								}
+								move_forward_until(distance);
+								if (!can_move_forward()) {
+									manage_obstacles();
+								}
+						}
+						rotate(-90);
+						if (can_move_forward()) {
+								allDistanceDone = move_forward_until(5);
+								if (!allDistanceDone){
+										nb++;
+								}
+								if (!allDistanceDone && !can_move_forward()) {
+										manage_obstacles();
+								}
+						}
+						else {
+							manage_obstacles();
+							nb++;
+						}
+						rotate(-90);
+						if (nb == 2){
+								terminated = 1;
+						}
+						nb = 0;
+				}
+				rotate(-90);
     }
+
 }
 
 
