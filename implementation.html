@@ -138,7 +138,7 @@ void goStraight(int speed, int distance){
       </div>
 	</section>
 	
-	<section id="section1ter" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section1ter" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto text-center">
@@ -147,7 +147,7 @@ void goStraight(int speed, int distance){
 			The sweep is managed by a specific thread, which modifies the state of the actuator : running, sleeping or finished.</p>
 		    <video src="movie/sweep.mp4" class="col-lg-6 col-lg-offset-0 mx-auto" controls>
 			</video>
-			<div class="col-lg-6 mx-auto">
+			<div class="col-lg-6 mx-auto text-left">
 			  <pre><code class="C#">
 void continuous_sweep(){
 	int amplitudeAngle = 60;
@@ -190,7 +190,43 @@ void continuous_sweep(){
       </div>
 	</section>
 	
-	<section id="section3" class="content-section design1 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+      <div class="container">
+        <div class="row">
+		  <div class="col-lg-6 mx-auto">
+			<pre><code class="C#">
+void getColor(){
+    if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
+        set_sensor_mode_inx(sn_color,LEGO_EV3_COLOR_RGB_RAW);
+        get_sensor_value( 0, sn_color, &value_r );
+		get_sensor_value( 1, sn_color, &value_g);
+		get_sensor_value( 2, sn_color, &value_b);
+        fflush( stdout );
+    }
+}
+
+
+int is_red_obstacle(){
+    getColor();
+    if (value_r > value_g + value_b){
+		printf("obstacle red found\n");
+		return 1;
+    } else {
+		printf("not red\n");
+		return 0;
+}
+			</code></pre>
+		  </div>
+          <div class="col-lg-6 mx-auto">
+            <h2>Color sensor</h2>
+            <p>The components red, green and blue given by the sensor are used to define if an obstacle is red.<br>
+			The condition is that the red value is greater than the sum of the green and blue values.</p>
+          </div>
+        </div>
+      </div>
+	</section>
+	
+	<section id="section4" class="content-section design2 text-center"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
