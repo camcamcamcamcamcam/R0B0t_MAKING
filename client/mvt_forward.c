@@ -56,17 +56,18 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 	int distance_sonar = 0;
 
 	// variable used for linear braking and checking if the robot has completed the movement or not
-	int speedDivider = 2;
-	int brakingDistance = 300;
+	int speedDivider = 4;
+	int brakingDistance = 400;
 	char distanceMaxDone = 1;
 	char distanceMaxDoneLocal = 1;
 	int angle_start_gyro = getGyroAngle();
 	int angle_gyro;
 
 	// scanning the environnement before going forward
-	distance_sonar = getMinDistance(60,15);
+	distance_sonar = getMinBufferSonar();
 	if(distance_sonar>securityDistance){
 		// if the robot is enough far from the obstacle, it moves and adapts directly its speed
+		thread_sweep();
 		goStraight_NonBlocking(speed, distance);
 		if(distance_sonar<brakingDistance){
 			distanceMaxDoneLocal = manage_speed(speed,distance_sonar-securityDistance,securityDistance,brakingDistance, speedDivider);
@@ -74,45 +75,40 @@ char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int se
 				distanceMaxDone = distanceMaxDoneLocal;
 			}
 		}
-	}
-	Sleep(50);
-
-	// put the head of the robot in front of it
-	distance_sonar = getDistance_weighted(0);
-	int minBuffer = getMinBufferSonar();
-	// beginning of the sweep
-	thread_sweep();
-	// if the robot has not enough space, we indicate that it won't be able to achieve the movement
-	if (minBuffer <= securityDistance) {
-		distanceMaxDone = 0;
-	}
-
-	while(minBuffer>securityDistance && robot_is_moving()){
-		if(minBuffer<brakingDistance){
-			// linear braking from speed to speed/speedDivider. The speed begins to decrease when reaching brakingDistance from the obstacle.
-			distanceMaxDoneLocal = manage_speed(speed,minBuffer-securityDistance,securityDistance,brakingDistance, speedDivider);
-			if(distanceMaxDone==1){
-				distanceMaxDone = distanceMaxDoneLocal;
+		
+		// put the head of the robot in front of it
+		distance_sonar = getDistance_weighted(0);
+		int minBuffer = getMinBufferSonar();
+		
+		while(minBuffer>securityDistance && robot_is_moving()){
+			if(minBuffer<brakingDistance){
+				// linear braking from speed to speed/speedDivider. The speed begins to decrease when reaching brakingDistance from the obstacle.
+				distanceMaxDoneLocal = manage_speed(speed,minBuffer-securityDistance,securityDistance,brakingDistance, speedDivider);
+				if(distanceMaxDone==1){
+					distanceMaxDone = distanceMaxDoneLocal;
+				}
 			}
+			refreshGlobalPosition();
+			// get the distance of the sonar
+			distance_sonar = getDistance_current_weighted();
+			minBuffer = getMinBufferSonar();
+			printf(" ** DISTANCE SONAR : %d\n", distance_sonar);
+			Sleep(10);
 		}
-		refreshGlobalPosition();
-		// get the distance of the sonar
-		distance_sonar = getDistance_current_weighted();
-		minBuffer = getMinBufferSonar();
-		printf(" ** DISTANCE SONAR : %d\n", distance_sonar);
-		angle_gyro = getGyroAngle();
-		if(fabs(angle_gyro-angle_start_gyro)>=5){
-			rotate_to_angle_without_refresh(MAX_SPEED/10,angle_gyro-angle_start_gyro);
-		}
-		Sleep(50);
+
+		// Stop the motors and clear the buffer of the sonar
+		stop_sweep();
+		stopMotors();
+		clearBuffer();
+	}
+	else{
+		
+		// if the robot has not enough space, we indicate that it won't be able to achieve the movement
+		distanceMaxDone = 0;
+		// restore the state of the head
+		distance_sonar = getDistance_weighted(0);
+		
 	}
 
-	// Stop the motors and clear the buffer of the sonar
-	stop_sweep();
-	stopMotors();
-	clearBuffer();
-
-	// restore the state of the head
-	distance_sonar = getDistance_weighted(0);
 	return distanceMaxDone;
 }

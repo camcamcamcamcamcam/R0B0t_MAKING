@@ -71,12 +71,12 @@ int getDistance_weighted(int angle){
 
 	absolute_servo_sonar(angle);
 	distance = get_sonar_distance();
-	horiz_distance = distance*sin(angle*PI/180);
-	if(horiz_distance> (DIAMETRE_ROBOT/2 + 10)){ // 10 is used as an epsilon to ensure that the robot will not bump into the object
+	horiz_distance = fabs(distance*sin((angle*PI)/180));
+	if(horiz_distance> (DIAMETRE_ROBOT/2+20)){ // 10 is used as an epsilon to ensure that the robot will not bump into the object
 		distance = 1000;
 	}
 	else{
-		distance = distance*cos(angle*PI/180);
+		distance = fabs(distance*cos((angle*PI)/180));
 	}
 	bufferSonar[indexSonar] = (int) distance;
 	indexSonar = (indexSonar+1)%bufferSonarSize;
@@ -100,12 +100,12 @@ int getDistance_current_weighted(){
 
 	int angle = get_absolute_angle_servo();
 	distance = get_sonar_distance();
-	horiz_distance = distance*sin(angle*PI/180);
-	if(horiz_distance>DIAMETRE_ROBOT/2){
+	horiz_distance = fabs(distance*sin((angle*PI)/180));
+	if(horiz_distance>DIAMETRE_ROBOT/2+20){
 		distance = 1000;
 	}
 	else{
-		distance = distance*cos(angle*PI/180);
+		distance = fabs(distance*cos((angle*PI)/180));
 	}
 	bufferSonar[indexSonar] = (int) distance;
 	indexSonar = (indexSonar+1)%bufferSonarSize;
@@ -159,11 +159,13 @@ void clearBuffer(){
 int getMinDistance(int amplitudeAngle, int precisionAngle){
 	int angle = -amplitudeAngle;
 	int minDistance;
+	int distance;
 	minDistance = getDistance_weighted(angle);
 	while(angle<amplitudeAngle){
 		angle = angle+precisionAngle;
-		if (getDistance_weighted(angle)<minDistance){
-			minDistance = getDistance_weighted(angle);
+		distance = getDistance_weighted(angle);
+		if (distance<minDistance){
+			minDistance = distance;
 		}
 	}
 	getDistance_weighted(0);

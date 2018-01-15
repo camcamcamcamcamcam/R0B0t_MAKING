@@ -45,6 +45,10 @@
 #define MAX_SPEED 1050
 #endif
 
+extern int X; //in mm
+extern int Y; //in mm
+extern int TETA;
+
 /*
 @desc :
 	* the function makes the arm go up
@@ -102,7 +106,12 @@ int isMovableObstacle(){
 @return : int 0 if north, 1 if east, 2 if south, 3 if west
 */
 int direction(){
-	int var = (TETA+45)/90;
+	int angle;
+	angle = TETA;
+	if(angle<0){
+		angle=angle+360;
+	}
+	int var = (angle+45)/90;
 	return var%4;
 }
 
@@ -198,7 +207,7 @@ void checkForward(){
 			}
 		}
 		printf("setMapData: %d %d %d\n",x-2*delta_x,y-2*delta_y,type);
-		setMapData(x-2*delta_x,y-2*delta_y,0);
+		setMapData(x-2*delta_x,y-2*delta_y,type);
 
 	}
 	else{
@@ -248,11 +257,13 @@ void checkForward(){
 		  printf("setMapData: %d %d %d\n",x+2*delta_x,y+2*delta_y,0);
 			setMapData(x+2*delta_x,y+2*delta_y,0);
 	}
+	/*
 	if (type==2){
 		for (int i=-2; i<=2; i++){
 			setMapData(x+i*delta_x,y+i*delta_y,200);
 		}
 	}
+	*/
 	absolute_servo_sonar(0);
 	//printf("angle_servo : %d \n", 0);
 	Sleep(100);
