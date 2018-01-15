@@ -59,6 +59,7 @@ void client_position();
 void manage_obstacles();
 int longest_undisclosed_position();
 char checkBoundaries(int x_check, int y_check);
+void initSmallStadium();
 
 char checkBoundaries(int x_check, int y_check){
 	if (x_check >= MAP_WIDTH || x_check < 0 || y_check >= MAP_HEIGHT || y_check < 0)
@@ -66,7 +67,18 @@ char checkBoundaries(int x_check, int y_check){
 	return 1;
 }
 
-void initSmallStadium()
+void initSmallStadium(){
+	int i;
+	int j;
+	for (i=0; i <= 40 ; i++){
+		setMapData(0, i, 1);
+		setMapData(24, i, 1);
+	}
+	for (j=0; j <= 24; j++){
+		setMapData(j,0,1);
+		setMapData(j, 40, 1);
+	}
+}
 void client_position(){
   /*
   send the postition to the server every 2 seconds
@@ -141,7 +153,7 @@ char can_move_forward() {
 	else{
 		int distance_sonar = getMinDistance(75,15);
 		printf("*# can_move_forward distance_sonar : %d mm\n", distance_sonar);
-		if (distance_sonar < 150)
+		if (distance_sonar < 100)
 			return 0;
 	}
 	return 1;
@@ -467,6 +479,7 @@ char main (void) {
   servo_arm_up();
   //initMap();
   //while the server did not send the START_MESSAGE, the robot will wait in init_client()
+	//initSmallStadium();
   initClient(); // will STOP the program if the server is not launched !
 
   globx = X/50;

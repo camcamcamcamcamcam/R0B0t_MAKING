@@ -246,7 +246,7 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 	}
 	//printf("Distance remaining : %d \n",distance);
 	//printf("Maximum distance that the robot should do : %d \n",maxDistance);
-	
+
 	if(distance>maxDistance && brakingDistance>maxDistance){ // testing if the robot has detected stg forcing the robot to stop earlier than in the forecast.
 		distance = maxDistance;
 		deltaAngle = distance_to_angle(distance);
@@ -254,12 +254,12 @@ char manage_speed(int max_speed, int maxDistance,int securityDistance,int brakin
 		rightFinalPosition = get_right_motor_position() + deltaAngle;
 		distanceMaxDone = 0;
 	}
-	
+
 	// distance used in processing of the new speed.
 	if(distance>maxDistance){
 		distance = maxDistance;
 	}
-	
+
 	// Calculate the new speed and send the new order to the motor : regular braking
 	int newSpeed = max_speed - (((speedDivider-1)*max_speed/speedDivider)*(brakingDistance-distance))/(brakingDistance-securityDistance);
 	if(newSpeed>max_speed){
@@ -359,8 +359,16 @@ void preciseRotation(int speed, int angle){
 	int angle_gyro_start;
 	int angle_gyro_end;
 	int difference;
+  //int angle_gyro_start_esp;
 	initPosition();
 	angle_gyro_start = (getGyroAngle()+getGyroAngle()+getGyroAngle())/3;
+  /*if (angle_gyro_start<0){
+    angle_gyro_start_esp=(angle_gyro_start-45)/90*90;
+  }
+  else{
+    angle_gyro_start_esp=(angle_gyro_start+45)/90*90;
+  }
+  */
 	//printf("angle gyro avant : %d \n",(int) getGyroAngle());
 	rotation(speed, angle);
 	//printf("angle gyro apres : %d \n",(int) getGyroAngle());
