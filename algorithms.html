@@ -10,7 +10,7 @@
     <title>Algorithms - Robbie</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 
     <!-- Fonts -->
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -394,7 +394,7 @@ def algo_chenille(i):
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-			<h4>Performance for this test</h4>
+			<h4>Performance for this algorithm</h4>
 			<div class="col-lg-3 mx-auto">
 				<p>Our Algorithm</p>
 				<img src="img/final_map_chenille.png" style="width:100%">
@@ -415,7 +415,7 @@ def algo_chenille(i):
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-            <h2>Simple "Recursive" Algorithm</h2>
+            <h2>Simple Exploration Algorithm</h2>
             <p>
 			This time we use a little knowledge of the map. The robot will prefer to go left or right if the area in front of it is unreachable or already disclosed.
 			</p>
@@ -423,6 +423,36 @@ def algo_chenille(i):
 			<h4>"Recursive" algorithm</h4>
 			<div class="col-lg-12 mx-auto">
 				<pre><code class="python">
+# ASSESS IF A SPACE HAS BEEN DISCOVERED #
+				
+def disclosed(angle):
+    """
+    check if the cells linked to the direction corresponding to the angle have already been disclosed
+    """
+    global globx
+    global globX
+    global globy
+    global globY
+    global Map2
+    angle = angle%360
+    if angle==0:
+        dirX = 0
+        dirY = 1
+    elif angle==90:
+        dirX  = 1
+        dirY = 0
+    elif angle==180:
+        dirX =0
+        dirY=-1
+    else:
+        dirX =-1
+        dirY=0
+    # Determining if 1 of the 5 cells in front of the robot has not already been discovered.  
+    if Map2[globy+3*dirY,globx+3*dirX]==0 or Map2[globy+3*dirY+null(dirY),globx+3*dirX+null(dirX)]==0 or Map2[globy+3*dirY+null(dirY),globx+3*dirX+2*null(dirX)]==0 or Map2[globy+3*dirY-null(dirY),globx+3*dirX-null(dirX)]==0 or Map2[globy+3*dirY-null(dirY),globx+3*dirX-2*null(dirX)]==0:
+        return False
+    else:
+        return True				
+
 # ALGORITHMS RECURSIVE #
 
 def algo_recursive(i):
@@ -455,11 +485,73 @@ def algo_recursive(i):
       </div>
 	</section>
 	
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+        <div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h4>Main principles</h4>
+					<br>
+					<div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+					  <!-- Wrapper for slides -->
+					  <div class="carousel-inner">
+						<div class="item active">
+							<div class="row">
+								<div class="col-lg-10 col-md-offset-1">
+									<div class="col-lg-3 mx-auto">
+										<img src="img/map_before_recursive.png" style="width:100%">
+									</div>
+									<div class="col-lg-9 mx-auto">
+										<h5>1. Considering all the possibilities</h5>
+										<p>
+										The robot just does movement of 5cm in order to stay align with the cell.<br>
+										At each decision point, the robot considers all the possibility around (move forward, go left or go right).
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div class="row">
+								<div class="col-lg-10 col-md-offset-1">
+									<div class="col-lg-3 mx-auto">
+										<img src="img/map_after_recursive.png" style="width:100%">
+									</div>
+									<div class="col-lg-9 mx-auto">
+										<h5>2. Exploring its map</h5>
+										<p>
+										The decision takes first into account the cells that have already been explored.<br>
+										For example, if the robot has already been in the cell situated in front, the robot tries to go left or right if it has not been there before.<br>
+										If all the cells around have been explored, the robot tries to go forward (if it is possible) or randomly select one other direction.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+
+					  <!-- Left and right controls -->
+					  <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#myCarousel" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
 	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-			<h4>Performance for this test</h4>
+			<h4>Performance for this algorithm</h4>
 			<div class="col-lg-3 mx-auto">
 				<p>Our Algorithm</p>
 				<img src="img/final_map_recursive.png" style="width:100%">
@@ -480,7 +572,7 @@ def algo_recursive(i):
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-            <h2>Advanced "Recursive" Algorithm</h2>
+            <h2>Advanced Exploration Algorithm</h2>
             <p>
 			This time we use a little knowledge of the map. 
 			The robot will prefer to go left or right if the area in front of it is unreachable or already disclosed.
@@ -601,11 +693,77 @@ def algo_recursive_b(i):
       </div>
 	</section>
 	
+	<section id="section3" class="content-section design1"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
+        <div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<h4>Main principles</h4>
+					<br>
+					<div id="myCarousel2" class="carousel slide" data-ride="carousel">
+
+					  <!-- Wrapper for slides -->
+					  <div class="carousel-inner">
+						<div class="item active">
+							<div class="row">
+								<div class="col-lg-10 col-md-offset-1">
+									<div class="col-lg-3 mx-auto">
+										<img src="img/map_before_recursive.png" style="width:100%">
+									</div>
+									<div class="col-lg-9 mx-auto">
+										<h5>1. Using the main principle as before</h5>
+										<p>
+										The robot just does movement of 5cm in order to stay align with the cell.<br>
+										At each decision point, the robot considers all the possibility around (move forward, go left or go right).<br>
+										If one cell directly around the robot is not discovered the robot takes this direction.<br>
+										If it is not discovered, the robot runs an advanced algorithm.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="item">
+							<div class="row">
+								<div class="col-lg-10 col-md-offset-1">
+									<div class="col-lg-3 mx-auto">
+										<img src="img/map_after_recursive_b.png" style="width:100%">
+									</div>
+									<div class="col-lg-3 mx-auto">
+										<img src="img/map_after_recursive_b2.png" style="width:100%">
+									</div>
+									<div class="col-lg-6 mx-auto">
+										<h5>2. Taking an optimized decision</h5>
+										<p>
+										In this situation, the robot has already discovered all the cells around it.<br>
+										It searchs for the closest cell undiscovered in the same row or column and goes there.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+
+					  <!-- Left and right controls -->
+					  <a class="left carousel-control" href="#myCarousel2" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+						<span class="sr-only">Previous</span>
+					  </a>
+					  <a class="right carousel-control" href="#myCarousel2" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right"></span>
+						<span class="sr-only">Next</span>
+					  </a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	
 	<section id="section3" class="content-section design2"> <!-- The id of this first section should not be modified (else the arrow at the top won't work anymore). -->
       <div class="container">
         <div class="row">
           <div class="col-lg-12 mx-auto">
-			<h4>Performance for this test</h4>
+			<h4>Performance for this algorithm</h4>
 			<div class="col-lg-3 mx-auto">
 				<p>Our Algorithm</p>
 				<img src="img/final_map_recursive B.png" style="width:100%">
