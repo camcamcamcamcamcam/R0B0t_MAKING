@@ -31,7 +31,7 @@ uint8_t sn_color;
 /*
 @desc : read the data from the color sensor and update the 3 global variables value_r, value_g, value_b (values RGB).
 @param : /
-@author : 
+@author : Louis Roman
 @return : void
 */
 void getColor(){
@@ -48,7 +48,7 @@ void getColor(){
 /*
 @desc : returns an integer (boolean) telling if the obstacle is red or not.
 @param : /
-@author : 
+@author : Louis Roman
 @return : integer (1 if the obstacle is red, 0 else)
 */
 int red_obstacle(){

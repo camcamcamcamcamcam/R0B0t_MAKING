@@ -27,8 +27,8 @@ extern int Y; //in mm
 #ifndef MAX_SPEED
 #define MAX_SPEED 1050
 #endif
-int globx;  //coordonnate
-int globy;  //coordonnate
+int globx;  //coordinate
+int globy;  //coordinate
 extern int TETA;
 int directionX;
 int directionY;
@@ -47,18 +47,13 @@ int dirY;
  *   200 if the value is unknown
  */
 
-void nearest_undisclosed_point();
-int nearest_undisclosed_free(int angle);
 void rotate(int angle);
 char move_forward();
-char disclosed(int angle);
 char can_move_forward();
 void increase_cost(int value);
 char null(char a);
 void client_position();
 void manage_obstacles();
-int longest_undisclosed_position();
-char checkBoundaries(int x_check, int y_check);
 void initSmallStadium();
 
 char checkBoundaries(int x_check, int y_check){
@@ -81,7 +76,7 @@ void initSmallStadium(){
 }
 void client_position(){
   /*
-  send the postition to the server every 2 seconds
+  send the position to the server every 2 seconds
   update the local map every 50 ms to say there is no obstacle
   */
    uint32_t count = 0;
@@ -102,7 +97,7 @@ void client_position(){
           sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
         }
 				//if (count == 400) { // 224000
-				//	sendMapDone();
+					sendMapDone();
 				//}
 				if (count == 4700){
 					printf("*\n*\n*\n*\n\tALMOST END OF TIME, MAP IS SENDING NOW !!\n*\n*\n*\n");
@@ -157,40 +152,6 @@ char can_move_forward() {
 			return 0;
 	}
 	return 1;
-}
-
-char disclosed(int angle){
-  /*
-  check if the cells linked to the direction corresponding to the angle have already been disclosed
-  */
-  angle = angle%360;
-  if (angle==0){
-    dirX = 0;
-    dirY = 1;
-  } else if (angle==90){
-    dirX = 1;
-    dirY = 0;
-  } else if (angle==180){
-    dirX = 0;
-    dirY = -1;
-  } else {
-    dirX = -1;
-    dirY = 0;
-  }
-	if (!checkBoundaries(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)) && !checkBoundaries(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))){
-		return 1;
-	}
-	printf("Value disclosed (globx,globy,TETA)=(%d,%d,%d) \n",globx,globy,TETA);
-	printf("Disclosed(%d,%d) ? %d\n",globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY),getMapData(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY)));
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX-null(dirX),globy+3*dirY-null(dirY),getMapData(globx+3*dirX-null(dirX),globy+3*dirY-null(dirY)));
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX,globy+3*dirY,getMapData(globx+3*dirX,globy+3*dirY));
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+null(dirX),globy+3*dirY+null(dirY),getMapData(globx+3*dirX+null(dirX),globy+3*dirY+null(dirY)));
-	printf("Disclosed(%d,%d) ? %d \n",globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY),getMapData(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY)));
-  if ((getMapData(globx+3*dirX,globy+3*dirY)==200) || (getMapData(globx+3*dirX+2*null(dirX),globy+3*dirY+2*null(dirY))==200) || (getMapData(globx+3*dirX+null(dirX),globy+3*dirY+null(dirY))==200) || (getMapData(globx+3*dirX-null(dirX),globy+3*dirY-null(dirY))==200) || (getMapData(globx+3*dirX-2*null(dirX),globy+3*dirY-2*null(dirY))==200)) {
-      return 0;
-  }else{
-      return 1;
-  }
 }
 
 char move_forward(){
@@ -256,140 +217,7 @@ void rotate(int angle){
   increase_cost(1);
 }
 
-int longest_undisclosed_position(){
-  /*
-  The function enables to estimate the longest path the robot can do without bumping into already discovered obstacles or already discovered area
-  */
-  int angle = TETA;
-  if (angle==0){
-    dirX = 0;
-    dirY = 1;
-  } else if (angle==90){
-    dirX = 1;
-    dirY = 0;
-  } else if (angle==180){
-    dirX = 0;
-    dirY = -1;
-  } else {
-    dirX = -1;
-    dirY = 0;
-  }
-  int i=0;
-  unsigned char case1 = 0;
-  unsigned char case2 = 0;
-  unsigned char case3 = 0;
-  unsigned char case4 = 0;
-  unsigned char case5 = 0;
-
-  // we check that the cells assessed are inisde the arena
-  if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
-    case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
-    case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
-    case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
-    case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
-  }
-  // we loop until a wall has been found and an undisclosed place has not been found
-  while (((case1==200) || (case2==200) || (case3==200) || (case4==200) || (case5==200)) && (globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    if ((case1!=1) && (case2!=1) && (case3!=1) && (case4!=1) && (case5!=1)){
-      i++;
-      if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-        case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
-        case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
-        case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
-        case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
-        case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
-      }
-    } else {
-        return (i+1);
-      }
-    }
-	if(angle==0){
-		return (h-3-globy);
-	}
-	else if(angle==90){
-		return (w-3-globx);
-	}
-	else if(angle==180){
-		return (globy-2);
-	}
-	else{
-		return (globx-2);
-	}
-
-  return 1000;
-}
-
-int nearest_undisclosed_free(int angle){
-  /*
-  The function returns the biggest number of 5cm-cell with the angle "angle" that the robot can do.
-  */
-  angle = angle % 360;
-  if (angle == 0){
-    dirX = 0;
-    dirY = 1;
-  } else if (angle == 90) {
-    dirX = 1;
-    dirY = 0;
-  } else if (angle == 180) {
-    dirX = 0;
-    dirY = -1;
-  } else {
-    dirX = -1;
-    dirY = 0;
-  }
-  int i=0;
-  unsigned char case1 = 1;
-  unsigned char case2 = 1;
-  unsigned char case3 = 1;
-  unsigned char case4 = 1;
-  unsigned char case5 = 1;
-
-  // we check that the cells assessed are inside the arena
-  if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
-    case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
-    case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
-    case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
-    case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
-  }
-  // we loop until a wall has been found and an undisclosed place has not been found
-  while ((case1!=1) && (case2!=1) && (case3!=1) && (case4!=1) && (case5!=1) && (globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-    if ((case1!=200) && (case2!=200) && (case3!=200) && (case4!=200) && (case5!=200)){
-      i++;
-      if ((globy+(3+i)*dirY+2*null(dirY)<h) && (globy+(3+i)*dirY-2*null(dirY)>0) && (globx+(3+i)*dirX+2*null(dirX)<w) && (globx+(3+i)*dirX-2*null(dirX)>0)){
-        case1 = getMapData(globx+(3+i)*dirX-2*null(dirX),globy+(3+i)*dirY-2*null(dirY));
-        case2 = getMapData(globx+(3+i)*dirX-null(dirX),globy+(3+i)*dirY-null(dirY));
-        case3 = getMapData(globx+(3+i)*dirX,globy+(3+i)*dirY);
-        case4 = getMapData(globx+(3+i)*dirX+null(dirX),globy+(3+i)*dirY+null(dirY));
-        case5 = getMapData(globx+(3+i)*dirX+2*null(dirX),globy+(3+i)*dirY+2*null(dirY));
-      }
-    } else {
-        return (i+1);
-      }
-    }
-  return 1000;
-}
-
-void nearest_undisclosed_point(int * result){
-  //"""return the angle the robot should take to go to the nearest undisclosed point in one of the four direction without obstacle between, 1000 if not exists"""
-  int angle = 0;
-  int minimum = nearest_undisclosed_free(TETA + angle);
-  int indexAngle = angle;
-  int dist;
-  while (angle < 270){
-    angle = angle + 90;
-    dist = nearest_undisclosed_free(TETA+angle);
-    if (dist < minimum) {
-      minimum = dist;
-      indexAngle = angle;
-    }
-  }
-  result[0] = indexAngle;
-  result[1] = minimum;
-}
-
-void algo_recursive_b() {
+void algo_chenille() {
     srand(time(NULL));   // should only be called once
     directionX = 0;
     directionY = 1;
@@ -480,7 +308,7 @@ void algo_recursive_b() {
 
 
 
-char main (void) {
+int main (void) {
   /*
   * The robot is doing the algorithm".
   */
@@ -510,6 +338,6 @@ char main (void) {
 	char b;
   pthread_create(&tid_receive_message, &attr_receive_message, (void *) receiveMessageServer, (void *)&b);
 
-  algo_recursive_b();
+  algo_chenille();
 	return 1;
 }

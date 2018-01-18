@@ -27,8 +27,8 @@ extern int Y; //in mm
 #ifndef MAX_SPEED
 #define MAX_SPEED 1050
 #endif
-int globx;  //coordonnate
-int globy;  //coordonnate
+int globx;  //coordinate
+int globy;  //coordinate
 extern int TETA;
 int directionX;
 int directionY;
@@ -102,7 +102,7 @@ void client_position(){
           sendMessage(MSG_POSITION, x, y, 0, 0, 0, 0);
         }
 				//if (count == 400) { // 224000
-				//	sendMapDone();
+					sendMapDone();
 				//}
 				if (count == 4700){
 					printf("*\n*\n*\n*\n\tALMOST END OF TIME, MAP IS SENDING NOW !!\n*\n*\n*\n");

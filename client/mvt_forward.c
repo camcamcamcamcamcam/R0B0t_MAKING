@@ -40,7 +40,7 @@
 	* the function enables the robot to move forward until the distance specified has been reached or an obstacle has been met
 	* before the movement, the robot is doing a scan around it to see if it can move forward
 	* during the movement, the sonar is sweeping the space
-	* if braking is needed, the robot adapt his speed to the environnement
+	* if braking is needed, the robot adapt his speed to the environment
 	* at the end, the function returns a char describing if the robot has done the distance specified (1) or if it was obliged to stop because of obstacles (0)
 @param :
 	* int speed : speed of the tacho used for the rotation

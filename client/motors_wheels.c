@@ -536,7 +536,7 @@ int angle_to_distance(int angle){
 	* This function enables to convert the distance done by a wheel in angle in degree
 @param :
 	* distance in mm
-@author : Samuel Pierre
+@author : Benjamin Castellan and Samuel Pierre
 @return : (int) angle in degree
 */
 int distance_to_angle(int distance){

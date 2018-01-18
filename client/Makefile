@@ -32,23 +32,11 @@ sensor_compass.o: sensor_compass.c
 sensor_compass: sensor_compass.o
 	gcc sensor_compass.o -Wall -lm -lev3dev-c -o sensor_compass
 
-test_compass.o: test_compass.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_compass.c -o test_compass.o
-
-test_compass: sensor_compass.o test_compass.o
-	gcc -pthread sensor_compass.o test_compass.o -Wall -lm -lev3dev-c -o test_compass
-
 sensor_gyro.o: sensor_gyro.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_gyro.c -o sensor_gyro.o
 
 sensor_gyro: sensor_gyro.o
 	gcc sensor_gyro.o -Wall -lm -lev3dev-c -o sensor_gyro
-
-test_gyro.o: test_gyro.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_gyro.c -o test_gyro.o
-
-test_gyro: sensor_gyro.o test_gyro.o
-	gcc sensor_gyro.o test_gyro.o -Wall -lm -lev3dev-c -o test_gyro
 
 sensor_sonar.o: sensor_sonar.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_sonar.c -o sensor_sonar.o
@@ -63,20 +51,6 @@ touch_sensor.o: touch_sensor.c
 touch_sensor: touch_sensor.o
 	gcc touch_sensor.o -Wall -lm -lev3dev-c -o touch_sensor
 	./touch_sensor
-
-getSonarValue.o: getSonarValue.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c getSonarValue.c -o getSonarValue.o
-
-getSonarValue: getSonarValue.o
-	gcc getSonarValue.o -Wall -lm -lev3dev-c -o getSonarValue
-	./getSonarValue
-
-setMotorsValue.o: setMotorsValue.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c setMotorsValue.c -o setMotorsValue.o
-
-setMotorsValue:
-	gcc setMotorsValue.o -Wall -lm -lev3dev-c -o setMotorsValue
-	./setMotorsValue
 
 robotclient.o: robotclient.c
 	gcc -std=gnu99 -W -Wall -c robotclient.c -o robotclient.o
@@ -99,148 +73,23 @@ servo_sonar: motors_servo.o sensor_sonar.o
 	gcc servo_sonar.o motors_servo.o sensor_sonar.o -Wall -lm -lev3dev-c -o servo_sonar
 	./servo_sonar
 
-
-test_1.o: test_1.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_1.c -o test_1.o
-
-test_1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o test_1.o
-	gcc -pthread sensor_gyro.o motors_wheels.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lev3dev-c -o test_1
-	./test_1
-
-test_1V2: test_1V2.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_wheels.c -o motors_wheels.o
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c motors_servo.c -o motors_servo.o
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensor_sonar.c -o sensor_sonar.o
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c servo_sonar.c -o servo_sonar.o
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c robotclient.c -o robotclient.o
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_1.c -o test_1.o
-	gcc -pthread sensor_gyro.o motors_wheels.o robotclient.o servo_sonar.o motors_servo.o sensor_sonar.o test_1.o -Wall -lm -lbluetooth -lev3dev-c -o test_1V2
-	./test_1V2
-
 mvt_forward.o: mvt_forward.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c mvt_forward.c -o mvt_forward.o
-
-test_mvt_forward.o: test_mvt_forward.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_mvt_forward.c -o test_mvt_forward.o
-
-test_mvt_forward: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_mvt_forward.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_mvt_forward.o -Wall -lm -lev3dev-c -o test_mvt_forward
-	./test_mvt_forward
-
-test_avancee_simple.o: test_avancee_simple.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_avancee_simple.c -o test_avancee_simple.o
-
-test_avancee_simple: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_forward.o test_avancee_simple.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_avancee_simple.o -Wall -lm -lev3dev-c -o test_avancee_simple
 
 mvt_rotate.o: mvt_rotate.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c mvt_rotate.c -o mvt_rotate.o
 
-test_mvt_rotate.o: test_mvt_rotate.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_mvt_rotate.c -o test_mvt_rotate.o
-
-test_mvt_rotate: sensor_gyro.o motors_wheels.o sensor_sonar.o motors_servo.o servo_sonar.o mvt_rotate.o mvt_forward.o test_mvt_rotate.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o servo_sonar.o motors_servo.o sensor_sonar.o mvt_forward.o test_mvt_rotate.o -Wall -lm -lev3dev-c -o test_mvt_rotate
-
-test_scan_attrape.o: test_scan_attrape.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_scan_attrape.c -o test_scan_attrape.o
-
-test_scan_attrape: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o
-	gcc -pthread  sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o color_sensor.o mvt_rotate.o mvt_forward.o object_interaction.o test_scan_attrape.o -Wall -lm -lev3dev-c -o test_scan_attrape
-
 object_interaction.o: object_interaction.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c object_interaction.c -o object_interaction.o
-
-test_final_1.o: test_final_1.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_1.c -o test_final_1.o
-
-test_final_1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_1.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_1.o -Wall -lm -lev3dev-c -o test_final_1
-	./test_final_1
-
-test_final_2.o: test_final_2.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_2.c -o test_final_2.o
-
-test_final_2: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_2.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_2.o -Wall -lm -lev3dev-c -o test_final_2
-	./test_final_2
-
-test_final_5.o: test_final_5.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_5.c -o test_final_5.o
-
-test_final_5: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_final_5.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_5.o -Wall -lm -lev3dev-c -o test_final_5
-	./test_final_5
-
-test_algo_simple.o: test_algo_simple.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_algo_simple.c -o test_algo_simple.o
-
-test_algo_simple: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_algo_simple.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_algo_simple.o -Wall -lm -lev3dev-c -o test_algo_simple
-	./test_algo_simple
-
-test_final_6.o: test_final_6.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_6.c -o test_final_6.o
-
-test_final_6: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o test_final_6.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o robotclient.o test_final_6.o -Wall -lm -lbluetooth -lev3dev-c -o test_final_6
-	./test_final_6
-
-test2_final1.o: test2_final1.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test2_final1.c -o test2_final1.o
-
-test2_final1: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o test2_final1.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o robotclient.o test2_final1.o -Wall -lm -lbluetooth -lev3dev-c -o test2_final1
-	./test2_final_1
-
-test_servo.o: test_servo.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_servo.c -o test_servo.o
-
-test_servo: motors_servo.o test_servo.o
-	gcc motors_servo.o test_servo.o -Wall -lm -lev3dev-c -o test_servo
-	./test_servo
-
-test_chenille.o: test_chenille.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_chenille.c -o test_chenille.o
-
-test_chenille: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille.o -Wall -lm -lev3dev-c -o test_chenille
-	./test_chenille
-
-test_chenille_thread: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_chenille_thread.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_chenille_thread.o -Wall -lm -lev3dev-c -o test_chenille_thread
-	./test_chenille_thread
-
-test3.o: test3.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test3.c -o test3.o
-
-test3: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test3.o
-	gcc color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test3.o -Wall -lm -lev3dev-c -o test3
-
-test4.o: test4.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test4.c -o test4.o
-
-test4: color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o
-	gcc color_sensor.o sensor_gyro.o sensor_sonar.o servo_sonar.o motors_servo.o motors_wheels.o object_interaction.o mvt_forward.o mvt_rotate.o test4.o -Wall -lm -lev3dev-c -o test4
 
 test_final_algo_recursif.o: test_final_algo_recursif.c
 	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_algo_recursif.c -o test_final_algo_recursif.o
 
 test_final_algo_recursif: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o map_construction.o object_interaction.o color_sensor.o test_final_algo_recursif.o
 	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_algo_recursif.o robotclient.o map_construction.o object_interaction.o color_sensor.o -Wall -lm -lbluetooth -lev3dev-c -o test_final_algo_recursif
+	
+test_final_algo_chenille.o: test_final_algo_chenille.c
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_final_algo_chenille.c -o test_final_algo_chenille.o
 
-test_simple_rotation.o: test_simple_rotation.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_simple_rotation.c -o test_simple_rotation.o
-
-test_simple_rotation: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o test_simple_rotation.o
-	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_simple_rotation.o -Wall -lm -lev3dev-c -o test_simple_rotation
-	./test_simple_rotation
-
-test_object_interaction.o: test_object_interaction.c
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c test_object_interaction.c -o test_object_interaction.o
-
-test_object_interaction: color_sensor.o sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o object_interaction.o test_object_interaction.o
-	gcc -pthread color_sensor.o sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o object_interaction.o test_object_interaction.o -Wall -lm -lev3dev-c -o test_object_interaction
-
-run:
-	./tester
+test_final_algo_chenille: sensor_gyro.o motors_wheels.o motors_servo.o sensor_sonar.o servo_sonar.o mvt_rotate.o mvt_forward.o robotclient.o map_construction.o object_interaction.o color_sensor.o test_final_algo_chenille.o
+	gcc -pthread sensor_gyro.o motors_wheels.o mvt_rotate.o mvt_forward.o servo_sonar.o motors_servo.o sensor_sonar.o test_final_algo_chenille.o robotclient.o map_construction.o object_interaction.o color_sensor.o -Wall -lm -lbluetooth -lev3dev-c -o test_final_algo_chenille

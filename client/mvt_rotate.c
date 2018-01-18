@@ -68,7 +68,7 @@ void rotate_to_angle_without_refresh(int speed, int angle){
 	* int speed : speed of the tacho used for the rotation
 	* int amplitudeAngle : amplitude of the search
 	* int precisionAngle : step of the search
-@author : 
+@author : everybody
 @return : (int) return the distance of the obstacle detected.
 */
 int rotate_to_closest_obstacle(int speed, int amplitudeAngle, int precisionAngle){
