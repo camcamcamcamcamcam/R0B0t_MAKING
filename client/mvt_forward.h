@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include "ev3.h"
 #include "ev3_port.h"
+#include "ev3_tacho.h"
 #include "ev3_sensor.h"
+#include <math.h>
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
 
@@ -17,11 +19,4 @@
 //////////////////////////////////////////////////
 #endif
 
-uint8_t sn_sonar;
-
-void initSensorSonar();
-/*need to be started at the beginning
- Allows to use the sonar sensor */
-int get_sonar_distance();
-/* return the distance found by the sensor in mm.
-*/
+char go_to_distance_sweep_regular_braking_new_v2(int speed, int distance, int securityDistance,int amplitudeSweep);

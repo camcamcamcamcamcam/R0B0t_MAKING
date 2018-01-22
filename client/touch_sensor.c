@@ -18,7 +18,12 @@
 #endif
 
 uint8_t sn_touch;
-
+/*
+@desc : initialize the touch sensor. The function has to be called once before starting using the touch sensor.
+@param : /
+@author : Benjamin Castellan
+@return : void
+*/
 void initTouchSensor(){
     //initialize the touch sensor
     if ( ev3_init() == -1 ) return ( 1 );
@@ -27,6 +32,12 @@ void initTouchSensor(){
 
 }
 
+/*
+@desc : check if the sensor is being pushed
+@param : /
+@author : Benjamin Castellan
+@return : 1 if touched, 0 else
+*/
 int isTouched(){
     //return true if the sensor is pushed, false if not
     int value;
@@ -37,6 +48,12 @@ int isTouched(){
     return value;
 }
 
+/*
+@desc : test if the touchSensor is working properly
+@param : /
+@author : Benjamin Castellan
+@return : 0
+*/
 int main( void )
 {
 

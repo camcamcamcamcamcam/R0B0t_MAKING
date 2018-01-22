@@ -5,8 +5,8 @@
 
 uint8_t sn_color;
 
-int getColor();
-//return an array with
+void getColor();
+// read the data from the color sensor and update the 3 global variables (values RGB) in color_sensor.c
 
 int red_obstacle();
-//say if an obstacle
+// returns an integer (boolean) telling if the obstacle is red or not.

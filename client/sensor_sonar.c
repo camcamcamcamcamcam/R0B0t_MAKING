@@ -21,7 +21,12 @@
 
 uint8_t sn_sonar;
 
-
+/*
+@desc : initialize the sensor sonar. The function has to be called once before starting using the sonar.
+@param : /
+@author : Samuel Pierre
+@return : void
+*/
 void initSensorSonar(){
 	// initialise the sonar sensor
     if ( ev3_init() == -1 ) return ( 1 );
@@ -29,29 +34,15 @@ void initSensorSonar(){
 	ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0);
 }
 
+/*
+@desc : the function enables to get the value detected by the sonar sensor
+@param : /
+@author : Samuel Pierre
+@return : (int) distance in mm detected by the sonar
+*/
 int get_sonar_distance(){
-    // return the distance in mm got by the sensor
 	float value;
     get_sensor_value0(sn_sonar,&value);
 	fflush( stdout );
-	printf("value sensor : %f\n",value);
-	if(value>=750){
-		return 750;
-	}
-	else{
-		return (int) value;
-	}
+	return (int) value;
 }
-/*
-int main( void ){
-
-	int distance;
-    initSensorSonar();
-    while(1){
-		distance = get_sonar_distance();
-		printf("Distance captée : %d \n",distance);
-		Sleep(1000);
-	}
-
-}
-*/

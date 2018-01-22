@@ -10,7 +10,7 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/rfcomm.h>
 
-#define SERV_ADDR   "5c:51:4f:29:bc:be" //"dc:53:60:ad:61:90"     /* Whatever the address of the server is */
+#define SERV_ADDR  "dc:53:60:ad:61:90"   //"benjiii bluetooth address 5c:51:4f:29:bc:be" //  small arena "dc:53:60:ad:61:90 /* big arena 00:1a:7d:da:71:06 Whatever the address of the server is */
 #define TEAM_ID     2                       /* Your team ID */
 
 #define MSG_ACK     0
@@ -22,6 +22,12 @@
 #define MSG_MAPDONE 6
 #define MSG_OBSTACLE 7
 #define Sleep( msec ) usleep(( msec ) * 1000 )
+#define TAG "CLIENT : "
+#define DEBUG 1
+
+char server_said_stop = 0;
+
+int read_from_server (int sock, char *buffer, size_t maxSize);
 
 void debug (const char *fmt, ...) {
     va_list argp;
@@ -35,8 +41,48 @@ void debug (const char *fmt, ...) {
 
 
 int s;
+int status;
 
 uint16_t msgId = 0;
+
+/*
+@desc : initialize the client. The function has to be called once before starting the program because it waits for the START message.
+@param : /
+@author : Benjamin Castellan and Louis Roman
+@return : void
+*/
+void initClient() {
+    if (DEBUG) printf("CLIENT : initializing\n");
+    struct sockaddr_rc addr = { 0 };
+
+    /* allocate a socket */
+    s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+
+    /* set the connection parameters (who to connect to) */
+    addr.rc_family = AF_BLUETOOTH;
+    addr.rc_channel = (uint8_t) 1;
+    str2ba (SERV_ADDR, &addr.rc_bdaddr);
+
+    /* connect to server */
+    if (DEBUG) printf("CLIENT : Trying to connect to the server\n");
+    status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
+
+    if( status == 0 ) {
+        printf("wait for START message\n");
+        char string[58];
+        string[4] = MSG_STOP; //to be sure it is not initialized to MSG_START
+
+        //wait for the start message
+        while (string[4] != MSG_START) read_from_server(s, string, 9);
+
+        printf("Received start message!\n");
+
+    } else {
+        fprintf (stderr, "Failed to connect to server...\n");
+        sleep (2);
+        exit (EXIT_FAILURE);
+    }
+}
 
 int read_from_server (int sock, char *buffer, size_t maxSize) {
     int bytes_read = read (sock, buffer, maxSize);
@@ -52,6 +98,12 @@ int read_from_server (int sock, char *buffer, size_t maxSize) {
     return bytes_read;
 }
 
+/*
+@desc : given the type of the message, it gives the size it should be (helps to write a message)
+@param : take the type of a message (as define above) 
+@author : Benjamin Castellan and Louis Roman
+@return : char
+*/
 char size_message(char msg_type) {
     switch (msg_type) {
         /*case MSG_ACK :    only sent by the server
@@ -71,52 +123,100 @@ char size_message(char msg_type) {
         case MSG_OBSTACLE:
             return 10;
     }
+    return (-1);
 }
 
+/*
+@desc : send to the server the message specified
+@param : as explicated just after
+@author : Benjamin Castellan and Louis Roman
+@return : char 1 if succeeded, 0 else
+*/
 char sendMessage(char msg_type, int x, int y, int R, int G, int B, char act) {
     /*
      * int x, int y, int R, int G, int B, char act are optional, they should be put to 0 when unnecessary
      * x and y are for position, R, G, B are colors between 0 and 255,
      * act is 0 if the robot dropped an obstable, 1 if it picked it
      */
-    char string[58];
-    *((uint16_t *) string) = msgId++;
-    string[2] = TEAM_ID;
-    string[3] = 0xFF;
-    string[4] = msg_type;
-    switch (msg_type) {
-        case MSG_POSITION: // to test
-            string[5] = x;          /* x */
-            string[6] = 0x00;
-            string[7] = y;              /* y */
-            string[8] = 0x00;
-            break;
-        case MSG_MAPDATA:
-            string[5] = x;          /* x */
-            string[6] = 0x00;
-            string[7] = y;          /* y */
-            string[8]= 0x00;
-            string[9]= R;
-            string[10]= G;
-            string[11]= B;
-            break;
-        case MSG_OBSTACLE:
-            string[5] = act;
-            string[6] = x;
-            string[7] = 0x00;
-            string[8] = y;
-            string[9] = 0x00;
-    }
+    if( status == 0 ) {
+        char string[58];
+        *((uint16_t *) string) = msgId++;
+        string[2] = TEAM_ID;
+        string[3] = 0xFF;
+        string[4] = msg_type;
+        switch (msg_type) {
+            case MSG_POSITION: // to test
+                string[5] = x;          /* x */
+                string[6] = 0x00;
+                string[7] = y;              /* y */
+                string[8] = 0x00;
+                break;
+            case MSG_MAPDATA:
+                string[5] = x;          /* x */
+                string[6] = 0x00;
+                string[7] = y;          /* y */
+                string[8] = 0x00;
+                string[9] = R;
+                string[10] = G;
+                string[11] = B;
+                break;
+            case MSG_OBSTACLE:
+                string[5] = act;
+                string[6] = x;
+                string[7] = 0x00;
+                string[8] = y;
+                string[9] = 0x00;
+        }
 
-    write(s, string, size_message(msg_type));
-    return (1);
+        write(s, string, size_message(msg_type));
+        return (1);
+    }
+    return (0);
 }
 
+/*
+@desc : listen if the server wants to stop the robot(end of game or kicked out of the game)
+@param : /
+@author : Benjamin Castellan
+@return : void
+*/
+void receiveMessageServer(){
+  if( status == 0 ) {
+      //printf("wait for STOP or KICK message\n");
+      char string[58];
+      char type;
+      string[4] = MSG_START; //to be sure it is not initialized to STOP
+      //wait for the stop or kick message
+      while(1){
+          //Wait for stop message
+          read_from_server (s, string, 58);
+          type = string[4];
+          if (type == MSG_STOP || type ==  MSG_KICK){
+              server_said_stop = 1;
+              if (type == MSG_STOP) printf("*\n**\n***\n**** THE GAME HAS STOPED\n***\n**\n*\n");
+              else printf("*\n**\n***\n**** WE WERE KICKED OUT OF THE GAME :(\n***\n**\n*\n");
+              return;
+          }
+      }
+
+  } else {
+      fprintf (stderr, "Failed to connect to server...\n");
+      sleep (2);
+      exit (EXIT_FAILURE);
+  }
+}
+
+/*
+@desc : test if the function sendMessage is working (and the server as well)
+@param : /
+@author : Benjamin Castellan
+@return : void
+*/
 void robot2() {
     /*
      * second test to see if function sendMessage is working
      */
-    int i, j;
+    int i;
     for (i=0; i<30; i++){
         sendMessage(MSG_POSITION,i,i,0,0,0,0);
         Sleep(1000);
@@ -266,45 +366,51 @@ void robot () {
 }
 
 
-int main(int argc, char **argv) {
-    struct sockaddr_rc addr = { 0 };
-    int status;
-
-    /* allocate a socket */
-    s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-
-    /* set the connection parameters (who to connect to) */
-    addr.rc_family = AF_BLUETOOTH;
-    addr.rc_channel = (uint8_t) 1;
-    str2ba (SERV_ADDR, &addr.rc_bdaddr);
-
-    /* connect to server */
-    status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
-
-    /* if connected */
-    if( status == 0 ) {
-        char string[58];
-
-        /* Wait for START message */
-        printf("wait for START message\n");
-        read_from_server (s, string, 9);
-        if (string[4] == MSG_START) {
-            printf ("Received start message!\n");
 
 
-        }
+/*
+int main(void) {
+
+    //struct sockaddr_rc addr = { 0 };
+
+    // allocate a socket
+    //s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
+
+    // set the connection parameters (who to connect to)
+    //addr.rc_family = AF_BLUETOOTH;
+    //addr.rc_channel = (uint8_t) 1;
+    //str2ba (SERV_ADDR, &addr.rc_bdaddr);
+
+    // connect to server
+    //status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
+
+    init_client();
+
+    // if connected
+    //if( status == 0 ) {
+        //if (DEBUG) printf("CLIENT : We are connected to the server");
+        //char string[58];
+
+        // Wait for START message
+        //printf("wait for START message\n");
+        //read_from_server (s, string, 9);
+        //if (string[4] == MSG_START) {
+        //    printf ("Received start message!\n");
+
+        //}
         //robot();
         robot2();
         close (s);
 
         sleep (5);
 
-    } else {
-        fprintf (stderr, "Failed to connect to server...\n");
-        sleep (2);
-        exit (EXIT_FAILURE);
-    }
+    //} else {
+       // fprintf (stderr, "Failed to connect to server...\n");
+      //  sleep (2);
+     //   exit (EXIT_FAILURE);
+    //}
 
     close(s);
     return 0;
 }
+*/

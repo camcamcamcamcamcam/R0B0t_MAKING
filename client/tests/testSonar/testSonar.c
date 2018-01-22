@@ -24,26 +24,26 @@ int main( void )
 	uint8_t sn_sonar;
 	char s[ 256 ];
 	float value;
-	
+
 	if ( ev3_init() == -1 ) return ( 1 );
 
 	while ( ev3_tacho_init() < 1 ) Sleep( 1000 );
 
 	printf( "*** ( EV3 ) Hello! ***\n" );
-	
+
 //Run all sensors
 	ev3_sensor_init();
-	
+
 	int expectedValue;
 	FILE * fichier = NULL;
 	fichier = fopen("testSonar.txt","a");
 	fprintf(fichier,"# The file contains a kind of table expectedValue (in cm) : value from the sensor \n");
-	
+
 	printf("Value measured (in cm) ?");
 	scanf("%d",&expectedValue);
 	printf("\n");
 	while (expectedValue!=0){
-		
+
 		if (ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0)){
 			printf("SONAR found, reading sonar...\n");
 			if ( !get_sensor_value0(sn_sonar, &value )) {
@@ -55,12 +55,12 @@ int main( void )
 			fprintf(fichier, "%d : %f \n", expectedValue, value);
 			fflush( stdout );
 	    	}
-		
+		 
 		printf("Valeur mesurée (en cm) ? (0 to exit)");
 		scanf("%d",&expectedValue);
 		printf("\n");
 	}
-	
+
 	fclose(fichier);
 
 	ev3_uninit();
